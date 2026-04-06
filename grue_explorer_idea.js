@@ -309,7 +309,7 @@ function drawGraphic(id) {
     scale(sx, sy);
 
     // scanline flicker — very subtle brightness pulse
-    let flicker = 1.0 + sin(millis() * 0.003) * 0.04;
+    let flicker = 1.0 + sin(millis() * 0.003) * 0.05;
     tint(0, 230 * flicker, 80 * flicker, 220);
 
     image(graphics[id], 0, 0, 140, 140);
