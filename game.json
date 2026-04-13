@@ -144,12 +144,15 @@
     },
 
     "a2_table": {
-      "label": "CLEAN TABLE",
+      "label": "CLEAN ROOM",
       "sp": "de",
       "sets_flag": "a2_table_clean",
       "excludes_flag": "a2_table_clean",
       "text": [
         { "line": "YOU GRAB A NEARBY RAG AND THOROUGHLY WIPE THE TABLE AND COFFEE MAKER DOWN, ORGANIZING THE MAGAZINES INTO A STACK.", "sp": "se" },
+        { "line": "WHILE YOU'RE AT IT, YOU ALSO WIPE DOWN THE CHAIRS, REMOVING SOME OF THE DUST AND DEBRIS.", "sp": "se" },
+        { "line": "YOU GRAB A NEARBY BROOM AND SWEEP THE FLOOR, MAKING THE ROOM FEEL MUCH CLEANER A LITTLE MORE LIVABLE FOR THE STAFF.", "sp": "se" },
+        { "line": "A SENSE OF PRIDE WELLS UP IN YOU AS YOU STEP BACK AND ADMIRE YOUR WORK.", "sp": "se" },
         { "line": "MUCH BETTER.", "sp": "se" }
       ],
       "leads_to": ["back"]
