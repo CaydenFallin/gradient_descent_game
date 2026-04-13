@@ -8,6 +8,8 @@ let ivuVisualized = false;
 let audioVisualized = false;
 
 const bootSequence = [
+  { line: "GRADIENT DESCENT", sp: "se", speed: 60 },
+  { line: "     \n", sp: "se", speed: 100 },
   { line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
   { line: "WELCOME [[USER]], BOOTUP SEQUENCE STARTING...", sp: "na", speed: 5 },
   { line: "\n", sp: "se", speed: 5 },
