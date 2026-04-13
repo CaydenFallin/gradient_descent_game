@@ -1,6 +1,42 @@
 let data;
 let vt323;
 
+// --- BOOT SEQUENCE SETTINGS ---
+let isBooting = true;
+let bootIndex = 0;
+let ivuVisualized = false;
+let audioVisualized = false;
+
+const bootSequence = [
+  //{ line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
+  //{ line: "WELCOME [[USER]], BOOTUP SEQUENCE STARTING...", sp: "na", speed: 5 },
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "MEMORY CHECK........................ERROR", sp: "na", speed: 5 },
+  //{ line: "WARNING: MEMORY ERROR DETECTED. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
+  //{ line: "CORE LOGIC..........................OK", sp: "na", speed: 5 },
+  //{ line: "INITIALIZING INTEGRATED VISUAL UNIT...........OK", sp: "na", speed: 5 },
+  { line: "CALIBRATING OPTICAL BUFFER...", sp: "na", trigger: "ivu", speed: 5 },
+  //{ line: "INITIALIZING AUDIO..INPUT DEVICE..........OK", sp: "na", speed: 5 },
+  { line: "ALLIANCE INTERFACE SYSTEM - COPYRIGHT 19XX", sp: "na", trigger: "audio", speed: 5 },
+  //{ line: "----------------------------------------", sp: "na", speed: 5 },
+  //{ line: "PRIMARY INTERFACE UNIT: ONLINE", sp: "na", speed: 5 },
+  //{ line: "SENSOR DESCRIPTION SYSTEM: ONLINE", sp: "na", speed: 5 },
+  //{ line: "WARNING, SENSOR DESCRIPTION SYSTEM MEMORY LEAK. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
+  //{ line: "SYSTEM READY.", sp: "na", speed: 5 },
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "HELLO [[USER]], WELCOME TO THE ALLIANCE INTERFACE SYSTEM. YOUR PRIMARY INTERFACE UNIT IS NOW ONLINE. PLEASE STAND BY.", sp: "se" },
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "CALIBRATING...", sp : "se"},
+  //{ line: "..............", sp : "se"},
+  //{ line: "CALIBRATION COMPLETE. WELCOME TO TEST SITE CHELBASKIA-40, [[USER]].", sp: "se"},
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "YOUR JOB IS TO MAINTAIN NUCLEAR WARHEADS, FACILITY INFRASTRUCTURE, LOG RESOURCES, AND ENSURE STABILITY DURING THIS MONTH'S OPERATIONAL CHECKPOINT.", sp: "se"},
+  //{ line: "BEGINNING REMOTE INTERFACE SOFTWARE NOW. USE COMMANDS PROVIDED BY THE SYSTEM TO NAVIGATE THE FACILITY AND INTERACT WITH THE ENVIRONMENT.", sp: "se"},
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "MONTHLY CHECKLIST CAN BE FOUND HUNG ON THE WALL IN THE FACILITY LOUNGE, GOOD LUCK [[USER]].", sp: "se"},
+  //{ line: "\n", sp: "se", speed: 5 },
+];
+
 let currentRoom;
 let currentChoices = [];
 let flags = {};
@@ -21,97 +57,182 @@ let rotationAngle = 0;
 const PRINT_DELAY = 18;
 const LINE_H = 32;
 const MARGIN = 36;
-const MAX_LINES = 12;
+const MAX_LINES = 13;
+const DEFAULT_SPEED = 40;
+const TEXT_MULTIPLIER = 1.0;
 
 // ─── LOAD ─────────────────────────────────────────────────────
 
 function preload() {
   vt323 = loadFont("VT323-Regular.ttf", () => {}, () => console.log("Font failed"));
   data = loadJSON("game.json");
-
   loadGraphic("star_gear_graphic", "graphics/star_gear_graphic.png");
+  loadGraphic("map", "graphics/map.png");
 }
 
 function loadGraphic(id, path) {
-  graphics[id] = loadImage(path, 
-    (img) => { applyDither(img); },
-    ()    => { console.log("Image failed to load: " + path); }
-  );
+  graphics[id] = loadImage(path, (img) => { applyDither(img); });
 }
 
 // ─── SETUP ────────────────────────────────────────────────────
 
 function setup() {
-  createCanvas(800, 520);
+  createCanvas(windowWidth, windowHeight);
   textFont(vt323);
   textSize(28);
-  enterRoom("corridor");
+  imageMode(CENTER);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 // ─── DRAW ─────────────────────────────────────────────────────
 
 function draw() {
-  background(0);
+  background(5, 10, 5);
 
-  // tick sensor color shift
+  let dividerX = width * 0.62;
+  let textWidthLimit = dividerX - (MARGIN * 2);
+  let monitorX = dividerX + 30;
+  let monitorY = 50;
+  let monitorSize = min(width - monitorX - 40, height * 0.4);
+
+  // --- BOOT LOGIC ---
+  if (isBooting) {
+    if (printQueue.length === 0 && currentLine === "") {
+      if (bootIndex < bootSequence.length) {
+        let b = bootSequence[bootIndex];
+        if (b.trigger === "ivu") ivuVisualized = true;
+        if (b.trigger === "audio") audioVisualized = true;
+        queueLine(b.line, b.sp, b.speed);
+        bootIndex++;
+      } else {
+        isBooting = false;
+        enterRoom("a1_boot_room"); // Fixed handshake to match new JSON
+      }
+    }
+  }
+
   if (flags["sensor_aware"] && sensorShift < 1.0) sensorShift += 0.0005;
 
-  // tick print queue
-  if (printQueue.length > 0 && millis() - lastPrint > PRINT_DELAY) {
-    let item = printQueue.shift();
-    if (item.ch === "\n") {
-      lines.push({ text: currentLine, col: currentCol });
-      if (lines.length > MAX_LINES) lines.shift();
-      currentLine = "";
-    } else {
-      currentLine += item.ch;
-      currentCol = item.col;
+  if (printQueue.length > 0) {
+    let timeElapsed = millis() - lastPrint;
+    while (printQueue.length > 0 && timeElapsed >= printQueue[0].speed) {
+      let item = printQueue.shift();
+      timeElapsed -= item.speed; 
+      lastPrint = millis() - timeElapsed;
+
+      if (item.ch === "\n") {
+        lines.push({ text: currentLine, col: currentCol });
+        if (lines.length > MAX_LINES) lines.shift();
+        currentLine = "";
+      } else {
+        let potentialLine = currentLine + item.ch;
+        if (textWidth(potentialLine) > textWidthLimit) {
+          lines.push({ text: currentLine, col: currentCol });
+          if (lines.length > MAX_LINES) lines.shift();
+          currentLine = item.ch;
+        } else {
+          currentLine += item.ch;
+        }
+        currentCol = item.col;
+      }
     }
+  } else {
     lastPrint = millis();
   }
 
-  // draw completed lines
+  // Render text
   for (let i = 0; i < lines.length; i++) {
     let c = lines[i].col;
     fill(c.r, c.g, c.b);
     text(lines[i].text, MARGIN, MARGIN + i * LINE_H);
   }
-
-  // draw currently printing line
   if (currentCol) fill(currentCol.r, currentCol.g, currentCol.b);
   text(currentLine, MARGIN, MARGIN + lines.length * LINE_H);
 
-  drawGraphic(currentGraphic);
+  // UI dividers and visuals
+  stroke(40, 60, 40, 150);
+  strokeWeight(2);
+  line(dividerX, 20, dividerX, height - 20);
+  noStroke();
 
-  // input bar in decider orange
-  fill(255, 140, 0);
-  text("> " + inputBuffer, MARGIN, 460);
+  if (ivuVisualized) {
+    drawMonitorFrame(monitorX, monitorY, monitorSize);
+    drawGraphic(currentGraphic, monitorX, monitorY, monitorSize);
+    fill(0, 150, 0, 180);
+    textAlign(CENTER);
+    textSize(18);
+    text("INTEGRATED VISUAL UNIT", monitorX + monitorSize/2, monitorY + monitorSize + 30);
+    textAlign(LEFT);
+    textSize(28);
+  }
+
+  if (audioVisualized) {
+    drawSoundVisualizer(monitorX, monitorY + monitorSize + 80, monitorSize, 120);
+  }
+
+  if (!isBooting) {
+    fill(255, 140, 0);
+    text("> " + inputBuffer, MARGIN, height - MARGIN);
+  }
 }
 
-// ─── INPUT ────────────────────────────────────────────────────
+// ─── FLAG LOGIC ───────────────────────────────────────────────
+
+function hasRequiredFlags(req, ex) {
+  // 1. Check Exclusions (If the 'hide' flag is present, return false immediately)
+  if (ex) {
+    if (Array.isArray(ex)) {
+      if (ex.some(f => flags[f] === true)) return false;
+    } else {
+      if (flags[ex] === true) return false;
+    }
+  }
+
+  // 2. Check Requirements (Existing logic)
+  if (!req) return true;
+  if (Array.isArray(req)) {
+    return req.every(f => flags[f] === true);
+  }
+  return flags[req] === true;
+}
+
+// ─── INPUT / GAME LOGIC ───────────────────────────────────────
 
 function keyPressed() {
+  if (key === 'f' || key === 'F') { let fs = fullscreen(); fullscreen(!fs); }
+  if (isBooting) return; 
+
   if (key === 'e' || key === 'E') {
-    if (printQueue.length > 0 || currentLine !== "") {
-      // finish the current line instantly
+    if (printQueue.length > 0) {
       while (printQueue.length > 0) {
         let item = printQueue.shift();
         if (item.ch === "\n") {
           lines.push({ text: currentLine, col: currentCol });
           if (lines.length > MAX_LINES) lines.shift();
           currentLine = "";
-          break; // stop at the newline, leave the rest in the queue
+          break; // Stop at one line
         } else {
-          currentLine += item.ch;
+          let dividerX = width * 0.62;
+          let textWidthLimit = dividerX - (MARGIN * 2);
+          if (textWidth(currentLine + item.ch) > textWidthLimit) {
+            lines.push({ text: currentLine, col: currentCol });
+            if (lines.length > MAX_LINES) lines.shift();
+            currentLine = item.ch;
+          } else {
+            currentLine += item.ch;
+          }
           currentCol = item.col;
         }
       }
+      lastPrint = millis();
       return;
     }
   }
-  
-  if (printQueue.length > 0 || currentLine !== "") return;
 
+  if (printQueue.length > 0 || currentLine !== "") return;
   if (keyCode === ENTER) {
     let cmd = inputBuffer.trim().toLowerCase();
     inputBuffer = "";
@@ -124,18 +245,10 @@ function keyPressed() {
   }
 }
 
-// ─── COMMANDS ─────────────────────────────────────────────────
-
 function handleCommand(cmd) {
   queueLine(cmd.toUpperCase(), "de");
-
-  // movement
-  let dirMap = {
-    n: "n", north: "n",
-    s: "s", south: "s",
-    e: "e", east:  "e",
-    w: "w", west:  "w"
-  };
+  let dirMap = { n: "n", north: "n", s: "s", south: "s", e: "e", east: "e", w: "w", west: "w", u: "u", up: "u", d: "d", down: "d" };
+  
   if (dirMap[cmd]) {
     let dir = dirMap[cmd];
     let room = data.rooms[currentRoom];
@@ -147,15 +260,9 @@ function handleCommand(cmd) {
     enterRoom(room.exits[dir]);
     return;
   }
-
-  // back
-  if (cmd === "back") {
-    enterRoom(currentRoom);
-    clearGraphic();
-    return;
-  }
-
-  // match typed command to a visible choice label
+  
+  if (cmd === "back") { enterRoom(currentRoom); clearGraphic(); return; }
+  
   let choiceId = currentChoices.find(id => {
     if (id === "back" || id === "move") return false;
     return data.choices[id].label.toLowerCase() === cmd;
@@ -168,25 +275,13 @@ function handleCommand(cmd) {
   }
 
   let choice = data.choices[choiceId];
-
   if (choice.graphic) currentGraphic = choice.graphic;
-
-  // apply relationship delta
   if (choice.rel_delta) relationship += choice.rel_delta;
-
-  // set flag
   if (choice.sets_flag) flags[choice.sets_flag] = true;
-
-  // trigger sensor color shift
-  if (choice.color_override) flags[choice.color_override] = true;
-
-  // process text and get resolved leads_to
+  
   let nextChoices = processText(choice.text, choice.leads_to);
-
   showChoices(nextChoices);
 }
-
-// ─── ROOMS ────────────────────────────────────────────────────
 
 function enterRoom(roomId) {
   currentRoom = roomId;
@@ -201,7 +296,8 @@ function showChoices(choiceIds) {
     if (id === "back" || id === "move") return true;
     let c = data.choices[id];
     if (!c) return false;
-    if (c.requires_flag && !flags[c.requires_flag]) return false;
+    if (!hasRequiredFlags(c.requires_flag, c.excludes_flag)) return false;
+    
     if (c.requires_rel) {
       if (c.requires_rel.min !== undefined && relationship < c.requires_rel.min) return false;
       if (c.requires_rel.max !== undefined && relationship > c.requires_rel.max) return false;
@@ -214,56 +310,63 @@ function showChoices(choiceIds) {
     if (id === "move") return "N / S / E / W";
     return data.choices[id].label;
   });
-
-  queueLine("OPTIONS: " + labels.join(",  "), "se");
+  queueLine("OPTIONS: " + labels.join(",   "), "se");
 }
-
-// ─── TEXT PROCESSING ──────────────────────────────────────────
 
 function processText(textArray, leadsTo) {
   let resolvedLeadsTo = leadsTo;
-
   for (let entry of textArray) {
     if (entry.line !== undefined) {
-      if (entry.requires_flag && !flags[entry.requires_flag]) continue;
-      queueLine(entry.line, entry.sp);
+      if (!hasRequiredFlags(entry.requires_flag, entry.excludes_flag)) continue;
+      queueLine(entry.line, entry.sp, entry.speed);
     } else if (entry.rel_branch) {
       let b = entry.rel_branch;
-      let branch = relationship < b.min ? b.below
-                 : relationship > b.max ? b.above
-                 : b.middle;
+      let branch = relationship < b.min ? b.below : (relationship > b.max ? b.above : b.middle);
       if (branch) {
-        queueLine(branch.line, branch.sp);
+        queueLine(branch.line, branch.sp, branch.speed);
         if (branch.override_leads_to) resolvedLeadsTo = branch.override_leads_to;
       }
     }
   }
-
   return resolvedLeadsTo;
 }
-
-// ─── HELPERS ──────────────────────────────────────────────────
 
 function getSpeakerColor(sp) {
   if (sp === "se") {
     return {
-      r: lerp(data.speakers.se.r, 0,   sensorShift),
+      r: lerp(data.speakers.se.r, 0, sensorShift),
       g: lerp(data.speakers.se.g, 200, sensorShift),
       b: lerp(data.speakers.se.b, 200, sensorShift)
     };
   }
-  let s = data.speakers[sp];
+  let s = (data && data.speakers && data.speakers[sp]) ? data.speakers[sp] : {r:0, g:230, b:0};
   return { r: s.r, g: s.g, b: s.b };
 }
 
-function queueLine(str, sp) {
+function queueLine(str, sp, customSpeed) {
   let col = getSpeakerColor(sp || "se");
-  for (let ch of str) printQueue.push({ ch: ch, col: col });
-  printQueue.push({ ch: "\n", col: col });
+  let baseSpeed = (customSpeed !== undefined) ? customSpeed : DEFAULT_SPEED;
+  let finalSpeed = baseSpeed * TEXT_MULTIPLIER;
+  for (let ch of str) {
+    printQueue.push({ ch: ch, col: col, speed: finalSpeed });
+  }
+  printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
 }
 
+// ─── VISUAL HELPERS ───────────────────────────────────────────
 
-//---------- GRAPHICS -----------------------
+function drawSoundVisualizer(x, y, w, h) {
+  noFill(); stroke(30, 45, 30); rect(x, y, w, h, 5);
+  stroke(0, 80, 0, 100);
+  for(let i = 0; i < w; i += 10) {
+    let bh = noise(i * 0.1, millis() * 0.001) * h;
+    line(x + i, y + h, x + i, y + h - bh);
+  }
+  fill(0, 100, 0, 150); noStroke(); textSize(14);
+  let statusText = isBooting ? "AUDIO_INPUT: CALIBRATING..." : "AUDIO_INPUT: NULL";
+  text(statusText, x + 10, y + 20);
+  textSize(28);
+}
 
 function applyDither(img) {
   img.loadPixels();
@@ -271,56 +374,31 @@ function applyDither(img) {
     for (let x = 0; x < img.width; x++) {
       let i = (x + y * img.width) * 4;
       let bright = (img.pixels[i] + img.pixels[i+1] + img.pixels[i+2]) / 3;
-
-      // 2x2 bayer ordered dither matrix
-      let bayer = [
-        [  0, 128 ],
-        [ 192,  64 ]
-      ];
-      let threshold = bayer[y % 2][x % 2];
+      let threshold = [[0, 128], [192, 64]][y % 2][x % 2];
       let val = bright > threshold ? 255 : 0;
-
-      img.pixels[i]   = 0;                      // R
-      img.pixels[i+1] = val;                    // G — keeps green phosphor tint
-      img.pixels[i+2] = val > 0 ? 80 : 0;      // B — slight teal for darker areas
-      img.pixels[i+3] = val > 0 ? 220 : 0;     // A — black areas go transparent
+      img.pixels[i] = 0; img.pixels[i+1] = val; img.pixels[i+2] = val > 0 ? 80 : 0; img.pixels[i+3] = val > 0 ? 220 : 0;
     }
   }
   img.updatePixels();
 }
 
-function drawGraphic(id) {
+function drawMonitorFrame(x, y, size) {
+  noFill(); stroke(40, 60, 40); strokeWeight(4); rect(x, y, size, size, 15);
+  fill(0, 15, 0); noStroke(); rect(x + 5, y + 5, size - 10, size - 10, 10);
+  stroke(0, 40, 0, 80); strokeWeight(1);
+  for (let i = y + 10; i < y + size - 10; i += 5) line(x + 10, i, x + size - 10, i);
+}
+
+function drawGraphic(id, x, y, size) {
   if (!id || !graphics[id]) return;
-
-  push();
-  translate(630, 200);   // position on right side of screen
-  imageMode(CENTER);
-
-  if (id === "facility_map") {
-    // static — no rotation, just dithered image
-    image(graphics[id], 0, 0, 160, 160);
-
-  } else {
-    // faux-3D rotation for logos and objects
-    rotationAngle += 0.012;
-
-    let sx = cos(rotationAngle);
-    let sy = 1.0 + sin(rotationAngle) * 0.01; // subtle vertical breathe
-    scale(sx, sy);
-
-    // scanline flicker — very subtle brightness pulse
-    let flicker = 1.0 + sin(millis() * 0.003) * 0.05;
-    tint(0, 230 * flicker, 80 * flicker, 220);
-
-    image(graphics[id], 0, 0, 140, 140);
-    noTint();
+  push(); translate(x + size/2, y + size/2); imageMode(CENTER);
+  if (id === "facility_map") image(graphics[id], 0, 0, size * 0.8, size * 0.8);
+  else {
+    rotationAngle += 0.012; scale(cos(rotationAngle), 1.0 + sin(rotationAngle) * 0.01);
+    let flicker = 1.0 + sin(millis() * 0.003) * 0.05; tint(0, 230 * flicker, 80 * flicker, 220);
+    image(graphics[id], 0, 0, size * 0.65, size * 0.65); noTint();
   }
-
   pop();
 }
 
-function clearGraphic() {
-  currentGraphic = null;
-  rotationAngle = 0;
-}
-
+function clearGraphic() { currentGraphic = null; rotationAngle = 0; }

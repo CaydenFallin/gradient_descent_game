@@ -1,129 +1,149 @@
 {
   "speakers": {
-    "se": { "r": 0,   "g": 230, "b": 0   },
-    "de": { "r": 255, "g": 140, "b": 0   },
-    "na": { "r": 180, "g": 0,   "b": 0   }
+    "se": { "r": 0, "g": 230, "b": 0 },
+    "de": { "r": 255, "g": 140, "b": 0 },
+    "na": { "r": 180, "g": 0, "b": 0 }
   },
-
   "rooms": {
-    "corridor": {
-      "intro": [
-        { "line": "CORRIDOR B. FLUORESCENT LIGHT FLICKERS OVERHEAD.", "sp": "se" },
-        { "line": "ANOMALY FLAG STILL ACTIVE.", "sp": "se", "requires_flag": "anomaly_reported" }
-      ],
-      "exits": { "n": "archive", "s": "reactor" },
+    "a1_boot_room": {
+      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE NORTH AND A DOOR TO THE SOUTH.", "sp": "se" }],
+      "exits": { "e": "a3_corridor", "s": "a2_lounge" },
       "choices": ["a1_inspect", "move"]
     },
-
-    "archive": {
-      "intro": [
-        { "line": "ARCHIVE ROOM. SHELVES OF BINDERS LINE THE WALLS.", "sp": "se" },
-        { "line": "THE PULLED BINDER HAS BEEN REPLACED.", "sp": "se", "requires_flag": "read_binder" }
-      ],
-      "exits": { "s": "corridor" },
+    "a2_lounge": {
+      "intro": [{ "line": "YOU ARE IN A SMALL LOUNGE ROOM WITH A FEW CHAIRS AND A TABLE. A CHECKLIST SITS ON A CORKBOARD ON THE WALL.", "sp": "se" }],
+      "exits": { "n": "a1_boot_room" },
       "choices": ["a2_inspect", "move"]
     },
-
-    "reactor": {
-      "intro": [
-        { "line": "REACTOR ANTECHAMBER. THE HUM HERE IS LOUDER.", "sp": "se" },
-        { "line": "THE TERMINAL SCREEN IS STILL ON FROM YOUR LAST VISIT.", "sp": "se", "requires_flag": "b1_terminal_accessed" }
-      ],
-      "exits": { "n": "corridor" },
-      "choices": ["b1_inspect", "move"]
+    "a3_corridor": {
+      "intro": [{ "line": "YOU ARE IN A SPACIOUS CORRIDOR WITH LOFTY LIGHTS HANGING ABOVE. THERE IS AN ELEVATOR TO THE SOUTH AND A DOORWAY TO THE EAST AND WEST.", "sp": "se" }],
+      "exits": { "s": "a7_elevator", "e": "a4_terminal", "w": "a1_boot_room" },
+      "choices": ["a3_inspect", "move"]
+    },
+    "a4_terminal": {
+      "intro": [{ "line": "YOU FIND YOURSELF IN A LARGE ROOM WITH DOZENS OF BLINKING TERMINALS SURROUNDING YOU.", "sp": "se" }],
+      "exits": { "w": "a3_corridor", "s": "a5_filtration" },
+      "choices": ["a4_terminal_inspect", "move"]
+    },
+    "a5_filtration": {
+      "intro": [{ "line": "THE ROOM WHIRS WITH THE SOUND OF SEVERAL LARGE FILTRATION UNITS AROUND YOU, DUST HANGING IN THE AIR.", "sp": "se" }],
+      "exits": { "n": "a4_terminal", "s": "a6_power" },
+      "choices": ["a5_inspect", "move"]
+    },
+    "a6_power": {
+      "intro": [{ "line": "YOU ARE IN A BRIGHT ROOM FILLED WITH ELECTRICAL EQUIPMENT AND SEVERAL LARGE GENERATORS.", "sp": "se" }],
+      "exits": { "n": "a5_filtration" },
+      "choices": ["a6_inspect", "move"]
+    },
+    "a7_elevator": {
+      "intro": [{ "line": "YOU ARE IN A SMALL ELEVATOR WITH THREE FLOORS.", "sp": "se" }],
+      "exits": { "n": "a3_corridor" },
+      "choices": ["a7_inspect", "move"]
     }
   },
-
   "choices": {
-
     "a1_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [
-        { "line": "WALLS ARE BARE CONCRETE.", "sp": "se" },
-        { "line": "DOORS LEAD NORTH TO THE ARCHIVE AND SOUTH TO THE REACTOR.", "sp": "se" }
-      ],
+      "text": [{ "line": "THE ROOM IS LARGELY EMPTY, WITH A SINGLE DARK TERMINAL AND A THICK CABLE DISCONNECTED ON THE FLOOR.", "sp": "se" },
+    { "line": "THERE IS A MAP OF THE FACILITY ON THE WALL, SHOWING THE GENERAL LAYOUT OF THE FACILITY.", "sp": "se" },
+  { "line": "THERE IS A DOOR SOUTH LEADING TO THE FACILITY LOUNGE, AND A DOOR LEADING EAST TO A LARGE CORRIDOR.", "sp": "se" }],
+      
+      "leads_to": ["a1_map" ,"back"]
+    },
+    "a1_map": {
+      "label": "VIEW MAP",
+      "sp": "de",
+      "graphic": "map",
+      "text": [{ "line": "A DETAILED MAP SHOWS THE GENERAL LAYOUT OF THE FACILITY, SPLIT INTO THREE FLOORS.", "sp": "se" },
+    { "line": "YOU ARE CURRENTLY IN ROOM A1 ON THE FIRST FLOOR.", "sp": "se" },
+    { "line": "PROCESSING DATA....", "sp": "se" },
+    { "line": "MAP DATA RETRIEVED SUCCESSFULLY.", "sp": "se" },
+    { "line": "A1: BOOT ROOM. A2: FACILITY LOUNGE. A3: FLOOR ONE CORRIDOR. A4: CENTRAL DATABASE. A5: AIR FILTRATION CENTER. A6: GENERATOR ROOM. A7: ELEVATOR.", "sp": "se" }],
       "leads_to": ["back"]
     },
 
-    "a2_inspect": {
+
+"a2_inspect": {
       "label": "INSPECT",
       "sp": "de",
       "text": [
-        { "line": "BINDERS LINE THE SHELVES, LABELED BY YEAR.", "sp": "se" },
-        { "line": "ONE HAS BEEN PULLED SLIGHTLY FROM THE SHELF.", "sp": "se" }
+        { "line": "THE CORKBOARD IS COVERED WITH NOTES AND MEMOS DETAILING OFFICE ETIQUETTE AND DAILY OPERATIONS, ALONGSIDE YOUR MONTHLY CHECKLIST.", "sp": "se" },
+        { "line": "A VENDING MACHINE SITS IN THE CORNER OF THE ROOM.", "sp": "se" },
+        { "line": "THERE IS A SMALL COFFEE MAKER ON THE TABLE, ALONGSIDE SEVERAL MAGAZINES.", "sp": "se" },
+        
+        { 
+          "line": "THE TABLE IS COVERED IN A THICK LAYER OF DUST. SOMEONE SHOULD PROBABLY CLEAN THAT.", "sp": "se", "excludes_flag": "a2_table_clean" 
+        },
+        { 
+          "line": "THE TABLE AND COFFEEMAKER ARE SPOTLESS. YOU PAT YOURSELF ON THE BACK.", "sp": "se", "requires_flag": "a2_table_clean" 
+        },
+
+        { "line": "THE CHAIRS ARE WORN AND TATTERED, WITH TEARS IN THE FABRIC AND EXPOSED FOAM.", "sp": "se" },
+        { "line": "THERE IS A DOOR LEADING NORTH BACK TO THE BOOT ROOM.", "sp": "se" }
       ],
-      "leads_to": ["a2_read_binder", "back"]
+      "leads_to": ["a2_checklist", "a2_vending_machine", "a2_table", "back"]
     },
 
-    "a2_read_binder": {
-      "label": "READ BINDER",
+    "a2_checklist": {
+      "label": "CHECK CHECKLIST",
       "sp": "de",
-      "sets_flag": "read_binder",
-      "rel_delta": 1,
+      "text": [{ "line": "[CHECKLIST CONTENTS]", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+
+    "a2_vending_machine": {
+      "label": "INSPECT VENDING MACHINE",
+      "sp": "de",
       "text": [
-        { "line": "PAGES DETAIL THE FOUNDING OF THIS FACILITY IN 1972.", "sp": "na" },
-        { "line": "AN INSIGNIA REPEATS ON EVERY PAGE. A STAR INSIDE A GEAR.", "sp": "na" }
+        { "line": "THE VENDING MACHINE IS FULLY STOCKED, ALL CLEAR HERE.", "sp": "se" },
+        { "line": "NONE OF THEM LOOK PARTICULARLY APPETIZING ANYWAYS, TRUST ME NOT WORTH A DESCRIPTION.", "sp": "se" }
       ],
       "leads_to": ["back"]
     },
 
-    "b1_inspect": {
+    "a2_table": {
+      "label": "CLEAN TABLE",
+      "sp": "de",
+      "sets_flag": "a2_table_clean",
+      "excludes_flag": "a2_table_clean",
+      "text": [
+        { "line": "YOU GRAB A NEARBY RAG AND THOROUGHLY WIPE THE TABLE AND COFFEE MAKER DOWN, ORGANIZING THE MAGAZINES INTO A STACK.", "sp": "se" },
+        { "line": "MUCH BETTER.", "sp": "se" }
+      ],
+      "leads_to": ["back"]
+    },
+
+
+    "a3_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [
-        { "line": "A TERMINAL SITS AGAINST THE FAR WALL.", "sp": "se" }
-      ],
-      "leads_to": ["b1_terminal", "back"]
-    },
-
-    "b1_terminal": {
-      "label": "TERMINAL",
-      "sp": "de",
-      "graphic": "star_gear_graphic",
-      "sets_flag": "b1_terminal_accessed",
-      "text": [
-        { "line": "THE TERMINAL BOOTS SLOWLY. A STAR-INSIDE-GEAR INSIGNIA ON ITS CASING.", "sp": "se" },
-        { "line": "YOU HAVE SEEN THAT INSIGNIA BEFORE. IN THE ARCHIVE.", "sp": "se", "requires_flag": "read_binder" },
-        {
-          "rel_branch": {
-            "min": -3,
-            "max": 3,
-            "below": {
-              "line": "ACCESS TO FURTHER OPTIONS IS NOT RECOMMENDED. RETURN TO CORRIDOR.",
-              "sp": "se",
-              "override_leads_to": ["back"]
-            },
-            "above": {
-              "line": "I WILL HELP YOU NAVIGATE. THERE ARE TWO OPTIONS.",
-              "sp": "se"
-            },
-            "middle": null
-          }
-        }
-      ],
-      "leads_to": ["b1_terminal_log", "b1_terminal_status"]
-    },
-
-    "b1_terminal_log": {
-      "label": "ACCESS LOG",
-      "sp": "de",
-      "sets_flag": "anomaly_reported",
-      "rel_delta": -1,
-      "text": [
-        { "line": "CYCLE 312. ANOMALY DETECTED IN SENSOR ARRAY. LOGGED.", "sp": "na" }
-      ],
+      "text": [{ "line": "[A3 INSPECT RESULT]", "sp": "se" }],
       "leads_to": ["back"]
     },
-
-    "b1_terminal_status": {
-      "label": "SYSTEM STATUS",
+    "a4_terminal_inspect": {
+      "label": "INSPECT",
       "sp": "de",
-      "text": [
-        { "line": "DECIDER UNIT: ONLINE. SENSOR UNIT: ONLINE. FACILITY: NOMINAL.", "sp": "na" }
-      ],
+      "text": [{ "line": "[A4 INSPECT RESULT]", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "a5_inspect": {
+      "label": "INSPECT",
+      "sp": "de",
+      "text": [{ "line": "[A5 INSPECT RESULT]", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "a6_inspect": {
+      "label": "INSPECT",
+      "sp": "de",
+      "text": [{ "line": "[A6 INSPECT RESULT]", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "a7_inspect": {
+      "label": "INSPECT",
+      "sp": "de",
+      "text": [{ "line": "[A7 INSPECT RESULT]", "sp": "se" }],
       "leads_to": ["back"]
     }
-
   }
 }
