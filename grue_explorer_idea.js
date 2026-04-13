@@ -277,9 +277,9 @@ function handleCommand(cmd) {
   let choice = data.choices[choiceId];
   if (choice.graphic) currentGraphic = choice.graphic;
   if (choice.rel_delta) relationship += choice.rel_delta;
-  if (choice.sets_flag) flags[choice.sets_flag] = true;
   
   let nextChoices = processText(choice.text, choice.leads_to);
+  if (choice.sets_flag) flags[choice.sets_flag] = true;
   showChoices(nextChoices);
 }
 
