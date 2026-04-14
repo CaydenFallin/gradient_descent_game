@@ -60,6 +60,14 @@
       "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
       "exits": { "n": "a3_corridor" },
       "choices": ["a7_inspect", "move"]
+    },
+
+
+
+    "b_elevator": {
+      "intro": [{ "line": "WE ARE ON THE SECOND FLOOR ELEVATOR.", "sp": "se" }],
+      "exits": { "n": ""},
+      "choices": ["b_elevator_inspect", "move"]
     }
   },
 
@@ -103,13 +111,14 @@
         { "line": "THE CHAIRS ARE WORN AND TATTERED, WITH TEARS IN THE FABRIC AND EXPOSED FOAM.", "sp": "se" },
         { "line": "THERE IS A DOOR LEADING NORTH BACK TO THE BOOT ROOM.", "sp": "se" }
       ],
-      "leads_to": ["a2_checklist", "a2_vending_machine", "a2_table", "back"]
+      "leads_to": ["a2_checklist", "a2_checklist_complete", "a2_vending_machine", "a2_table", "back"]
     },
 
 "a2_checklist": {
       "label": "CHECK CHECKLIST",
       "sp": "de",
       "sets_flag": "a_readlist",
+      "excludes_flag": "a_checklist_done",
       "text": [
         { "line": "PROCESSING CHECKLIST DATA...", "sp": "se", "excludes_flag": "a_readlist" },
         { "line": "THE CHECKLIST IS THOROUGH AND DETAILED. BEST TO TAKE IT ONE FLOOR AT A TIME.", "sp": "se", "excludes_flag": "a_readlist" },
@@ -124,6 +133,17 @@
         { "line": "[X] MONITOR GENERATOR PERFORMANCE / BATTERY: COMPLETE", "sp": "se", "requires_flag": "a6_generator_checked" },
         { "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES LOG PERFORMANCE INTO THE TERMINAL AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" },
         { "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "de" }
+      ],
+      "leads_to": ["back"]
+    },
+    "a2_checklist_complete": {
+      "label": "CHECK CHECKLIST",
+      "sp": "de",
+      "requires_flag": "a_checklist_done",
+      "sets_flag": "a_checklist_ddone",
+      "text": [
+        { "line": "YOU TAKE A QUICK GLANCE OVER THE LIST, CONFIRMING THAT ALL THE FIRST FLOOR DUTIES ARE DONE.", "sp": "se" },
+        { "line": "the rest of the checklist will be filled out once i write it lmao.", "sp": "se" }
       ],
       "leads_to": ["back"]
     },
@@ -238,20 +258,132 @@
     "a5_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "[A5 INSPECT RESULT]", "sp": "se" }],
+      "text": [{ "line": "SEVERAL LARGE AIR FILTRATION UNITS LINE THE FLOOR, HUMMING LOUDLY AS THEY OPERATE. AN INTERFACE IS VISIBLE ON THE WALL, PATIENTLY WAITING FOR INPUT. VENTS ACROSS THE WALL PUSH AIR THROUGH THE ROOM, CREATING A SLIGHT BREEZE. A SMALL STORAGE CLOSET LURKS IN THE CORNER, SEVERAL AIR FILTERS VISIBLY LINING THE SHELVES.", "sp": "se" }],
+      "leads_to": ["a5_interface","a5_closet","a5_vents","a5_filters","back"]
+    },
+
+    "a5_interface": {
+      "label": "CHECK INTERFACE",
+      "sp": "de",
+      "text": [{ "line": "THE INTERFACE IS A SIMPLE SCREEN WITH A SMALL KEYBOARD HUNG UNDERNEATH IT. A FEW OPTIONS ARE DISPLAYED.", "sp": "se" },
+    { "line": "CHECK OXYGEN LEVELS \nCHECK FILTER STATUS \nVERIFY VENT AIRFLOW", "sp": "na" }],
+      "leads_to": ["a5_ox_levels","a5_filter_status","a5_vent_airflow","back"]
+    },
+    "a5_ox_levels": {
+      "label": "CHECK OXYGEN LEVELS",
+      "sp": "de",
+      "text": [{ "line": "FLOOR ONE: OXYGEN SATURATION AT 13%. ENSURE PROPER VENTILATION IS MAINTAINED AND AIR FILTERS ARE PROPERLY CYCLED. \nFLOOR TWO: OXYGEN SATURATION AT 27%. NO IMMEDIATE CONCERNS. \nFLOOR THREE: OXYGEN SATURATION AT 12%. ENSURE PROPER VENTILATION IS MAINTAINED AND FILTERS ARE PROPERLY CYCLED.", "sp": "na" },
+    {"line": "WELL, IT'S WITHIN BREATHABLE PARAMETERS BUT A LITTLE LOW ON ONE AND THREE. RUNNING A BIT OVER ON TWO THOUGH, AIRFLOW IS PROBABLY GETTING DIVERTED INCORRECTLY. BETTER CYCLE THOSE FILTERS AND CHECK THE VENTS.", "excludes_flag": "a5_air_filters_replaced", "sp": "se"},
+    {"line": "WHATEVER THE OXYGEN SATURATION PROBLEM IS ISN'T THE FILTERS. WE'RE GONNA HAVE TO CHECK FLOOR TWO TO FIGURE OUT EXACTLY WHAT'S GOING ON.", "requires_flag": "a5_air_filters_replaced", "sp": "se"}],
+      "leads_to": ["a5_interface"]
+    },
+    "a5_filter_status": {
+      "label": "CHECK FILTER STATUS",
+      "sp": "de",
+      "text": [{ "line": "IT HAS BEEN [30] DAYS SINCE THE LAST FILTER REPLACEMENT. PLEASE REPLACE FILTER IMMEDIATELY.", "excludes_flag": "a5_air_filters_replaced", "sp": "na" },
+    { "line": "NOTHING WE DIDN'T ALREADY KNOW. TIME TO GET ON IT.", "sp": "se", "excludes_flag": "a5_air_filters_replaced" },
+    { "line": "IT HAS BEEN [0 DAYS] SINCE THE LAST FILTER REPLACEMENT. NEXT FILTER REPLACEMENT DUE IN [30 DAYS].", "requires_flag": "a5_air_filters_replaced", "sp": "na" },
+    { "line": "I'VE BEEN WORKIN', BEEN WORKIN', BUT I GOT ME SO TERRIBLE LONG TO GO.", "sp": "se", "requires_flag": "a5_air_filters_replaced" }],
+      "leads_to": ["a5_interface"]
+    },
+    "a5_vent_airflow": {
+      "label": "VERIFY VENT AIRFLOW",
+      "sp": "de",
+      "text": [{ "line": "RUNNING VENTILATION DIAGNOSTICS...", "sp": "na" },
+    { "line": "YOU HEAR THE VENTS WHIRR EVEN HARDER, AND WITHIN THAT WHIRRING YOU CAN BARELY MAKE OUT A KIND OF CHOKING SOUND. NOT A GOOD SIGN.", "sp": "se" },
+    { "line": "THE VENT AIRFLOW IS REDUCED BY 20%. PRIMARY RESISTANCE POINT IDENTIFIED ON FLOOR TWO. FIBROUS ORGANIC MATERIAL DETECTED. PLEASE RESOLVE BLOCKAGE IMMEDIATELY.", "sp": "na" },
+    { "line": "ANOTHER THING TO ADD TO THE NEVER-ENDING LIST. WE'LL GIVE IT A LOOK AFTER FINISHING THIS FLOOR.", "sp": "se" }],
+      "leads_to": ["a5_interface"]
+    },
+
+    "a5_closet": {
+      "label": "CHECK STORAGE CLOSET",
+      "sp": "de",
+      "sets_flag": "a5_air_filters_held",
+      "excludes_flag": "a5_air_filters_held",
+      "text": [{ "line": "YOU OPEN THE DOORS TO THE STORAGE CLOSET, REVEALING SEVERAL SHELVES LINED WITH GOVERNMENT ISSUED AIR FILTERS. YOU GRAB A HANDFUL OFF THE SHELF.", "sp": "se" }],
       "leads_to": ["back"]
     },
+    "a5_vents": {
+      "label": "CHECK VENTS",
+      "sp": "de",
+      "text": [{ "line": "YOU APPROACH THE VENTS HANGING ABOVE YOU AND LISTEN CLOSELY. THE WHIRRING SOUND IS SLIGHTLY CLUNKIER THAN USUAL, DOESN'T SEEM TO BE WORKING RIGHT.", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "a5_filters": {
+      "label": "REPLACE AIR FILTERS",
+      "sp": "de",
+      "requires_flag": "a5_air_filters_held",
+      "sets_flag": "a5_air_filters_replaced",
+      "excludes_flag": "a5_air_filters_replaced",
+      "text": [
+        { "line": "YOU TAKE THE AIR FILTERS YOU GRABBED FROM THE STORAGE CLOSET AND BEGIN REPLACING THEM FROM EACH UNIT, GOING ONE BY ONE DOWN THE LINE. \nFIRST YOU GRAB THE POP-OFF CORNERS OF THE FILTRATION PANELS, PULLING OUT DUSTY AND TANGLED AIR FILTERS AND REPLACING EACH ONE WITH PRECISION AND CARE. \nIT'S TEDIOUS WORK AND TIME CONSUMING, BUT IT'S IMPORTANT FOR THE HEALTH OF THE CREW. \nFINALLY, YOU POP THE LAST PANEL BACK ON AND STEP BACK. FILTER REPLACEMENT COMPLETE. GREAT JOB TEAM.", "sp": "se" }
+      ],
+      "leads_to": ["back"]
+    },
+
+
+
+
+
     "a6_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "[A6 INSPECT RESULT]", "sp": "se" }],
+      "text": [{ "line": "DOZENS OF GENERATORS ARE PLACED AROUND THE ROOM. ALL BUT ONE SIT SILENT, WITH A TERMINAL ON THE WALL DISPLAYING THE STATUS OF THE SLEEPING BEHEMOTHS. VARIOUS ELECTRICAL CABLES AND WIRES COVER THE FLOOR AND SNAKE UP THE WALLS, HEADING OFF TO OTHER ROOMS TO PERFORM THEIR TASKS.", "sp": "se" }],
+      "leads_to": ["a6_terminal","a6_generators","back"]
+    },
+    "a6_terminal": {
+      "label": "CHECK TERMINAL",
+      "sp": "de",
+      "sets_flag": "a6_generator_checked",
+      "text": [{ "line": "THE TERMINAL DISPLAYS THE STATUS OF THE GENERATORS- AH SHIT.", "sp": "se" },
+      { "line": "GENERATOR 1: 0% \nGENERATOR 2: 0%\nGENERATOR 3: 0%\nGENERATOR 4: 0%\n GENERATOR 5: 0%\n GENERATOR 6: 0%", "sp": "na" },
+      { "line": "THIS CONTINUES AS YOU'D EXPECT IT TO. LET'S JUST CUT AHEAD.", "sp": "se"},
+      { "line": "GENERATOR 23: 0% \nGENERATOR 24: 0% \nGENERATOR 25: 18% \n\nTOTAL FACILITY POWER: 0.72% \nTIME UNTIL FACILITY SHUTDOWN: 18 MONTHS", "sp": "na"},
+      { "line": "MORE TIME THAN I THOUGH, LESS THAN I'D HOPE. HERE'S HOPING A TECHNICIAN FIGURES THAT OUT BECAUSE I DON'T THINK THAT'S UNDER OUR JOB DESCRIPTION.", "sp": "se", "excludes_flag": "a6_generator_checked"}
+    ],
       "leads_to": ["back"]
     },
+    "a6_generators": {
+      "label": "CHECK GENERATORS",
+      "sp": "de",
+      "text": [{ "line": "YOU WALK AROUND THE ROOM, HOVERING OVER EACH GENERATOR. ALMOST ALL SIT COLD AND DEAD EXCEPT FOR ONE STILL SPUTTERING ALONG. \nHOLD ON LITTLE GUY, HELP'S GOTTA BE COMING SOON.", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+
     "a7_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "[A7 INSPECT RESULT]", "sp": "se" }],
+      "text": [{ "line": "THE ELEVATOR IS A COLD, CLINICAL STEEL BOX WITH A SINGLE LIGHTBULB HANGING FROM THE CEILING. THERE'S THREE BUTTONS VISIBLE ON THE BOARD, ONE, TWO AND THREE. THE DISPLAY AT THE TOP OF THE ELEVATOR READS 1.", "sp": "se" }],
+      "leads_to": ["elevator_1","elevator_2_false","elevator_2","elevator_3","back"]
+    },
+    "elevator_1": {
+      "label": "ONE",
+      "sp": "de",
+      "text": [{ "line": "HEY DUMBASS THAT'S THE FLOOR WE'RE ON NOW.", "sp": "se" }],
+      "leads_to": ["a7_inspect"]
+    },
+    "elevator_2": {
+      "label": "TWO",
+      "sp": "de",
+      "requires_flag": "a_checklist_ddone",
+      "text": [{ "line": "YOU PRESS THE BUTTON FOR THE SECOND FLOOR, THE ELEVATOR MAKING A CONCERINING CLANKING SOUND AS YOU FEEL IT DESCEND \nAFTER WHAT FEELS LIKE AN ETERNITY THE DOOR OPENS UP IN FRONT OF YOU, SHOWING ANOTHER CORRIDOR NOT DISSIMILAR FROM THE ONE YOU JUST CAME FROM.", "sp": "se" }],
+      "move_to_room": "b_elevator",
       "leads_to": ["back"]
+    },
+    "elevator_2_false": {
+      "label": "TWO",
+      "sp": "de",
+      "excludes_flag": "a_checklist_ddone",
+      "text": [{ "line": "WE'RE GONNA NEED TO FINISH THE CHECKLIST FIRST BEFORE GOING ANYWHERE ELSE.", "sp": "se" }],
+      "leads_to": ["a7_inspect"]
+    },
+    "elevator_3": {
+      "label": "THREE",
+      "sp": "de",
+      "text": [{ "line": "LET'S CLEAR OUT FLOOR TWO BEFORE WE HEAD DOWN TO THREE.", "sp": "se" }],
+      "leads_to": ["a7_inspect"]
     }
+
   }
 }

@@ -201,7 +201,7 @@ function hasRequiredFlags(req, ex) {
 // ─── INPUT / GAME LOGIC ───────────────────────────────────────
 
 function keyPressed() {
-  if (key === 'f' || key === 'F') { let fs = fullscreen(); fullscreen(!fs); }
+  if (key === 'F4' || keyCode === 115) { let fs = fullscreen(); fullscreen(!fs); }
   if (isBooting) return; 
 
   if (key === 'e' || key === 'E') {
@@ -277,6 +277,10 @@ function handleCommand(cmd) {
   if (choice.graphic) currentGraphic = choice.graphic;
   if (choice.rel_delta) relationship += choice.rel_delta;
   
+  if (choice.move_to_room) {
+    currentRoom = choice.move_to_room; 
+  }
+
   let nextChoices = processText(choice.text, choice.leads_to);
   if (choice.sets_flag) flags[choice.sets_flag] = true;
   showChoices(nextChoices);
