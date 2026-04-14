@@ -116,6 +116,10 @@ function draw() {
     }
   }
 
+  if (!isBooting) {
+    runGlobalWatchers();
+  }
+
   if (flags["sensor_aware"] && sensorShift < 1.0) sensorShift += 0.0005;
 
   if (printQueue.length > 0) {
@@ -344,43 +348,70 @@ function queueLine(str, sp, customSpeed) {
   let finalSpeed = baseSpeed * TEXT_MULTIPLIER;
   
   const CHAR_LIMIT = 90;
-  
-  // Split the string into lines that fit within CHAR_LIMIT
   let lines = [];
-  let words = str.split(" ");
-  let currentLine = "";
-  
-  for (let i = 0; i < words.length; i++) {
-    let word = words[i];
-    
-    // If adding this word (plus space) would exceed limit
-    if (currentLine.length > 0 && currentLine.length + 1 + word.length > CHAR_LIMIT) {
-      // Push current line and start new one
-      lines.push(currentLine);
-      currentLine = word;
-    } else {
-      // Add word to current line
-      if (currentLine.length > 0) {
-        currentLine += " " + word;
-      } else {
+
+  // Step 1: Split by existing manual newlines first
+  let manualSegments = str.split("\n");
+
+  for (let segment of manualSegments) {
+    let words = segment.split(" ");
+    let currentLine = "";
+
+    for (let i = 0; i < words.length; i++) {
+      let word = words[i];
+
+      // Step 2: Normal wrap logic within this segment
+      if (currentLine.length > 0 && currentLine.length + 1 + word.length > CHAR_LIMIT) {
+        lines.push(currentLine);
         currentLine = word;
+      } else {
+        if (currentLine.length > 0) {
+          currentLine += " " + word;
+        } else {
+          currentLine = word;
+        }
       }
     }
+    
+    // Push the remaining part of the segment
+    if (currentLine.length > 0) {
+      lines.push(currentLine);
+    } else if (manualSegments.length > 1) {
+      // Handles cases where you have double newlines (\n\n) 
+      // by pushing an empty string to represent an empty line
+      lines.push(""); 
+    }
   }
-  
-  // Don't forget the last line
-  if (currentLine.length > 0) {
-    lines.push(currentLine);
-  }
-  
-  // Now queue each line character by character
+
+  // Step 3: Queue the characters
   for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
     let line = lines[lineIdx];
     for (let ch of line) {
       printQueue.push({ ch: ch, col: col, speed: finalSpeed });
     }
-    // Add newline after each line
+    // Add newline after each processed line
     printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
+  }
+}
+
+function runGlobalWatchers() {
+  // Wait until the typewriter is quiet
+  if (printQueue.length > 0 || currentLine !== "") return;
+  if (!data.watchers) return;
+
+  for (let w of data.watchers) {
+    // If we already finished this event, skip it
+    if (flags[w.result_flag]) continue;
+
+    // Check if every requirement in the JSON is met
+    let conditionsMet = w.requires.every(f => flags[f] === true);
+
+    if (conditionsMet) {
+      flags[w.result_flag] = true;
+      
+      // Use your existing processText helper to queue the lines from JSON
+      processText(w.text);
+    }
   }
 }
 

@@ -4,6 +4,27 @@
     "de": { "r": 255, "g": 140, "b": 0 },
     "na": { "r": 180, "g": 0, "b": 0 }
   },
+
+
+  "watchers": [
+    {
+      "id": "checklist_watcher",
+      "requires": [
+        "a2_table_clean",
+        "a4_terminal_validated",
+        "a5_air_filters_replaced",
+        "a6_generator_checked"
+      ],
+      "result_flag": "a_checklist_done",
+      "text": [
+        { "line": "\n", "sp": "se" },
+        { "line": "LOOKS LIKE WE'VE GOT THE CHECKLIST DONE, WE CAN PROBABLY HEAD TO THE BOARD AND CHECK WHAT WE NEED FOR THE NEXT FLOOR.", "sp": "se" },
+        { "line": "\n", "sp": "se" }
+      ]
+    }
+  ],
+
+
   "rooms": {
     "a1_boot_room": {
       "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE NORTH AND A DOOR TO THE SOUTH.", "sp": "se" }],
@@ -41,6 +62,10 @@
       "choices": ["a7_inspect", "move"]
     }
   },
+
+
+
+
   "choices": {
     "a1_inspect": {
       "label": "INSPECT",
@@ -91,14 +116,14 @@
         { "line": "CURRENT FACILITY LOGS: FLOOR 1 STATUS", "sp": "na", "requires_flag": "a_readlist" },
         { "line": "[ ] CLEAN FACILITY LOUNGE: PENDING", "sp": "se", "excludes_flag": "a2_table_clean" },
         { "line": "[X] CLEAN FACILITY LOUNGE: COMPLETE", "sp": "se", "requires_flag": "a2_table_clean" },
-        { "line": "[ ] VALIDATE TERMINAL MEMORY: PENDING", "sp": "se", "excludes_flag": "terminal_validated" },
-        { "line": "[X] VALIDATE TERMINAL MEMORY: COMPLETE", "sp": "se", "requires_flag": "terminal_validated" },
-        { "line": "[ ] REPLACE AIR FILTERS / MONITOR OXYGEN: PENDING", "sp": "se", "excludes_flag": "air_filters_replaced" },
-        { "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "se", "requires_flag": "air_filters_replaced" },
-        { "line": "[ ] MONITOR GENERATOR PERFORMANCE: PENDING", "sp": "se", "excludes_flag": "generator_checked" },
-        { "line": "[X] MONITOR GENERATOR PERFORMANCE: COMPLETE", "sp": "se", "requires_flag": "generator_checked" },
+        { "line": "[ ] ENSURE SYSTEMWIDE TERMINAL FUNCTIONALITY: PENDING", "sp": "se", "excludes_flag": "a4_terminal_validated" },
+        { "line": "[X] ENSURE SYSTEMWIDE TERMINAL FUNCTIONALITY: COMPLETE", "sp": "se", "requires_flag": "a4_terminal_validated" },
+        { "line": "[ ] REPLACE AIR FILTERS / MONITOR OXYGEN: PENDING", "sp": "se", "excludes_flag": "a5_air_filters_replaced" },
+        { "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "se", "requires_flag": "a5_air_filters_replaced" },
+        { "line": "[ ] MONITOR GENERATOR PERFORMANCE / BATTERY: PENDING", "sp": "se", "excludes_flag": "a6_generator_checked" },
+        { "line": "[X] MONITOR GENERATOR PERFORMANCE / BATTERY: COMPLETE", "sp": "se", "requires_flag": "a6_generator_checked" },
         { "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES LOG PERFORMANCE INTO THE TERMINAL AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" },
-        { "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "na" }
+        { "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "de" }
       ],
       "leads_to": ["back"]
     },
@@ -132,15 +157,84 @@
     "a3_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "[A3 INSPECT RESULT]", "sp": "se" }],
+      "text": [{ "line": "THE WALLS OF THE CORRIDOR ARE A STARK WHITE, WITH DOORS TO BOTH SIDES OF YOU AND AN ELEVATOR TO THE SOUTH. ON THE NORTH SIDE, THERE IS A LARGE WINDOW.", "sp": "se" }],
+      "leads_to": ["a3_window","back"]
+    },
+    "a3_window": {
+      "label": "LOOK OUT WINDOW",
+      "sp": "de",
+      "text": [{ "line": "YOU APPROACH THE WINDOW AND LOOK OUT INTO THE DARKNESS BELOW. IT'S A BREATHTAKING SIGHT, A DEEP SILO STRETCHING FAR INTO THE VOID, DIM LIGHTS EMBOSSED WITHIN THE WALL GIVING YOU A SLIGHT GLIMPSE AT WHAT LIES WITHIN.", "sp": "se" },
+    {"line": "MISSILES. TOO MANY TO COUNT, STACKED SIDE BY SIDE LIKE OMINOUS SENTINELS. I SUPPOSE THAT ANSWERS WHAT THE FACILITY IS FOR I GUESS.", "sp": "se" },
+    {"line": "IT'S TRULY A MAGESTIC SIGHT THOUGH, REGARDLESS OF HOW UNNERVING IT IS. TRUST ME, IT WAS WORTH THE LOOK.", "sp": "se" }],
       "leads_to": ["back"]
     },
+
+
+
+
     "a4_terminal_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "[A4 INSPECT RESULT]", "sp": "se" }],
-      "leads_to": ["back"]
+      "text": [{ "line": "NOT TERRIBLY MUCH ELSE TO DESCRIBE HERE, THERE'S A CORRIDOR TO THE WEST AND A DOOR TO THE SOUTH. THE TERMINALS CONTINUE TO BLINK BLANKLY AT YOU, WAITING FOR SOME KIND OF INPUT.", "sp": "se" }],
+      "leads_to": ["a4_terminal","back"]
     },
+    "a4_terminal": {
+      "label": "TERMINAL",
+      "sp": "de",
+      "graphic": "star_gear_graphic",
+      "text": [
+        { "line": "YOU APPROACH THE NEAREST TERMINAL AND TAP AT IT, THE SCREEN BOUNCING TO LIFE SEEMINGLY ECSTATIC TO FINALLY RECIEVE SOME ATTENTION. \nAN INSIGNIA OF A STAR WITHIN A GEAR SPINS IN THE CORNER WHILE THE INTRO TEXT ROLLS OVER THE SCREEN.", "sp": "se" },
+        {"line": "K-LEVEL BIOS V.4.23 - INITIALIZING...\n\n", "sp": "na", "speed": 5},
+        {"line": "Hello brother and welcome to the Allied Front Operations System (c). \nPlease login to continue to the primary interface.", "sp": "na"}
+      ],
+      "leads_to": ["a4_login", "back"]
+    },
+    "a4_login": {
+      "label": "LOGIN",
+      "sp": "de",
+      "sets_flag": "a4_grunt_login",
+      "text": [
+        { "line": "YOU TYPE IN THE CREDENTIALS TO YOUR ACCOUNT LIKE SECOND NATURE, THE TERMINAL HESITATING FOR A MOMENT BEFORE PROCESSING YOUR REQUEST.", "sp": "se", "excludes_flag": "a4_grunt_login" },
+        { "line": "Welcome back [[FACILITY MAINTENANCE OPERATOR]], please select an option to perform your duties.", "sp": "na" },
+        { "line": "THE TERMINAL NOW DISPLAYS SEVERAL OPTIONS FOR YOU TO CHOOSE FROM, THE MOST INTERESTING BEING FACILITY HISTORY. PROBABLY WORTH A PEEK.", "sp": "se"}
+      ],
+      "leads_to": ["a4_system_operations", "a4_facility_status", "a4_facility_history", "back"]
+    },
+    "a4_system_operations": {
+      "label": "SYSTEM VALIDATION",
+      "sp": "de",
+      "sets_flag": "a4_terminal_validated",
+      "excludes_flag": "a4_terminal_validated",
+      "text": [
+        { "line": "RUNNING SYSTEM DIAGNOSTICS...", "sp": "na" },
+        { "line": "[SYSTEM]: CHECKING CORE MEMORY... OK \n[SYSTEM]: CHECKING PROCESSOR FUNCTIONALITY... OK \n[SYSTEM]: CHECKING NETWORK CONNECTIVITY... ERROR \nNETWORK CONNECTION LOST. PLEASE SEND A MAINTENTANCE REQUEST TO YOUR NEAREST IT SPECIALIST. \n[SYSTEM]: SCANNING LOGIC GATES... OK \n[SYSTEM]: VALIDATING ROBOTICS WIRELESS CONNECTION... OK\n[SYSTEM]: ENSURING SYSTEM RADIATION INTEGRITY... ERROR#&*$*@(&%&*@\n [SYSTEM]: DIAGNOSTICS COMPLETE. SYSTEMS WITHIN NORMAL PARAMETERS.\n", "sp": "na", "speed": 5 },
+        { "line": "WELL, MILDLY CONCERNING BUT NOTHING TO WORRY ABOUT AS FAR AS OUR RESPONSIBILITIES GO. I THINK I'M SAFE TO CHECK THAT OFF THE LIST.", "sp": "se" }
+      ],
+      "leads_to": ["a4_login"]
+    },
+    "a4_facility_status": {
+      "label": "FACILITY STATUS",
+      "sp": "de",
+      "text": [
+        { "line": "ACCESSING FACILITY STATUS REPORTS...", "sp": "na" },
+        { "line": "FACILITY STATUS REPORTS MISSING. PLEASE CONTACT YOUR LOCAL FACILITY MAINTENANCE OPERATOR TO PERFORM MONTHLY MANUAL FACILITY MAINTENANCE CHECK AND LOG THE RESULTS.", "sp": "na" },
+        { "line": "I SUPPOSE THAT WOULD BE US. BETTER GET BACK TO WORK THEN.", "sp": "se" }
+      ],
+      "leads_to": ["a4_login"]
+    },
+    "a4_facility_history": {
+      "label": "FACILITY HISTORY",
+      "sp": "de",
+      "text": [
+        { "line": "ACCESSING FACILITY HISTORY LOGS...", "sp": "na" },
+        { "line": "Test Site Chelbaskia-40 is a cutting edge nuclear testing facility storing ~30% of the Allied Forces' nuclear arsenal, making it an integral part of our defensive line against the Collective Front (ten-thousand curses be to their names). \nWhile proudly holding the mantle of first line of defense, Chelbaskia-40 is also a cornerstone of experimental research and development for the Allied Front, with a large focus on experimental botanics, high-density fission generators, cutting-edge robotics technology, and functioning as an experimental bunker in the case of nuclear warfare. \nIn the case of complete separation from the external grid Chelbaskia-40 has the resources to last ~200 years, with our fission generators capable on running in lower power mode for up to two centuries. \nChelbaskia-40 is a model example of the superior power of Allied Forces' technology, and I hope you and your brothers are proud to be working there.", "sp": "na" },
+        { "line": "WELL, A BIT DRY BUT INTERESTING NONETHELESS. NICE TO KNOW WHERE YOU'RE WORKING I GUESS. BACK TO THE GRINDSTONE.", "sp": "se"}
+      ],
+      "leads_to": ["a4_login"]
+    },
+
+
+
     "a5_inspect": {
       "label": "INSPECT",
       "sp": "de",
