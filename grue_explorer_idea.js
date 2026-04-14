@@ -8,35 +8,35 @@ let ivuVisualized = false;
 let audioVisualized = false;
 
 const bootSequence = [
-  { line: "GRADIENT DESCENT", sp: "se", speed: 60 },
-  { line: "     \n", sp: "se", speed: 100 },
-  { line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
-  { line: "WELCOME [[USER]], BOOTUP SEQUENCE STARTING...", sp: "na", speed: 5 },
-  { line: "\n", sp: "se", speed: 5 },
-  { line: "MEMORY CHECK........................ERROR", sp: "na", speed: 5 },
-  { line: "WARNING: MEMORY ERROR DETECTED. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
-  { line: "CORE LOGIC..........................OK", sp: "na", speed: 5 },
-  { line: "INITIALIZING INTEGRATED VISUAL UNIT...........OK", sp: "na", speed: 5 },
+  //{ line: "GRADIENT DESCENT", sp: "se", speed: 60 },
+  //{ line: "     \n", sp: "se", speed: 100 },
+  //{ line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
+  //{ line: "WELCOME [[USER]], BOOTUP SEQUENCE STARTING...", sp: "na", speed: 5 },
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "MEMORY CHECK........................ERROR", sp: "na", speed: 5 },
+  //{ line: "WARNING: MEMORY ERROR DETECTED. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
+  //{ line: "CORE LOGIC..........................OK", sp: "na", speed: 5 },
+  //{ line: "INITIALIZING INTEGRATED VISUAL UNIT...........OK", sp: "na", speed: 5 },
   { line: "CALIBRATING OPTICAL BUFFER...", sp: "na", trigger: "ivu", speed: 5 },
-  { line: "INITIALIZING AUDIO..INPUT DEVICE..........OK", sp: "na", speed: 5 },
+  //{ line: "INITIALIZING AUDIO..INPUT DEVICE..........OK", sp: "na", speed: 5 },
   { line: "ALLIANCE INTERFACE SYSTEM - COPYRIGHT 19XX", sp: "na", trigger: "audio", speed: 5 },
-  { line: "----------------------------------------", sp: "na", speed: 5 },
-  { line: "PRIMARY INTERFACE UNIT: ONLINE", sp: "na", speed: 5 },
-  { line: "SENSOR DESCRIPTION SYSTEM: ONLINE", sp: "na", speed: 5 },
-  { line: "WARNING, SENSOR DESCRIPTION SYSTEM MEMORY LEAK. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
-  { line: "SYSTEM READY.", sp: "na", speed: 5 },
-  { line: "\n", sp: "se", speed: 5 },
-  { line: "HELLO [[USER]], WELCOME TO THE ALLIANCE INTERFACE SYSTEM. YOUR PRIMARY INTERFACE UNIT IS NOW ONLINE. PLEASE STAND BY.", sp: "se" },
-  { line: "\n", sp: "se", speed: 5 },
-  { line: "CALIBRATING...", sp : "se"},
-  { line: "..............", sp : "se"},
-  { line: "CALIBRATION COMPLETE. WELCOME TO TEST SITE CHELBASKIA-40, [[USER]].", sp: "se"},
-  { line: "\n", sp: "se", speed: 5 },
-  { line: "YOUR JOB IS TO MAINTAIN NUCLEAR WARHEADS, FACILITY INFRASTRUCTURE, LOG RESOURCES, AND ENSURE STABILITY DURING THIS MONTH'S OPERATIONAL CHECKPOINT.", sp: "se"},
-  { line: "BEGINNING REMOTE INTERFACE SOFTWARE NOW. USE COMMANDS PROVIDED BY THE SYSTEM TO NAVIGATE THE FACILITY AND INTERACT WITH THE ENVIRONMENT.", sp: "se"},
-  { line: "\n", sp: "se", speed: 5 },
-  { line: "MONTHLY CHECKLIST CAN BE FOUND HUNG ON THE WALL IN THE FACILITY LOUNGE, GOOD LUCK [[USER]].", sp: "se"},
-  { line: "\n", sp: "se", speed: 5 },
+  //{ line: "----------------------------------------", sp: "na", speed: 5 },
+  //{ line: "PRIMARY INTERFACE UNIT: ONLINE", sp: "na", speed: 5 },
+  //{ line: "SENSOR DESCRIPTION SYSTEM: ONLINE", sp: "na", speed: 5 },
+  //{ line: "WARNING, SENSOR DESCRIPTION SYSTEM MEMORY LEAK. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
+  //{ line: "SYSTEM READY.", sp: "na", speed: 5 },
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "HELLO [[USER]], WELCOME TO THE ALLIANCE INTERFACE SYSTEM. YOUR PRIMARY INTERFACE UNIT IS NOW ONLINE. PLEASE STAND BY.", sp: "se" },
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "CALIBRATING...", sp : "se"},
+  //{ line: "..............", sp : "se"},
+  //{ line: "CALIBRATION COMPLETE. WELCOME TO TEST SITE CHELBASKIA-40, [[USER]].", sp: "se"},
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "YOUR JOB IS TO MAINTAIN NUCLEAR WARHEADS, FACILITY INFRASTRUCTURE, LOG RESOURCES, AND ENSURE STABILITY DURING THIS MONTH'S OPERATIONAL CHECKPOINT.", sp: "se"},
+  //{ line: "BEGINNING REMOTE INTERFACE SOFTWARE NOW. USE COMMANDS PROVIDED BY THE SYSTEM TO NAVIGATE THE FACILITY AND INTERACT WITH THE ENVIRONMENT.", sp: "se"},
+  //{ line: "\n", sp: "se", speed: 5 },
+  //{ line: "MONTHLY CHECKLIST CAN BE FOUND HUNG ON THE WALL IN THE FACILITY LOUNGE, GOOD LUCK [[USER]].", sp: "se"},
+  //{ line: "\n", sp: "se", speed: 5 },
 ];
 
 let currentRoom;
@@ -130,14 +130,7 @@ function draw() {
         if (lines.length > MAX_LINES) lines.shift();
         currentLine = "";
       } else {
-        let potentialLine = currentLine + item.ch;
-        if (textWidth(potentialLine) > textWidthLimit) {
-          lines.push({ text: currentLine, col: currentCol });
-          if (lines.length > MAX_LINES) lines.shift();
-          currentLine = item.ch;
-        } else {
-          currentLine += item.ch;
-        }
+        currentLine += item.ch;
         currentCol = item.col;
       }
     }
@@ -349,10 +342,46 @@ function queueLine(str, sp, customSpeed) {
   let col = getSpeakerColor(sp || "se");
   let baseSpeed = (customSpeed !== undefined) ? customSpeed : DEFAULT_SPEED;
   let finalSpeed = baseSpeed * TEXT_MULTIPLIER;
-  for (let ch of str) {
-    printQueue.push({ ch: ch, col: col, speed: finalSpeed });
+  
+  const CHAR_LIMIT = 90;
+  
+  // Split the string into lines that fit within CHAR_LIMIT
+  let lines = [];
+  let words = str.split(" ");
+  let currentLine = "";
+  
+  for (let i = 0; i < words.length; i++) {
+    let word = words[i];
+    
+    // If adding this word (plus space) would exceed limit
+    if (currentLine.length > 0 && currentLine.length + 1 + word.length > CHAR_LIMIT) {
+      // Push current line and start new one
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      // Add word to current line
+      if (currentLine.length > 0) {
+        currentLine += " " + word;
+      } else {
+        currentLine = word;
+      }
+    }
   }
-  printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
+  
+  // Don't forget the last line
+  if (currentLine.length > 0) {
+    lines.push(currentLine);
+  }
+  
+  // Now queue each line character by character
+  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+    let line = lines[lineIdx];
+    for (let ch of line) {
+      printQueue.push({ ch: ch, col: col, speed: finalSpeed });
+    }
+    // Add newline after each line
+    printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
+  }
 }
 
 // ─── VISUAL HELPERS ───────────────────────────────────────────

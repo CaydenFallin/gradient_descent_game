@@ -36,7 +36,7 @@
       "choices": ["a6_inspect", "move"]
     },
     "a7_elevator": {
-      "intro": [{ "line": "YOU ARE IN A SMALL ELEVATOR WITH THREE FLOORS.", "sp": "se" }],
+      "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
       "exits": { "n": "a3_corridor" },
       "choices": ["a7_inspect", "move"]
     }
@@ -71,13 +71,9 @@
         { "line": "THE CORKBOARD IS COVERED WITH NOTES AND MEMOS DETAILING OFFICE ETIQUETTE AND DAILY OPERATIONS, ALONGSIDE YOUR MONTHLY CHECKLIST.", "sp": "se" },
         { "line": "A VENDING MACHINE SITS IN THE CORNER OF THE ROOM.", "sp": "se" },
         { "line": "THERE IS A SMALL COFFEE MAKER ON THE TABLE, ALONGSIDE SEVERAL MAGAZINES.", "sp": "se" },
-        
-        { 
-          "line": "THE TABLE IS COVERED IN A THICK LAYER OF DUST. SOMEONE SHOULD PROBABLY CLEAN THAT.", "sp": "se", "excludes_flag": "a2_table_clean" 
-        },
-        { 
-          "line": "THE TABLE AND COFFEEMAKER ARE SPOTLESS. YOU PAT YOURSELF ON THE BACK.", "sp": "se", "requires_flag": "a2_table_clean" 
-        },
+
+        { "line": "THE TABLE IS COVERED IN A THICK LAYER OF DUST. SOMEONE SHOULD PROBABLY CLEAN THAT.", "sp": "se", "excludes_flag": "a2_table_clean" },
+        { "line": "THE TABLE AND COFFEEMAKER ARE SPOTLESS. YOU PAT YOURSELF ON THE BACK.", "sp": "se", "requires_flag": "a2_table_clean" },
 
         { "line": "THE CHAIRS ARE WORN AND TATTERED, WITH TEARS IN THE FABRIC AND EXPOSED FOAM.", "sp": "se" },
         { "line": "THERE IS A DOOR LEADING NORTH BACK TO THE BOOT ROOM.", "sp": "se" }
@@ -90,45 +86,19 @@
       "sp": "de",
       "sets_flag": "a_readlist",
       "text": [
-        { 
-          "line": "PROCESSING CHECKLIST DATA...", "sp": "se", "excludes_flag": "a_readlist" 
-        },
-        { 
-          "line": "THE CHECKLIST IS THOROUGH AND DETAILED. BEST TO TAKE IT ONE FLOOR AT A TIME.", "sp": "se", "excludes_flag": "a_readlist" 
-        },
-        { 
-          "line": "CURRENT FACILITY LOGS: FLOOR 1 STATUS", "sp": "na", "requires_flag": "a_readlist" 
-        },
-        { 
-          "line": "[ ] CLEAN FACILITY LOUNGE: PENDING", "sp": "se", "excludes_flag": "a2_table_clean" 
-        },
-        { 
-          "line": "[X] CLEAN FACILITY LOUNGE: COMPLETE", "sp": "se", "requires_flag": "a2_table_clean" 
-        },
-        { 
-          "line": "[ ] VALIDATE TERMINAL MEMORY: PENDING", "sp": "se", "excludes_flag": "terminal_validated" 
-        },
-        { 
-          "line": "[X] VALIDATE TERMINAL MEMORY: COMPLETE", "sp": "se", "requires_flag": "terminal_validated" 
-        },
-        { 
-          "line": "[ ] REPLACE AIR FILTERS / MONITOR OXYGEN: PENDING", "sp": "se", "excludes_flag": "air_filters_replaced" 
-        },
-        { 
-          "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "se", "requires_flag": "air_filters_replaced" 
-        },
-        { 
-          "line": "[ ] MONITOR GENERATOR PERFORMANCE: PENDING", "sp": "se", "excludes_flag": "generator_checked" 
-        },
-        { 
-          "line": "[X] MONITOR GENERATOR PERFORMANCE: COMPLETE", "sp": "se", "requires_flag": "generator_checked" 
-        },
-        { 
-          "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES LOG PERFORMANCE INTO THE TERMINAL AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" 
-        },
-        { 
-          "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "na" 
-        }
+        { "line": "PROCESSING CHECKLIST DATA...", "sp": "se", "excludes_flag": "a_readlist" },
+        { "line": "THE CHECKLIST IS THOROUGH AND DETAILED. BEST TO TAKE IT ONE FLOOR AT A TIME.", "sp": "se", "excludes_flag": "a_readlist" },
+        { "line": "CURRENT FACILITY LOGS: FLOOR 1 STATUS", "sp": "na", "requires_flag": "a_readlist" },
+        { "line": "[ ] CLEAN FACILITY LOUNGE: PENDING", "sp": "se", "excludes_flag": "a2_table_clean" },
+        { "line": "[X] CLEAN FACILITY LOUNGE: COMPLETE", "sp": "se", "requires_flag": "a2_table_clean" },
+        { "line": "[ ] VALIDATE TERMINAL MEMORY: PENDING", "sp": "se", "excludes_flag": "terminal_validated" },
+        { "line": "[X] VALIDATE TERMINAL MEMORY: COMPLETE", "sp": "se", "requires_flag": "terminal_validated" },
+        { "line": "[ ] REPLACE AIR FILTERS / MONITOR OXYGEN: PENDING", "sp": "se", "excludes_flag": "air_filters_replaced" },
+        { "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "se", "requires_flag": "air_filters_replaced" },
+        { "line": "[ ] MONITOR GENERATOR PERFORMANCE: PENDING", "sp": "se", "excludes_flag": "generator_checked" },
+        { "line": "[X] MONITOR GENERATOR PERFORMANCE: COMPLETE", "sp": "se", "requires_flag": "generator_checked" },
+        { "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES LOG PERFORMANCE INTO THE TERMINAL AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" },
+        { "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "na" }
       ],
       "leads_to": ["back"]
     },
