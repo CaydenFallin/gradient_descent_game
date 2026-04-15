@@ -21,13 +21,23 @@
         { "line": "LOOKS LIKE WE'VE GOT THE CHECKLIST DONE, WE CAN PROBABLY HEAD TO THE BOARD AND CHECK WHAT WE NEED FOR THE NEXT FLOOR.", "sp": "se" },
         { "line": "\n", "sp": "se" }
       ]
+    },
+    {
+      "id": "checklist_b_watcher",
+      "requires": ["b_game_cleaned", "b_beds_cleaned", "b_food_stocked", "b_plants_watered", "b_water_filters_replaced", "b_medical_stock_checked", "b_mental_health_checked"],
+      "result_flag": "b_checklist_done",
+      "text": [
+        { "line": "\n", "sp": "se" },
+        { "line": "WELL, THAT WAS UNDERWHELMING. WE'RE DONE WITH THIS PART OF THE CHECKLIST I SUPPOSE, BUT LET'S GO TO THE CORRIDOR TO RECOLLECT AND CHECK IT ONE LAST TIME.", "sp": "se" },
+        { "line": "\n", "sp": "se" }
+      ]
     }
   ],
 
 
   "rooms": {
     "a1_boot_room": {
-      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE NORTH AND A DOOR TO THE SOUTH.", "sp": "se" }],
+      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE EAST AND A DOOR TO THE SOUTH.", "sp": "se" }],
       "exits": { "e": "a3_corridor", "s": "a2_lounge" },
       "choices": ["a1_inspect", "move"]
     },
@@ -65,14 +75,58 @@
 
 
     "b_elevator": {
-      "intro": [{ "line": "WE ARE ON THE SECOND FLOOR ELEVATOR.", "sp": "se" }],
-      "exits": { "n": ""},
+      "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
+      "exits": { "n": "b1_corridor"},
       "choices": ["b_elevator_inspect", "move"]
+    },
+    "b1_corridor": {
+      "intro": [{ "line": "YOU ARE IN A COZY CORRIDOR, WITH DOORS ON BOTH SIDES AND THE ELEVATOR TO THE SOUTH.", "sp": "se" }],
+      "exits": { "s": "b_elevator", "e": "b4_food", "w": "b2_game", "n": "b7_hospital" },
+      "choices": ["b1_inspect", "move"]
+    },
+    "b2_game": {
+      "intro": [{ "line": "YOU ENTER THE GAME ROOM, A LARGE SPACE WITH SEVERAL SHELVES OF BOARD GAMES, TABLES TO PLAY THEM ON, AND A POOL TABLE IN THE CENTER.", "sp": "se" }],
+      "exits": { "e": "b1_corridor", "s": "b3_beds", "w": "b7_gym" },
+      "choices": ["b2_inspect", "move"]
+    },
+    "b7_gym": {
+      "intro": [{ "line": "YOU ENTER THE GYM, A LARGE ROOM WITH SEVERAL PIECES OF EXERCISE EQUIPMENT LINING THE WALLS AND A SMALL WEIGHTLIFTING AREA IN THE CENTER.", "sp": "se" }],
+      "exits": { "e": "b2_game" },
+      "choices": ["b7_inspect", "move"]
+    },
+    "b3_beds": {
+      "intro": [{ "line": "YOU ENTER THE QUARTERS, A LARGE ROOM WITH DOZENS OF BUNKBEDS LINING THE WALLS.", "sp": "se" }],
+      "exits": { "n": "b2_game" },
+      "choices": ["b3_inspect", "move"]
+    },
+    "b4_food": {
+      "intro": [{ "line": "YOU ENTER THE FOOD STORAGE ROOM, A LARGE ROOM WITH SHELVES LINING THE WALLS, COVERED TOP TO BOTTOM IN MRES AND DUST.", "sp": "se" }],
+      "exits": { "w": "b1_corridor", "s": "b5_plants"},
+      "choices": ["b4_inspect", "move"]
+    },
+    "b5_plants": {
+      "intro": [{ "line": "YOU ENTER AN EXTREMELY OVERGROWN JUNGLE OF A ROOM, WITH PLANTERS OVERFLOWING WITH VINES AND FRUIT.", "sp": "se" }],
+      "exits": { "n": "b4_food", "s": "b6_water"},
+      "choices": ["b5_inspect", "move"]
+    },
+    "b6_water": {
+      "intro": [{ "line": "YOU ENTER THE WATER FILTRATION ROOM, A LARGE ROOM WITH SEVERAL LARGE WATER TANKS LINING THE WALLS AND A FEW SMALL DESKS WITH MONITORS ON THEM.", "sp": "se" }],
+      "exits": { "n": "b5_plants" },
+      "choices": ["b6_inspect", "move"]
+    },
+    "b7_hospital": {
+      "intro": [{ "line": "YOU ENTER THE HOSPITAL WARD, A LARGE ROOM WITH SEVERAL COTS LINING THE WALLS AND A FEW SHELVES FILLED WITH MEDICAL EQUIPMENT.", "sp": "se" }],
+      "exits": { "w": "b1_corridor" },
+      "choices": ["b7_inspect", "move"]
+    },
+
+
+    "c_elevator": {
+      "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
+      "exits": {},
+      "choices": []
     }
   },
-
-
-
 
   "choices": {
     "a1_inspect": {
@@ -123,14 +177,14 @@
         { "line": "PROCESSING CHECKLIST DATA...", "sp": "se", "excludes_flag": "a_readlist" },
         { "line": "THE CHECKLIST IS THOROUGH AND DETAILED. BEST TO TAKE IT ONE FLOOR AT A TIME.", "sp": "se", "excludes_flag": "a_readlist" },
         { "line": "CURRENT FACILITY LOGS: FLOOR 1 STATUS", "sp": "na", "requires_flag": "a_readlist" },
-        { "line": "[ ] CLEAN FACILITY LOUNGE: PENDING", "sp": "se", "excludes_flag": "a2_table_clean" },
-        { "line": "[X] CLEAN FACILITY LOUNGE: COMPLETE", "sp": "se", "requires_flag": "a2_table_clean" },
-        { "line": "[ ] ENSURE SYSTEMWIDE TERMINAL FUNCTIONALITY: PENDING", "sp": "se", "excludes_flag": "a4_terminal_validated" },
-        { "line": "[X] ENSURE SYSTEMWIDE TERMINAL FUNCTIONALITY: COMPLETE", "sp": "se", "requires_flag": "a4_terminal_validated" },
-        { "line": "[ ] REPLACE AIR FILTERS / MONITOR OXYGEN: PENDING", "sp": "se", "excludes_flag": "a5_air_filters_replaced" },
-        { "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "se", "requires_flag": "a5_air_filters_replaced" },
-        { "line": "[ ] MONITOR GENERATOR PERFORMANCE / BATTERY: PENDING", "sp": "se", "excludes_flag": "a6_generator_checked" },
-        { "line": "[X] MONITOR GENERATOR PERFORMANCE / BATTERY: COMPLETE", "sp": "se", "requires_flag": "a6_generator_checked" },
+        { "line": "[ ] CLEAN FACILITY LOUNGE: PENDING", "sp": "na", "excludes_flag": "a2_table_clean" },
+        { "line": "[X] CLEAN FACILITY LOUNGE: COMPLETE", "sp": "na", "requires_flag": "a2_table_clean" },
+        { "line": "[ ] ENSURE SYSTEMWIDE TERMINAL FUNCTIONALITY: PENDING", "sp": "na", "excludes_flag": "a4_terminal_validated" },
+        { "line": "[X] ENSURE SYSTEMWIDE TERMINAL FUNCTIONALITY: COMPLETE", "sp": "na", "requires_flag": "a4_terminal_validated" },
+        { "line": "[ ] REPLACE AIR FILTERS / MONITOR OXYGEN: PENDING", "sp": "na", "excludes_flag": "a5_air_filters_replaced" },
+        { "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "na", "requires_flag": "a5_air_filters_replaced" },
+        { "line": "[ ] MONITOR GENERATOR PERFORMANCE / BATTERY: PENDING", "sp": "na", "excludes_flag": "a6_generator_checked" },
+        { "line": "[X] MONITOR GENERATOR PERFORMANCE / BATTERY: COMPLETE", "sp": "na", "requires_flag": "a6_generator_checked" },
         { "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES LOG PERFORMANCE INTO THE TERMINAL AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" },
         { "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "de" }
       ],
@@ -143,7 +197,7 @@
       "sets_flag": "a_checklist_ddone",
       "text": [
         { "line": "YOU TAKE A QUICK GLANCE OVER THE LIST, CONFIRMING THAT ALL THE FIRST FLOOR DUTIES ARE DONE.", "sp": "se" },
-        { "line": "the rest of the checklist will be filled out once i write it lmao.", "sp": "se" }
+        { "line": "THEN YOU LOOK OVER THE DUTIES OF THE SECOND FLOOR. CLEANING THE GAME ROOM, CHANGING BEDLINENS, TAKING INVENTORY OF RATIONS, REFILLING BOTANICAL WATERING RESERVOIRS, CHANGING WATER FILTERS, TAKING STOCK OF MEDICAL SUPPLIES, AND ADMINISTERING MENTAL HEALTH BENCHMARKS TO THE STAFF. LONG NIGHT AHEAD OF YOU. GUESS IT'S TIME TO HEAD DOWN TO THE SECOND FLOOR.", "sp": "se" }
       ],
       "leads_to": ["back"]
     },
@@ -383,7 +437,105 @@
       "sp": "de",
       "text": [{ "line": "LET'S CLEAR OUT FLOOR TWO BEFORE WE HEAD DOWN TO THREE.", "sp": "se" }],
       "leads_to": ["a7_inspect"]
-    }
+    },
+
+
+    "b_checklist": {
+      "label": "CHECK CHECKLIST",
+      "sp": "de",
+      "text": [
+        { "line": "CURRENT FACILITY LOGS: FLOOR 2 STATUS", "sp": "na" },
+        { "line": "[ ] CLEAN GAME ROOM: PENDING", "sp": "se", "excludes_flag": "b_game_clean" },
+        { "line": "[X] CLEAN GAME ROOM: COMPLETE", "sp": "se", "requires_flag": "b_game_clean" },
+        { "line": "[ ] CHANGE BEDLINENS: PENDING", "sp": "se", "excludes_flag": "b_beds_changed" },
+        { "line": "[X] CHANGE BEDLINENS: COMPLETE", "sp": "se", "requires_flag": "b_beds_changed" },
+        { "line": "[ ] TAKE INVENTORY OF RATIONS: PENDING", "sp": "se", "excludes_flag": "b_rations_checked" },
+        { "line": "[X] TAKE INVENTORY OF RATIONS: COMPLETE", "sp": "se", "requires_flag": "b_rations_checked" },
+        { "line": "[ ] REFILL BOTANICAL WATERING RESERVOIRS: PENDING", "sp": "se", "excludes_flag": "b_plants_watered" },
+        { "line": "[X] REFILL BOTANICAL WATERING RESERVOIRS: COMPLETE", "sp": "se", "requires_flag": "b_plants_watered" },
+        { "line": "[ ] CHANGE WATER FILTERS: PENDING", "sp": "se", 	"excludes_flag": 	"b_water_filters_changed" },
+        { "line": "[X] CHANGE WATER FILTERS: COMPLETE", 	"sp": 	"se", 	"requires_flag": 	"b_water_filters_changed" },
+        { "line": "[ ] TAKE STOCK OF MEDICAL SUPPLIES: PENDING", 	"sp": 	"se", 	"excludes_flag": 	"b_medical_stock_checked" },
+        { "line": "[X] TAKE STOCK OF MEDICAL SUPPLIES: COMPLETE", 	"sp": 	"se", 	"requires_flag": 	"b_medical_stock_checked" },
+        { "line": "[ ] ADMINISTER MENTAL HEALTH BENCHMARKS TO STAFF: PENDING", 	"sp": 	"se", 	"excludes_flag": 	"b_mental_health_checked" },
+        { "line": "[X] ADMINISTER MENTAL HEALTH BENCHMARKS TO STAFF: COMPLETE", 	"sp": 	"se", 	"requires_flag": 	"b_mental_health_checked" },
+        { "line": "AFTER WE FINISH THESE WE CAN GO FINISH UP FLOOR THREE. THEN WE DO WHATEVER WE DO AFTER THAT.", "sp": "se" },
+        { "line": "You can check the checklist at any point from the corridor.", "sp": "de" }]
+    },
+    "b_checklist_complete": {
+      "label": "CHECK CHECKLIST",
+      "sp": "de",
+      "requires_flag": "b_checklist_done",
+      "sets_flag": "b_checklist_ddone",
+      "text": [
+        { "line": "YOU TAKE A QUICK GLANCE OVER THE LIST, CONFIRMING THAT ALL THE SECOND FLOOR DUTIES ARE DONE.", "sp": "se" },
+        { "line": ".....", "sp": "se", "speed": 50 },
+        { "line": "I DON'T KNOW IF YOU REALIZED, BUT THERE'S NO ONE HERE. AT ALL. GHOST TOWN. \nWHAT THE HELL ARE WE DOING HERE? WHERE IS EVERYONE? HOW LONG HAS IT REALLY BEEN DOWN HERE? \nTHE GENERATORS HAVE BEEN RUNNING FOR GOD KNOWS HOW LONG, THE RATIONS ARE UNTOUCHED, NO ONE'S BEEN IN ANY OF THE BEDS, AND THE PLANTS HAVE GONE CRAZY AND OVERTAKEN THE ENTIRE BOTANICAL DEPARTMENT. \nI THINK WE'RE ALONE DOWN HERE.", "sp": "se" },
+        { "line": ".....", "sp": "se", "speed": 50 },
+        { "line": "WHAT ARE WE DOING DOWN HERE?", "sp": "se" },
+        { "line": ".....", "sp": "se", "speed": 50 },
+        { "line": "I'M GONNA NEED SOME TIME TO THINK. LET'S JUST GET TO THE THIRD FLOOR.", "sp": "se" }
+      ],
+      "leads_to": ["back"]
+    },
+
+    "b_elevator_inspect": {
+      "label": "INSPECT",
+      "sp": "de",
+      "text": [{ "line": "THE ELEVATOR IS A COLD, CLINICAL STEEL BOX WITH A SINGLE LIGHTBULB HANGING FROM THE CEILING. THERE'S THREE BUTTONS VISIBLE ON THE BOARD, ONE, TWO AND THREE. THE DISPLAY AT THE TOP OF THE ELEVATOR READS 2.", "sp": "se" }],
+      "leads_to": ["b_elevator_1","b_elevator_2","b_elevator_3","b_elevator_3_true","back"]
+    },
+    "b_elevator_1": {
+      "label": "ONE",
+      "sp": "de",
+      "text": [{ "line": "ALREADY CLEARED OUT THAT FLOOR. NO NEED TO VISIT IT AGAIN.", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "b_elevator_2": {
+      "label": "TWO",
+      "sp": "de",
+      "text": [{ "line": "GENIUS, MAYBE THERE'S A secret FLOOR BY PRESSING THE SAME BUTTON TWICE.", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "b_elevator_3": {
+      "label": "THREE",
+      "sp": "de",
+      "excludes_flag": "b_checklist_ddone",
+      "text": [{ "line": "LET'S CLEAR OUT FLOOR TWO BEFORE WE HEAD BACK DOWN TO THREE.", "sp": "se" }],
+      "leads_to": ["back"]
+    },
+    "b_elevator_3_true": {
+      "label": "THREE",
+      "sp": "de",
+      "requires_flag": "b_checklist_ddone",
+      "text": [{ "line": "YOU PRESS THE BUTTON FOR THE THIRD FLOOR, THE ELEVATOR CLUNKING ALONG AS YOU'RE BROUGHT DEEPER AND DEEPER INTO THE FACILITY \n\nYOU KNOW I'VE BEEN THINKING \n\nWHY ARE WE STILL PIDDLING AROUND WITH MONTHLY MAINTENANCE FOR A FACILITY THAT'S CLEARLY LONG ABANDONED? \n\nAFTER WE FINISH THIS UP, LET'S LOOK AT GETTING OUT OF HERE.", "sp": "se" },
+      { "line": "\nTHE ELEVATOR DOOR OPENS. WE'RE HERE, LAST TREK.", "sp": "se" }  
+    ],
+      "move_to_room": "c_elevator",
+      "leads_to": ["back"]
+    },
+
+    "b1_corridor_inspect": {
+      "label": "INSPECT",
+      "sp": "de",
+      "text": [{ "line": "THE CORRIDOR IS A LONG ORNATE HALLWAY WITH WARM LIGHTING AND DOORS LINING THE EAST AND WEST, ALONGSIDE AN ELEVATOR AT THE SOUTH END. THERE'S A LARGE MAP OF THE FACILITY ON THE WALL, SHOWING THE LAYOUT OF THE ROOMS. \nYOU ALSO RECOLLECT THE CHECKLIST FOR THIS FLOOR.", "sp": "se" }],
+      "leads_to": ["b1_map", "b_checklist", "b_checklist_complete","back"]
+     },
+     "b1_map": {
+      "label": "VIEW MAP",
+      "sp": "de",
+      "graphic": "map",
+      "text": [{ "line": "A DETAILED MAP SHOWS THE GENERAL LAYOUT OF THE FACILITY, SPLIT INTO THREE FLOORS.", "sp": "se" },
+    { "line": "YOU ARE CURRENTLY IN ROOM B1 ON THE SECOND FLOOR.", "sp": "se" },
+    { "line": "PROCESSING DATA....", "sp": "se" },
+    { "line": "MAP DATA RETRIEVED SUCCESSFULLY.", "sp": "se" },
+    { "line": "B1: SECOND FLOOR CORRIDOR. B2: GAME ROOM. B3: QUARTERS. B4: FOOD STORAGE. B5: BOTANICALS. B6: WATER FILTRATION. B7: GYM. B8: HOSPITAL WARD. B9: ELEVATOR.", "sp": "se" }],
+      "leads_to": ["back"]
+     }
+
+
+
+
 
   }
 }
