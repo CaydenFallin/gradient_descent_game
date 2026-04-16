@@ -443,6 +443,7 @@
     "b_checklist": {
       "label": "CHECK CHECKLIST",
       "sp": "de",
+      "excludes_flag": "b_checklist_done",
       "text": [
         { "line": "CURRENT FACILITY LOGS: FLOOR 2 STATUS", "sp": "na" },
         { "line": "[ ] CLEAN GAME ROOM: PENDING", "sp": "se", "excludes_flag": "b_game_clean" },
