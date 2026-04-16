@@ -24,7 +24,7 @@
     },
     {
       "id": "checklist_b_watcher",
-      "requires": ["b_game_cleaned", "b_beds_cleaned", "b_food_stocked", "b_plants_watered", "b_water_filters_replaced", "b_medical_stock_checked", "b_mental_health_checked"],
+      "requires": ["b_game_clean", "b_beds_changed", "b_rations_checked", "b_plants_watered", "b_water_filters_changed", "b_medical_stock_checked", "b_mental_health_checked"],
       "result_flag": "b_checklist_done",
       "text": [
         { "line": "\n", "sp": "se" },
@@ -110,14 +110,14 @@
       "choices": ["b5_inspect", "move"]
     },
     "b6_water": {
-      "intro": [{ "line": "YOU ENTER THE WATER FILTRATION ROOM, A LARGE ROOM WITH SEVERAL LARGE WATER TANKS LINING THE WALLS AND A FEW SMALL DESKS WITH MONITORS ON THEM.", "sp": "se" }],
+      "intro": [{ "line": "YOU ENTER THE WATER FILTRATION ROOM, A SMALL ROOM WITH SEVERAL LARGE WATER TANKS LINING THE WALLS.", "sp": "se" }],
       "exits": { "n": "b5_plants" },
       "choices": ["b6_inspect", "move"]
     },
     "b7_hospital": {
       "intro": [{ "line": "YOU ENTER THE HOSPITAL WARD, A LARGE ROOM WITH SEVERAL COTS LINING THE WALLS AND A FEW SHELVES FILLED WITH MEDICAL EQUIPMENT.", "sp": "se" }],
-      "exits": { "w": "b1_corridor" },
-      "choices": ["b7_inspect", "move"]
+      "exits": { "s": "b1_corridor" },
+      "choices": ["b8_inspect", "move"]
     },
 
 
@@ -460,7 +460,8 @@
         { "line": "[ ] ADMINISTER MENTAL HEALTH BENCHMARKS TO STAFF: PENDING", 	"sp": 	"se", 	"excludes_flag": 	"b_mental_health_checked" },
         { "line": "[X] ADMINISTER MENTAL HEALTH BENCHMARKS TO STAFF: COMPLETE", 	"sp": 	"se", 	"requires_flag": 	"b_mental_health_checked" },
         { "line": "AFTER WE FINISH THESE WE CAN GO FINISH UP FLOOR THREE. THEN WE DO WHATEVER WE DO AFTER THAT.", "sp": "se" },
-        { "line": "You can check the checklist at any point from the corridor.", "sp": "de" }]
+        { "line": "You can check the checklist at any point from the corridor.", "sp": "de" }],
+      "leads_to": ["back"]
     },
     "b_checklist_complete": {
       "label": "CHECK CHECKLIST",
@@ -482,7 +483,7 @@
     "b_elevator_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "THE ELEVATOR IS A COLD, CLINICAL STEEL BOX WITH A SINGLE LIGHTBULB HANGING FROM THE CEILING. THERE'S THREE BUTTONS VISIBLE ON THE BOARD, ONE, TWO AND THREE. THE DISPLAY AT THE TOP OF THE ELEVATOR READS 2.", "sp": "se" }],
+      "text": [{ "line": "THE ELEVATOR IS A COLD, CLINICAL STEEL BOX WITH A SINGLE LIGHTBULB HANGING FROM THE CEILING. THERE'S THREE BUTTONS VISIBLE ON THE BOARD, ONE, TWO AND THREE. THE DISPLAY AT THE TOP OF THE ELEVATOR READS 2. \nTHE EXIT TO THE NORTH LEADS TO A CORRIDOR.", "sp": "se" }],
       "leads_to": ["b_elevator_1","b_elevator_2","b_elevator_3","b_elevator_3_true","back"]
     },
     "b_elevator_1": {
@@ -524,7 +525,7 @@
      "b1_map": {
       "label": "VIEW MAP",
       "sp": "de",
-      "graphic": "map",
+      "graphic": "map2",
       "text": [{ "line": "A DETAILED MAP SHOWS THE GENERAL LAYOUT OF THE FACILITY, SPLIT INTO THREE FLOORS.", "sp": "se" },
     { "line": "YOU ARE CURRENTLY IN ROOM B1 ON THE SECOND FLOOR.", "sp": "se" },
     { "line": "PROCESSING DATA....", "sp": "se" },
@@ -536,7 +537,7 @@
      "b2_inspect": {
       "label": "INSPECT",
       "sp": "de",
-      "text": [{ "line": "YOU TAKE A LOOK AROUND THE SPACIOUS ROOM AND TAKE INVENTORY, MAKING NOTE OF THE SEVERAL BRANDS OF BOARD GAMES ON THE SHELVES, THE FRAYED POOL TABLE WITH THE BALLS NEATLY ARRANGED IN A TRIANGLE, AND A BROOM AND MOP TUCKED INTO THE CORNER.", "sp": "se" }],
+      "text": [{ "line": "YOU TAKE A LOOK AROUND THE SPACIOUS ROOM AND TAKE INVENTORY, MAKING NOTE OF THE SEVERAL BRANDS OF BOARD GAMES ON THE SHELVES, THE FRAYED POOL TABLE WITH THE BALLS NEATLY ARRANGED IN A TRIANGLE, AND A BROOM AND MOP TUCKED INTO THE CORNER. \nTHERE IS A DOOR TO THE EAST, WEST AND SOUTH.", "sp": "se" }],
       "leads_to": ["b2_board_games","b2_pool_table","b2_clean","back"]
      },
       "b2_board_games": {
@@ -568,7 +569,7 @@
       "b3_inspect": {
         "label": "INSPECT",
         "sp": "de",
-        "text": [{ "line": "YOU TAKE STOCK OF THE PLENTIFUL BUNKBEDS AROUND THE ROOM, PROBABLY AROUND FORTY IN TOTAL.", "sp": "se" },
+        "text": [{ "line": "THERE IS A DOOR TO THE NORTH BACK TO THE GAME ROOM. \nYOU TAKE STOCK OF THE PLENTIFUL BUNKBEDS AROUND THE ROOM, PROBABLY AROUND FORTY IN TOTAL.", "sp": "se" },
         { "line": "CHANGING ALL OF THESE LINENS IS GOING TO BE A PAIN IN THE ASS.", "sp": "se", "excludes_flag": "b_beds_changed" },
         { "line": "CHANGING ALL OF THESE LINENS WAS A MASSIVE PAIN IN THE ASS. HOPE WHATEVER INVISIBLE PEOPLE ARE IN CHARGE OF THIS PLACE SLEEP WELL, ROTTEN BASTARDS.", "sp": "se", "requires_flag": "b_beds_changed" }
       ],
@@ -578,6 +579,7 @@
         "label": "CHANGE BEDS",
         "sp": "de",
         "sets_flag": "b_beds_changed",
+        "excludes_flag": "b_beds_changed",
         "text": [{ "line": "YOU BEGIN THE ENDLESSLY TEDIOUS TASK OF CHANGING ALL OF THE LINENS, TAKING DOZENS OF TRIPS BACK AND FORTH FROM THE STORAGE ROOM IN THE BACK OF THE QUARTERS TO GRAB THE NECESSARY SUPPLIES, WHICH APPEAR TO BE IN SHORT SUPPLY. YOU BARELY SCROUNGE UP ENOUGH SHEETS AND COMFORTERS TO CHANGE ALL OF THE BEDS, LEAVING A SMALL HANDFUL LEFT AFTER GRABBING ALL OF THE NECESSARY ONES. \nYOU TAKE THE OLD LINENS AND DISPOSE OF THEM IN THE CLEANING BASKET, DEAR LORD SOMEONE NEEDS TO EMPTY THIS THING THERE HAS GOT TO BE HUNDREDS OF OLD SHEETS IN HERE. GUESS WHOEVER IS ON LAUNDRY DUTY TOOK OFF AT SOME POINT. \nAFTER WALKING BACK INTO THE ROOM TO ADMIRE YOUR WORK YOU REALIZE THAT ALL OF THE BEDS WERE PERFECTLY MADE WHEN YOU CAME IN HERE, IF A BIT DUSTY. STRANGE.", "sp": "se" }],
         "leads_to": ["back"]
        },
@@ -585,27 +587,152 @@
        "b4_inspect": {
         "label": "INSPECT",
         "sp": "de",
-        "text": [{ "line": "THE FOOD STORAGE ROOM IS A LARGE WAREHOUSE-STYLE ROOM WITH DOZENS OF SHELVES STACKING UP TO THE CEILING, ALL ORGANIZED AND WELL-STOCKED. \nTHERE'S A SMALL TABLE AT THE FORE OF THE ROOM WITH A CLIPBOARD ON IT WHERE YOU APPARENTLY ARE SUPPOSED TO WRITE DOWN THE INVENTORY.", "sp": "se" }],
+        "text": [{ "line": "THE FOOD STORAGE ROOM IS A LARGE WAREHOUSE-STYLE ROOM WITH DOZENS OF SHELVES STACKING UP TO THE CEILING, ALL ORGANIZED AND WELL-STOCKED. \nTHERE'S A SMALL TABLE AT THE FORE OF THE ROOM WITH A CLIPBOARD ON IT WHERE YOU APPARENTLY ARE SUPPOSED TO WRITE DOWN THE INVENTORY. \nTHERE IS A CORRIDOR TO THE WEST AND A DOOR TO A PLANT-CHOKED ROOM TO THE SOUTH.", "sp": "se" }],
         "leads_to": ["b4_clipboard","b4_take_stock","back"]
         },
         "b4_clipboard": {
           "label": "CHECK CLIPBOARD",
           "sp": "de",
-          "text": [{ "line": "THE CLIPBOARD HAS A SERIES OF FIELDS FOR TAKING INVENTORY AND THE DATE, STRETCHING BACK FOR MONTHS ALL THE WAY TO THE BEGINNING OF THE PAGE. \nTWENTY-TWO MONTHS IN TOTAL ACTUALLY, WITH TWO MORE SLOTS REMAINING. YOU TAKE A QUICK GLANCE THROUGH THE BOXES.", "sp": "se" },
-          {"line": "SEPT | 996 TONNES | -0 KG | STABLE \nOCT | 996 TONNES | -0 KG | STABLE \nNOV | 996 TONNES | -0 KG | STABLE \nDEC | 996 TONNES | -0 KG | STABLE \nJAN | 996 TONNES | -0 KG | STABLE \nFEB | 996 TONNES | -0 KG | STABLE \nMAR | 996 TONNES | -0 KG | STABLE \nAPR | 996 TONNES | -0 KG | STABLE \nMAY | 996 TONNES | -0 KG | STABLE \nJUN | 996 TONNES | -0 KG | STABLE \nJUL | 996 TONNES | -0 KG | STABLE \nAUG | 996 TONNES | -0 KG | STABLE \nSEP | 996 TONNES | -0 KG | STABLE \nOCT| 996 TONNES |-0 KG| STABLE\nNOV| 996 TONNES |-0 KG| STABLE\nDEC| 996 TONNES |-0 KG| STABLE\nJAN| 996 TONNES |-0 KG| STABLE\nFEB| 996 TONNES |-0 KG| STABLE\nMAR| 996 TONNES |-0 KG| STABLE\nAPR| 996 TONNES |-0 KG| STABLE\nMAY| 996 TONNES |-0 KG| STABLE\nJUN| 996 TONNES |-0 KG| STABLE\nJUL| 996 TONNES |-0 KG| STABLE", "sp": "na", "speed": 5},
-          { "line": "WELL WE CERTAINLY AREN'T STARVING ANYTIME SOON."}
+          "excludes_flag": "b_rations_checked",
+          "text": [{ "line": "THE CLIPBOARD HAS A SERIES OF FIELDS FOR TAKING INVENTORY AND THE DATE, STRETCHING BACK FOR MONTHS ALL THE WAY TO THE BEGINNING OF THE PAGE. \nTWENTY-TWO MONTHS IN TOTAL ACTUALLY, WITH TWO MORE SLOTS REMAINING. YOU TAKE A QUICK GLANCE THROUGH THE BOXES.", "sp": "se", "excludes_flag": "b_rations_check" },
+          {"line": "SEPT | 996 TONNES | -0 KG | STABLE \nOCT | 996 TONNES | -0 KG | STABLE \nNOV | 996 TONNES | -0 KG | STABLE \nDEC | 996 TONNES | -0 KG | STABLE \nJAN | 996 TONNES | -0 KG | STABLE \nFEB | 996 TONNES | -0 KG | STABLE \nMAR | 996 TONNES | -0 KG | STABLE \nAPR | 996 TONNES | -0 KG | STABLE \nMAY | 996 TONNES | -0 KG | STABLE \nJUN | 996 TONNES | -0 KG | STABLE \nJUL | 996 TONNES | -0 KG | STABLE \nAUG | 996 TONNES | -0 KG | STABLE \nSEP | 996 TONNES | -0 KG | STABLE \nOCT| 996 TONNES |-0 KG| STABLE\nNOV| 996 TONNES |-0 KG| STABLE\nDEC| 996 TONNES |-0 KG| STABLE\nJAN| 996 TONNES |-0 KG| STABLE\nFEB| 996 TONNES |-0 KG| STABLE\nMAR| 996 TONNES |-0 KG| STABLE\nAPR| 996 TONNES |-0 KG| STABLE\nMAY| 996 TONNES |-0 KG| STABLE\nJUN| 996 TONNES |-0 KG| STABLE\nJUL|            |     |", "sp": "na", "speed": 10, "excludes_flag": "b_rations_check" },
+          { "line": "WELL WE CERTAINLY AREN'T STARVING ANYTIME SOON. LOOKS LIKE FOR SOME REASON OR ANOTHER NO ONE'S TOUCHED THE RATIONS. \nGETTING A PICTURE OF WHAT'S GOING ON HERE, AND IT'S NOT TOO PRETTY." , "sp": "se", "excludes_flag": "b_rations_check" },
+          { "line": "YOU GRAB THE NEARBY PEN AND FILL IN THE BLANKS FOR THE CURRENT MONTH, WHICH UNSURPRISINGLY IS THE SAME AS ALL THE OTHER MONTHS.", "sp": "se", "requires_flag": "b_rations_check" },
+          { "line": "JUL| 996 TONNES |-0 KG| STABLE", "sp": "na", "speed": 5, "requires_flag": "b_rations_check", "sets_flag": "b_rations_checked" }
         ],
           "leads_to": ["back"]
          },
          "b4_take_stock": {
           "label": "TAKE STOCK",
           "sp": "de",
-          "sets_flag": "b_rations_checked",
-          "excludes_flag": "b_rations_checked",
-          "text": [{ "line": "YOU TAKE A WALK AROUND THE ROOM, CHECKING OFF EACH ITEM ON THE CLIPBOARD AS YOU CONFIRM THAT IT'S FULLY STOCKED. \nAFTER TAKING STOCK OF EVERYTHING YOU REALIZE THAT EVERYTHING IS IN ORDER, WITH NO ISSUES TO REPORT. NOT BAD.", "sp": "se" }],
+          "sets_flag": "b_rations_check",
+          "excludes_flag": "b_rations_check",
+          "text": [{ "line": "YOU TAKE A WALK AROUND THE ROOM, PICKING UP ONE OF THE MRES OFF THE SHELF. YOU TAKE A NOTE OF THE WEIGHT, 1.5KGS. AFTER PACING AROUND THE SHELVES A FEW TIMES AND GETTING A GOOD IDEA HOW MANY MRES ARE PACKED INTO A ROW, HOW MANY ROWS ARE IN A SHELF, AND HOW MANY SHELVES ARE IN THE ROOM, YOU GET AN ACCURATE TOTAL OF THE AMOUNT OF RATIONS AVAILABLE. \nPROCESSING................ OK \n996 TONNES OF RATIONS. BETTER GO PUT THAT INTO THE CLIPBOARD.", "sp": "se" }],
           "leads_to": ["back"]
+          },
+
+        "b5_inspect": {
+          "label": "INSPECT",
+          "sp": "de",
+          "text": [{ "line": "PROBABLY THOUSANDS OF POUNDS OF GREENERY CHOKE THE ROOM, CLIMBING UP THE WALLS, ACROSS THE FLOOR, TANGLED WITH ALL THE ELECTRONICS AND BURROWING CRACKS INTO THE FLOOR. \nYOU ALSO SPY SEVERAL THICK VINES SNAKING THEIR WAY INTO THE VENTS ABOVE, SUPPOSE THAT EXPLAINS THE OXYGEN DISCREPENCIES. \nA SINGLE TERMINAL SITS IN THE MIDDLE OF THE ROOM, SMOTHERED IN PLANTS BUT STILL BARELY HOLDING ONTO LIFE.", "sp": "se" },
+          { "line": "SEVERAL LARGE TANKS STICK OUT FROM THE FLOOR, COVERED TIP TO TAIL IN VINES, WATER FILLING THEM UP AROUND THE HALFWAY MARK.", "sp": "se", "excludes_flag": "b_plants_watered" },
+          { "line": "SEVERAL LARGE TANKS STICK OUT FROM THE FLOOR, COVERED TIP TO TAIL IN VINES, WATER FILLING THEM UP ALL THE WAY TO THE BRIM.", "sp": "se", "requires_flag": "b_plants_watered"},
+          { "line": "THERE IS A DOOR TO THE NORTH THAT LEADS TO A ROOM FULL OF MRES, AND ONE TO THE SOUTH TO THE WATER FILTRATION ROOM.", "sp": "se"}
+          ], 
+          "leads_to": ["b5_reservoirs","b5_terminal","back"]
+          },
+          "b5_reservoirs": {
+            "label": "CHECK WATER RESERVOIRS",
+            "sp": "de",
+            "text": [{ "line": "THE WATER RESERVOIRS ARE BEING ACTIVELY CONSUMED IN A WALL OF GREENERY, BUT OBVIOUSLY THEY'RE STILL PUMPING WATER THROUGH THE ROOM. BETTER SEE HOW TO REFILL THEM ON THE TERMINAL.", "sp": "se", "excludes_flag": "b_plants_watered" },
+            { "line": "THE WATER RESERVOIRS ARE NOW FILLED UP TO THE TOP, FOR BETTER OR FOR WORSE. DID OUR JOB THOUGH.", "sp": "se", "requires_flag": "b_plants_watered"}],
+            "leads_to": ["back"]
+          },
+          "b5_terminal": {
+            "label": "CHECK TERMINAL",
+            "sp": "de",
+            "text": [{ "line": "THE TERMINAL IS COVERED IN PLANTS BUT STILL FUNCTIONAL, THE SCREEN DISPLAYING THE STATUS OF THE BOTANICAL DEPARTMENT.", "sp": "se" },
+            { "line": "WARNING: WATER RESERVOIRS LOW. PLEASE RUN GROUNDWATER EXTRACTION PROTOCOL.", "sp": "na", "excludes_flag": "b_plants_watered" },
+            { "line": "WATER RESERVOIRS FULL. PLEASE MAINTAIN WATER LEVELS TO AVOID DEHYDRATION OF PLANTS.", "sp": "na", "requires_flag": "b_plants_watered" },
+            { "line": "WARNING: LOW AMOUNTS OF RADIATION DETECTED IN WATER TANKS. PLEASE REDUCE RADIATION LEVELS TO AVOID EXCESS AND POSSIBLY HAZARDOUS GROWTH, IRRADIATED PLANT LIFE IS NOT FIT FOR CONSUMPTION.", "sp": "na"},
+            { "line": "EXPLAINS THE LITTLE SHOP OF HORRORS WE HAVE GOING ON IN HERE. MAY AS WELL WATER THE PLANTS THOUGH, CAN'T SAY WE DIDN'T DO OUR JOB. PLUS I'M GUESSING THEY'D PREFER CONTAMINATED PLANTS TO NO PLANTS AT ALL.", "sp": "se", "excludes_flag": "b_plants_watered" }
+           ],
+            "leads_to": ["b5_water_plants","back"]
+           },
+           "b5_water_plants": {
+            "label": "WATER PLANTS",
+            "sp": "de",
+            "sets_flag": "b_plants_watered",
+            "excludes_flag": "b_plants_watered",
+            "text": [{ "line": "YOU INPUT THE COMMAND TO RUN THE GROUNDWATER EXTRACTION PROCEDURE. THE ROOM RUMBLES SOMEWHAT AS YOU SEE WATER BEGIN TO FLOW INTO THE TANKS, FILLING THEM UP ALL THE WAY TO THE BRIM. \nMAN I REALLY HOPE SOMEONE COMES IN HERE TO DEAL WITH THE OVERGROWTH SITUATION.", "sp": "se" }],
+            "leads_to": ["back"]
+           },
+
+          "b6_inspect": {
+              "label": "INSPECT",
+              "sp": "de",
+              "text": [{ "line": "THE WATER FILTRATION ROOM IS A SMALL, DINGY SPACE WITH A FEW WATER FILTRATION UNITS PUMPING ALONG. A TERMINAL SITS ON THE WALL DISPLAYING THE STATUS OF THE WATER FILTRATION SYSTEM. \nTHERE IS A DOOR TO THE NORTH THAT LEADS TO A ROOM FULL OF PLANTS.", "sp": "se" }],
+              "leads_to": ["b6_terminal","b6_filters","back"]
+            },
+            "b6_terminal": {
+              "label": "CHECK TERMINAL",
+              "sp": "de",
+              "text": [{ "line": "THE TERMINAL DIMLY DISPLAYS THE STATUS OF THE WATER FILTRATION SYSTEM.", "sp": "se" },
+              { "line": "WARNING: EXCESSIVE RADIATION DETECTED IN WATER. PLEASE CONTACT SUPERVISORS IMMEDIATELY TO AVOID CONTAMINATION. \nWATER FILTERS WERE CHANGED [30] DAYS AGO. PLEASE CHANGE WATER FILTERS IMMEDIATELY.", "sp": "na", "excludes_flag": "b_water_filters_changed" },
+              { "line": "WARNING: EXCESSIVE RADIATION DETECTED IN WATER. PLEASE CONTACT SUPERVISORS IMMEDIATELY TO AVOID CONTAMINATION.. \nWATER FILTERS WERE CHANGED [0 DAYS] AGO. NEXT WATER FILTER CHANGE DUE IN [30 DAYS].", "sp": "na", "requires_flag": "b_water_filters_changed" },
+              { "line": "EXCESSIVE RADIATION IN WATER? THE ENTIRE THING IS FLOODED WITH POISON, THERE'S NO WAY SOME FILTERS ARE GOING TO HELP. MAY AS WELL CHANGE THEM ANYWAYS, CAN'T SAY WE DIDN'T DO OUR JOB.", "sp": "se", "excludes_flag": "b_water_filters_changed" },
+              { "line": "LOOKS LIKE THE FILTERS CAN'T DO SHIT AGAINS THE RADIATION. THIS WHOLE FACILITY IS FALLING APART, WHY THE HELL DO THEY HAVE US DOING NORMAL MONTHLY MAINTENANCE WORK WHEN THE ENTIRE BUILDING IS SLOWLY BEING FLOODED WITH RADIATION?", "sp": "se", "requires_flag": "b_water_filters_changed" }
+            ],
+              "leads_to": ["back"]
+            },
+            "b6_filters": {
+              "label": "CHANGE WATER FILTERS",
+              "sp": "de",
+              "sets_flag": "b_water_filters_changed",
+              "excludes_flag": "b_water_filters_changed",
+              "text": [{ "line": "YOU GRAB A HANDFUL OF FILTERS FROM OFF A NEARBY SHELF AND GO THROUGH EACH UNIT, PULLING OUT THE OLD FILTER AND SLOTTING IN THE NEW ONE. ANOTHER JOB ADEQUATELY DONE.", "sp": "se" }],
+              "leads_to": ["back"]
+            },
+
+            "b7_inspect": {
+              "label": "INSPECT",
+              "sp": "de",
+              "text": [{ "line": "THE GYM IS A LARGE OPEN SPACE WITH EQUIPMENT SCATTERED AROUND, A FEW TREADMILLS AGAINST THE WALL, A WEIGHTLIFTING SET IN THE CENTER OF THE ROOM, AND A LARGE WALL-LENGTH MIRROR ON ONE SIDE OF THE ROOM. \nTHERE IS A DOOR TO THE EAST BACK TO THE GAME ROOM.", "sp": "se" }],
+              "leads_to": ["b7_treadmill","b7_weights","b7_mirror","back"]
+            },
+            "b7_treadmill": {
+              "label": "RUN TREADMILL",
+              "sp": "de",
+              "sets_flag": "b_treadmill_run",
+              "excludes_flag": "b_treadmill_run",
+              "text": [{ "line": "YOU HOP ONTO THE TREADMILL, PRESSING THE BUTTON TO START IT ON THE CONSOLE. IT SLOWLY BEGINS TO MOVE, YOUR - WAIT WHAT? \n................................. \nYOU FINISH YOUR WORKOUT.", "sp": "se" }],
+              "leads_to": ["back"]
+            },
+            "b7_weights": {
+              "label": "LIFT WEIGHTS",
+              "sp": "de",
+              "sets_flag": "b_weights_lifted",
+              "excludes_flag": "b_weights_lifted",
+              "text": [{ "line": "YOU GRAB A FEW OF THE WEIGHTS, LIFTING THEM UP AND DOWN A FEW TIMES. IT'S SURPRISINGLY EASY, GUESS WE'RE IN BETTER SHAPE THAT WE THOUGHT. YOU MOVE ON TO THE HEAVIER WEIGHTS, ALSO LIFTING THEM WITH EASE. \nYOU MOVE ONTO HEAVIER WEIGHTS. EASY. \nYOU MOVE ONTO HEAVIER WEIGHTS. EASY. \nYOU MOVE ONTO HEAVIER WEIGHTS. EASY. \nTHERE ARE NO MORE WEIGHTS TO LIFT.", "sp": "se" }],
+              "leads_to": ["back"]
+            },
+            "b7_mirror": {
+              "label": "CHECK MIRROR",
+              "sp": "de",
+              "sets_flag": "b_mirror_checked",
+              "excludes_flag": "b_mirror_checked",
+              "text": [{ "line": "YOU TAKE A LOOK IN THE MIRROR, CHECKING YOUR REFLECTION. \n..................................... \nYOU STEP AWAY FROM THE MIRROR AFTER CHECKING YOUR REFLECTION.", "sp": "se" }],
+              "leads_to": ["back"]
+            },
 
 
+            "b8_inspect": {
+              "label": "INSPECT",
+              "sp": "de",
+              "text": [{ "line": "THERE'S A SMALL TABLE WITH A CLIPBOARD ON IT, SEVERAL SHELVES FULL OF MEDICAL EQUIPMENT, AND DOZENS ON EMPTY COTS. \nTHERE IS A DOOR TO THE SOUTH THAT LEADS TO A CORRIDOR.", "sp": "se" }],
+              "leads_to": ["b8_clipboard","b8_shelves","back"]
+             },
+             "b8_clipboard": {
+              "label": "CHECK CLIPBOARD",
+              "sp": "de",
+              "text": [{ "line": "THE CLIPBOARD CONTAINS A PAGE FOR TAKING INVENTORY OF MEDICAL SUPPLIES, AND A LIST OF PATIENTS WHO SIGNED UP FOR MENTAL HEALTH EVALUATION. \nTHE MEDICAL SUPPLIES PAGE HAS 3 PREVIOUS ENTRIES AND ONE EMPTY ONE.", "sp": "se", 
+            "excludes_flag": "b_medical_stock_check"},
+              { "line": "APR | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \n MAY | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \nJUN | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \nJUL | ", "sp": "na", "excludes_flag": "b_medical_stock_check" },
+              { "line": "YOU FILL IN THE BLANK FOR THE CURRENT MONTH, CONFIRMING THAT ALL THE SUPPLIES ARE ACCOUNTED FOR.", "sp": "se", "requires_flag": "b_medical_stock_check", "sets_flag": "b_medical_stock_checked" },
+              { "line": "APR | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \n MAY | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \nJUN | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \nJUL | ALL MEDICAL SUPPLIES ACCOUNTED FOR.", "sp": "na", "requires_flag": "b_medical_stock_check" },
+              { "line": "ALL THE SUPPLIES ARE ACCOUNTED FOR OVER THE PAST MONTHS, NOT A SINGLE THING MISSING. GUESS WE'VE GOT HEALTHY PATIENTS HERE. BETTER CHECK THE SUPPLIES AND FILL IN THE BLANK, BUT I CAN GO AHEAD AND GUESS WHAT IT'LL SAY.", "sp": "se", "excludes_flag": "b_medical_stock_check"},
+              { "line": "THE LIST OF PATIENTS SIGNED UP FOR A MENTAL HEALTH EVALUATION IS EMPTY. GUESS WE DON'T HAVE TO WORRY ABOUT THAT.", "sp": "se", "sets_flag": "b_mental_health_checked" }
+            ],
+              "leads_to": ["back"]
+             },
+             "b8_shelves": {
+              "label": "CHECK SHELVES",
+              "sp": "de",
+              "sets_flag": "b_medical_stock_check",
+              "excludes_flag": "b_medical_stock_check",
+              "text": [{ "line": "YOU RIFLE THROUGH THE SHELVES, COMPARING THEM TO A SMALL CHECKLIST FOR MEDICAL SUPPLIES ATTACHED TO THE WALL. TRAUMA KITS, CHECK. IODINE TABLETS, CHECK. MORPHINE SYRETTES, CHECK. BANDAGES, CHECK. ANTIBIOTICS, CHECK. SURGICAL KITS, CHECK. EVERYTHING IS ACCOUNTED FOR. BETTER GO PUT THAT INTO THE CLIPBOARD.", "sp": "se" }],
+              "leads_to": ["back"]
+             }
 
 
 
