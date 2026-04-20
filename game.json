@@ -31,6 +31,16 @@
         { "line": "WELL, THAT WAS UNDERWHELMING. WE'RE DONE WITH THIS PART OF THE CHECKLIST I SUPPOSE, BUT LET'S GO TO THE CORRIDOR TO RECOLLECT AND CHECK IT ONE LAST TIME.", "sp": "se" },
         { "line": "\n", "sp": "se" }
       ]
+    },
+    {
+      "id": "checklist_c_watcher",
+      "requires": ["c_coolant_cycled", "c_warhead_inspected", "c_waste_disposed", "c_gas_cycled", "c_shield_inspected"],
+      "result_flag": "c_checklist_done",
+      "text": [
+        { "line": "\n", "sp": "se" },
+        { "line": "WE'RE FINISHED WITH THE LIST, BUT i THINK WE HAVE ONE MORE LITTLE THING TO CHECK. HEAD TO THE CONTROL ROOM, I'VE GOT SOMETHING TO SHOW YOU.", "sp": "se" },
+        { "line": "\n", "sp": "se" }
+      ]
     }
   ],
 
@@ -121,10 +131,50 @@
     },
 
 
-    "c_elevator": {
+    "c0_elevator": {
       "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
-      "exits": {},
-      "choices": []
+      "exits": {"n": "c1_corridor"},
+      "choices": ["c0_inspect", "move"]
+    },
+    "c1_corridor": {
+      "intro": [{ "line": "YOU'RE IN THE FINAL, DINGY CORRIDOR. A MAP IS DISPLAYED ON THE WALL AND MEMORIES OF THE CHECKLIST FLASH THROUGH YOUR HEAD.", "sp": "se" }],
+      "exits": {"s": "c0_elevator", "e": "c2_coolant", "w": "c5_control"},
+      "choices": ["c1_inspect", "move"]
+    },
+    "c2_coolant": {
+      "intro": [{ "line": "YOU ENTER THE COOLANT ROOM, A LARGE CIRCULAR ROOM HUMMING WITH LIFE, DOZENS OF COOLANT TANKS LINING THE WALLS.", "sp": "se" }],
+      "exits": {"w": "c1_corridor", "s": "c4_waste"},
+      "choices": ["c2_inspect", "move"]
+    },
+    "c3_silo": {
+      "intro": [{ "line": "YOU ENTER THE CAVERN OF A MISSILE SILO, DOZENS OF MISSILES TOWERING ABOVE YOU INTO THE DARKNESS.", "sp": "se" }],
+      "exits": {"w": "c6_llc", "s": "c7_shield", "e": "c4_waste"},
+      "choices": ["c3_inspect", "move"]
+    },
+    "c4_waste": {
+      "intro": [{ "line": "YOU ENTER THE WASTE MANAGEMENT ROOM, DOZENS OF BARRELS STACKED ACROSS THE FLOOR.", "sp": "se" }],
+      "exits": {"w": "c3_silo", "n": "c2_coolant"},
+      "choices": ["c4_inspect", "move"]
+    },
+    "c6_llc": {
+      "intro": [{ "line": "YOU FIND YOURSELF IN A STORAGE ROOM, SEVERAL SHELVES FILLED TO THE BRIM WITH VARIOUS CHEMICALS AND DEVICES. SEVERAL GAS CHAMBERS SIT THROUGHOUT THE ROOM.", "sp": "se" }],
+      "exits": {"e": "c3_silo", "n": "c5_control"},
+      "choices": ["c6_inspect", "move"]
+    },
+    "c5_control": {
+      "intro": [{ "line": "YOU STROLL INTO THE CONTROL ROOM, THE CONTROL PANEL AGAINST THE WALL FLICKERING WITH HUNDREDS OF LITTLE LIGHTS.", "sp": "se" }],
+      "exits": {"w": "c8_robotics", "s": "c6_llc", "e": "c1_corridor"},
+      "choices": ["c5_inspect", "move"]
+    },
+    "c7_shield": {
+      "intro": [{ "line": "YOU ENTER THE SHIELDING ROOM, THE CRACKED LEAD WALL SHOWING YEARS OF WEAR.", "sp": "se" }],
+      "exits": {"n": "c3_silo"},
+      "choices": ["c7_inspect", "move"]
+    },
+    "c8_robotics": {
+      "intro": [{ "line": "YOU STEP INTO THE ROBOTICS LAB.", "sp": "se" }],
+      "exits": {"e": "c5_control"},
+      "choices": ["c8_inspect", "move"]
     }
   },
 
@@ -513,7 +563,7 @@
       "text": [{ "line": "YOU PRESS THE BUTTON FOR THE THIRD FLOOR, THE ELEVATOR CLUNKING ALONG AS YOU'RE BROUGHT DEEPER AND DEEPER INTO THE FACILITY \n\nYOU KNOW I'VE BEEN THINKING \n\nWHY ARE WE STILL PIDDLING AROUND WITH MONTHLY MAINTENANCE FOR A FACILITY THAT'S CLEARLY LONG ABANDONED? \n\nAFTER WE FINISH THIS UP, LET'S LOOK AT GETTING OUT OF HERE.", "sp": "se" },
       { "line": "\nTHE ELEVATOR DOOR OPENS. WE'RE HERE, LAST TREK.", "sp": "se" }  
     ],
-      "move_to_room": "c_elevator",
+      "move_to_room": "c0_elevator",
       "leads_to": ["back"]
     },
 
@@ -733,7 +783,59 @@
               "excludes_flag": "b_medical_stock_check",
               "text": [{ "line": "YOU RIFLE THROUGH THE SHELVES, COMPARING THEM TO A SMALL CHECKLIST FOR MEDICAL SUPPLIES ATTACHED TO THE WALL. TRAUMA KITS, CHECK. IODINE TABLETS, CHECK. MORPHINE SYRETTES, CHECK. BANDAGES, CHECK. ANTIBIOTICS, CHECK. SURGICAL KITS, CHECK. EVERYTHING IS ACCOUNTED FOR. BETTER GO PUT THAT INTO THE CLIPBOARD.", "sp": "se" }],
               "leads_to": ["back"]
-             }
+             },
+
+
+
+             "c0_inspect": {
+              "label": "INSPECT",
+              "sp": "de",
+              "text": [{ "line": "THE ELEVATOR IS THE SAME AS IT ALWAYS IS. THREE BUTTONS, BUT WE'RE ALREADY WHERE WE'RE SUPPOSED TO BE AREN'T WE? THE CORRIDOR WAITS IN FRONT OF YOU.", "sp": "se" }],
+              "leads_to": ["back"]
+             },
+
+             "c1_inspect": {
+              "label": "INSPECT",
+              "sp": "de",
+              "text": [{ "line": "THE CORRIDOR IS FLAT AND REMINISCENT OF THE OTHERS. DOORS TO THE EAST AND WEST, ELEVATOR TO THE SOUTH. A DISPLAY GLOWS DIMLY WITH A MAP ON IT, AND YOU'RE REMINDED OF YOUR CHECKLIST.", "sp": "se" }],
+              "leads_to": ["c1_map", "c1_checklist", "back"]
+             },
+            "c1_map": {
+              "label": "VIEW MAP",
+              "sp": "de",
+              "graphic": "map3",
+              "text": [{ "line": "THE MAP SHOWS WHERE YOU ARE ON THE THIRD FLOOR AND GENERAL INFORMATION FOR THE SURROUNDING ROOMS. \nPROCESSING MAP DATA... \nMAP DATA RETRIEVED SUCCESSFULLY.", "sp": "se" },
+              { "line": "C0: ELEVATOR. C1: CORRIDOR. C2: CONTROL ROOM. C3: MISSILE SILO. C4: WASTE DISPOSAL. C5: CONTROL ROOM. C6: LLC STORAGE / MANAGEMENT. C7: RADIATION SHIELDING. C8: ROBOTICS LAB.", "sp": "na" }
+            ],
+              "leads_to": ["back"]
+             },
+            "c1_checklist": {
+            "label": "CHECK CHECKLIST",
+            "sp": "de",
+            "excludes_flag": "c_checklist_done",
+            "text": [
+              { "line": "CURRENT FACILITY LOGS: FLOOR 2 STATUS", "sp": "na" },
+              { "line": "[ ] CYCLE COOLANT CHAMBERS: PENDING", "sp": "se", "excludes_flag": "c_coolant_cycled" },
+              { "line": "[X] CYCLE COOLANT CHAMBERS: COMPLETE", "sp": "se", "requires_flag": "c_coolant_cycled" },
+              { "line": "[ ] INSPECT WARHEADS: PENDING", "sp": "se", "excludes_flag": "c_warhead_inspected" },
+              { "line": "[X] INSPECT WARHEADS: COMPLETE", "sp": "se", "requires_flag": "c_warhead_inspected" },
+              { "line": "[ ] DISPOSE OF WASTE: PENDING", "sp": "se", "excludes_flag": "c_waste_disposed" },
+              { "line": "[X] DISPOSE OF WASTE: COMPLETE", "sp": "se", "requires_flag": "c_waste_disposed" },
+              { "line": "[ ] CYCLE TRITIUM GAS CHAMBERS: PENDING", "sp": "se", 	"excludes_flag": 	"c_gas_cycled" },
+              { "line": "[X] CYCLE TRITIUM GAS CHAMBERS: COMPLETE", 	"sp": 	"se", 	"requires_flag": 	"c_gas_cycled" },
+              { "line": "[ ] VERIFY RADIATION SHIELDING: PENDING", 	"sp": 	"se", 	"excludes_flag": 	"c_shield_inspected" },
+              { "line": "[X] VERIFY RADIATION SHIELDING: COMPLETE", 	"sp": 	"se", 	"requires_flag": 	"c_shield_inspected" },
+              { "line": "ONE FINAL, FINAL SPRINT. THEN I SUPPOSE WE DO IT AGAIN NEXT MONTH, AND THEN THE NEXT MONTH. REPEAT AD NAUSEUM.", "sp": "se" },
+              { "line": "You can check the checklist at any point from the corridor.", "sp": "de" }],
+            "leads_to": ["back"]
+          },
+
+             "c2_inspect": {
+              "label": "INSPECT",
+              "sp": "de",
+              "text": [{ "line": "THE ROOM IS NOTICEABLE COLDER THAN THE REST OF THE FACILITY, THE COOLANT CHAMBERS GLISTENING WITH ICE CRYSTALS AND CONDENSATION WHILE HUMMING ALONG. A TERMINAL GLOWS COLD IN THE CENTER OF THE ROOM.", "sp": "se" }],
+              "leads_to": ["c2_terminal", "", "back"]
+             },
 
 
 
