@@ -842,10 +842,12 @@
               "text": [{ "line": "THE TERMINAL DISPLAYS THE STATUS OF EACH COOLANT CHAMBER, WHICH APPEAR TO BE IN A SORRY STATE.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
               {"line": "THE TERMINAL DISPLAYS THE STATUS OF THE RECENTLY CYCLED COOLANT CHAMBERS, IN RELATIVELY GOOD SHAPE TO THE REST OF THIS HELLHOLE.", "sp": "se", "requires_flag": "c_coolant_cycled" },
              { "line": "COOLANT CHAMBER ONE: 14% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER TWO: 9% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER THREE: 3% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER FOUR: 16% EFFICIENCY. CYCLE RECOMMENDED.", "sp": "na", "excludes_flag": "c_coolant_cycled" },
-             { "line": "COOLANT CHAMBER ONE: 100% EFFICIENCY. COOLANT CHAMBER TWO: 100% EFFICIENCY. COOLANT CHAMBER THREE: 100% EFFICIENCY. ALL COOLANT CHAMBERS FUNCTIONING AT FULL CAPACITY.", "sp": "na", "requires_flag": "c_coolant_cycled" },
-             { "line": "WELL, BETTER GET TO WORK ON THOSE THEN.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
-             { "line": "ALL DONE, NICE AND SHINY AGAIN. BETTER HEAD BACK TO THE CHECKLIST TO MARK THIS ONE OFF.", "sp": "se", "requires_flag": "c_coolant_cycled" }
-            ]
+             { "line": "COOLANT CHAMBER ONE: 100% EFFICIENCY.\nCOOLANT CHAMBER TWO: 100% EFFICIENCY.\nCOOLANT CHAMBER THREE: 100% EFFICIENCY.\nCOOLANT CHAMBER FOUR: 100% EFFICIENCY.", "sp": "na", "requires_flag": "c_coolant_cycled" },
+             { "line": "LOOKS LIKE WE'VE GOT OUR WORK CUT OUT FOR US, BEST GET TO CYCLING THE COOLANT ASAP.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
+             { "line": "VIOLA. COOLANT COOLED-ANT. NAH THAT ONE'S WEAK, NEEDS SOME WORK.", "sp": "se", "requires_flag": "c_coolant_cycled" }
+            ],
+            "leads_to": ["back"]
+          }
 
 
 
