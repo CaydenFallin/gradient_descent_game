@@ -835,7 +835,7 @@
               "sp": "de",
               "text": [{ "line": "THE ROOM IS NOTICEABLE COLDER THAN THE REST OF THE FACILITY, THE COOLANT CHAMBERS GLISTENING WITH ICE CRYSTALS AND CONDENSATION WHILE HUMMING ALONG. A TERMINAL GLOWS COLD IN THE CENTER OF THE ROOM.", "sp": "se" }],
               "leads_to": ["c2_terminal", "", "back"]
-             },
+             }
 
 
 
