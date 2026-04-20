@@ -834,8 +834,18 @@
               "label": "INSPECT",
               "sp": "de",
               "text": [{ "line": "THE ROOM IS NOTICEABLE COLDER THAN THE REST OF THE FACILITY, THE COOLANT CHAMBERS GLISTENING WITH ICE CRYSTALS AND CONDENSATION WHILE HUMMING ALONG. A TERMINAL GLOWS COLD IN THE CENTER OF THE ROOM.", "sp": "se" }],
-              "leads_to": ["c2_terminal", "", "back"]
-             }
+              "leads_to": ["c2_terminal", "c2_coolant", "back"]
+             },
+             "c2_terminal": {
+              "label": "CHECK TERMINAL",
+              "sp": "de",
+              "text": [{ "line": "THE TERMINAL DISPLAYS THE STATUS OF EACH COOLANT CHAMBER, WHICH APPEAR TO BE IN A SORRY STATE.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
+              {"line": "THE TERMINAL DISPLAYS THE STATUS OF THE RECENTLY CYCLED COOLANT CHAMBERS, IN RELATIVELY GOOD SHAPE TO THE REST OF THIS HELLHOLE.", "sp": "se", "requires_flag": "c_coolant_cycled" },
+             { "line": "COOLANT CHAMBER ONE: 14% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER TWO: 9% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER THREE: 3% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER FOUR: 16% EFFICIENCY. CYCLE RECOMMENDED.", "sp": "na", "excludes_flag": "c_coolant_cycled" },
+             { "line": "COOLANT CHAMBER ONE: 100% EFFICIENCY. COOLANT CHAMBER TWO: 100% EFFICIENCY. COOLANT CHAMBER THREE: 100% EFFICIENCY. ALL COOLANT CHAMBERS FUNCTIONING AT FULL CAPACITY.", "sp": "na", "requires_flag": "c_coolant_cycled" },
+             { "line": "WELL, BETTER GET TO WORK ON THOSE THEN.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
+             { "line": "ALL DONE, NICE AND SHINY AGAIN. BETTER HEAD BACK TO THE CHECKLIST TO MARK THIS ONE OFF.", "sp": "se", "requires_flag": "c_coolant_cycled" }
+            ]
 
 
 
