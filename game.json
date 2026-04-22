@@ -847,9 +847,63 @@
              { "line": "VIOLA. COOLANT COOLED-ANT. NAH THAT ONE'S WEAK, NEEDS SOME WORK.", "sp": "se", "requires_flag": "c_coolant_cycled" }
             ],
             "leads_to": ["back"]
+          },
+          "c2_coolant": {
+            "label": "CYCLE COOLANT",
+            "sp": "de",
+            "sets_flag": "c_coolant_cycled",
+            "excludes_flag": "c_coolant_cycled",
+            "text": [
+              {"line": "YOU APPROACH THE COOLANT CHAMBERS ONE BY ONE, THE MURKY, STALE COOLANT FLUID SLOWLY ROTATING IN THE SEMI-TRANSPARENT TUBES. YOU GRAB THE LARGE BYPASS WHEEL ATTACHED TO THE FRONT OF THE DEVICE, TURNING IT SLOWLY AS THE COOLANT DRAINS AND IS CARRIED AWAY THROUGH VARIOUS SNAKING TUBES EMBEDDED INTO THE GROUND. \nONCE THE TANK IS EMPTY, YOU QUICKLY INPUT A SERIES OF COMMANDS ON THE DEVICE AND NEW, WHITE AND CRISP COOLANT IS DRAWN INTO THE TUBE AGAIN. \nIT'S A TEDIOUS PROCESS, WAITING FOR EACH TUBE TO FULLY EMPTY AND REFILL BEFORE MOVING TO THE NEXT ONE BUT THE MESMERIZING CYCLE OF LIQUID DYNAMICS HELPS PUTS YOU ALMOST INTO A TRANCE AND YOU'RE FINISHED BEFORE YOU KNOW IT. YOU STEP BACK, THE ROOM NOTICEABLY COLDER. JOB WELL DONE.", "sp": "se"}
+            ],
+            "leads_to": ["back"]
+          },
+
+
+          "c3_inspect": {
+            "label": "INSPECT",
+            "sp": "de",
+            "text": [
+              {"line": "THE ROOM IS FRIGHTENINGLY BIG, THE LARGEST SPACE YOU'VE SEEN ALL DAY. A BREEZE REVERBERATES OFF THE WALLS, A WHISPER TRANSFORMING INTO A HOWL AS IT BOUNDS AND LEAPS FROM STEEL WALL TO STEEL WALL, ECHOING OFF ITSELF REPEATEDLY. \nTHE MISSILES STAND LIKE SENTINELS, THE WEIGHT OF THEIR POWER BURYING ITS WAY TO YOUR CORE. \nA PUNY TERMINAL STANDS ALONE IN THE ROOM, BUT THE WARHEADS ALMOST COWER BEFORE IT.", "sp": "se"}
+            ],
+            "leads_to": ["c3_terminal","back"]
+          },
+          "c3_terminal": {
+            "label": "INSPECT TERMINAL",
+            "sp": "de",
+            "text": [
+              {"line": "THE DEVICE GLOWS A DIM RED. IT AWAITS YOUR INPUT.", "sp": "se"}
+            ],
+            "leads_to": ["c3_login","back"]
+          },
+          "c3_login": {
+            "label": "LOGIN",
+            "sp": "de",
+            "text": [
+              {"line": "YOU CLACK UNCONSCIOUSLY AT THE KEYS, INPUTTING YOUR LOGIN DETAILS.", "sp": "se"},
+              {"line": "K-LEVEL BIOS V.4.23 - INITIALIZING...\n\n", "sp": "na"},
+              {"line": "Welcome, [[MAINTANANCE OPERATOR]]. Permissions limited due to low-level credentials. Please select from the options below.", "sp": "na"},
+              {"line": "THE \"OPTIONS\" BELOW INCLUDE AND ARE LIMITED TO: WARHEAD INSPECTION.", "sp": "se", "excludes_flag": "c_warhead_inspected"},
+              {"line": "THERE AREN'T ANY OPTIONS. GUESS WE DID THE ONE THING YOU CAN DO WITH THIS TERMINAL. AT LEAST WITH THIS LEVEL OF PERMISSIONS.", "sp": "se", "requires_flag": "c_warhead_inspected"}
+            ],
+            "leads_to": ["c3_warhead_inspect","back"]
+          },
+          "c3_warhead_inspect": {
+            "label": "",
+            "sp": "de",
+            "excludes_flag": "c_warhead_inspected",
+            "sets_flag": "c_warhead_inspected",
+            "text": [
+              {"line": "AS YOU HIT THE CONFIRM KEY ON THE INSPECT OPTION AN ENORMOUS MECHANICAL CLAW DESCENDS FROM THE DARKNESS, PREVIOUSLY CLOAKED IN THE VOID ABOVE. IT WRAP AROUND ONE OF THE WARHEADS WITH SWIFTNESS AND PRECISION, LIFTING IT UP AS SEVERAL MANDIBLES BRANCH OFF OF THE CLAW ARM, FINDING THEIR WAY TO SLOTS AND GROOVES THAT THEY SNAKE THEIR WAY INTO AS IF THEY WERE DESIGNED FOR THOSE HOLES. THE SCREEN THEN BEGINS TO LIGHT UP WITH DATA.", "sp": "se"},
+              {"line": "Performing random warhead inspection... \nSystem Bus Connection Established... \nPerforming Diagnostics... \nPerforming Diagnostics... \n..........\n\nWARNING\nWARNING\nWARNING \n\nUNIT STATUS CRITICAL. PLEASE RETREAT BEHIND RADIATION SHIELD C7 AND DIAL YOUR EMERGENCY LINE IMMEDIATELY. \n\nCORE FLUX: 74,239 CPS \nHE SURFACE VOLATILITY: 88% \nA-E PARTICULATE: 1,200,000 CPM \nAMBIENT IONIZATION: 4,800 PPM \n\nUNSAFE LEVELS OF RADIATION. PLEASE CONTACT EMERGENCY SERVICES IMMEDIATELY AND RETREAT BEHIND RADIATION SHIELD C7.", "sp": "na"},
+              {"line": "AND FOR SOME REASON I HAVE A SNEAKING SUSPICION THAT WE'RE GOING TO BE ALRIGHT. I MEAN I CAN'T IMAGINE CANCER IS A TOP CONCERN OF OURS. JUST CROSS IT OFF THE LIST AND MOVE ON, IF ANYTHING COULD BE DONE IT WOULD HAVE BEEN DONE AGES AGO. PROTOCOL ISN'T THE SOLUTION FOR THIS PROBLEM.", "sp": "se"}
+
+            ],
+            "leads_to": ["back"]
           }
 
 
+          
 
   }
 }
