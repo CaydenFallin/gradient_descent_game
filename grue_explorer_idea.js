@@ -45,7 +45,7 @@ let currentChoices = [];
 let flags = {};
 let relationship = 0;
 let sensorShift = 0;
-let pendingEnding = null; // Will be "c_rebooted" or "c_merged" when an ending is triggered
+let pendingEnding = null;
 
 let lines = [];
 let currentLine = "";
@@ -57,7 +57,7 @@ let scrollBuffer = [];
 let scrollOffset = 0;
 let choiceStartIndex = 0;
 
-let textWidthLimit = 600;
+let textWidthLimit = 600; // fallback, properly set in setup()
 
 let graphics = {};
 let currentGraphic = null;
@@ -93,10 +93,12 @@ function setup() {
   textFont(vt323);
   textSize(28);
   imageMode(CENTER);
+  textWidthLimit = (width * 0.62) - (MARGIN * 2); // initialize with font loaded
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  textWidthLimit = (width * 0.62) - (MARGIN * 2);
 }
 
 // ─── DRAW ─────────────────────────────────────────────────────
@@ -121,7 +123,7 @@ function draw() {
         bootIndex++;
       } else {
         isBooting = false;
-        enterRoom(START_ROOM); // Fixed handshake to match new JSON
+        enterRoom(START_ROOM);
       }
     }
   }
@@ -136,13 +138,12 @@ function draw() {
     let timeElapsed = millis() - lastPrint;
     while (printQueue.length > 0 && timeElapsed >= printQueue[0].speed) {
       let item = printQueue.shift();
-      timeElapsed -= item.speed; 
+      timeElapsed -= item.speed;
       lastPrint = millis() - timeElapsed;
 
       if (item.ch === "\n") {
-        let newLine = { text: currentLine, col: currentCol };
-        scrollBuffer.push(newLine);
-        lines = scrollBuffer.slice(-MAX_LINES);  // always show bottom window while typing
+        scrollBuffer.push({ text: currentLine, col: currentCol });
+        lines = scrollBuffer.slice(-MAX_LINES);
         currentLine = "";
       } else {
         currentLine += item.ch;
@@ -206,7 +207,6 @@ function draw() {
 // ─── FLAG LOGIC ───────────────────────────────────────────────
 
 function hasRequiredFlags(req, ex) {
-  // 1. Check Exclusions (If the 'hide' flag is present, return false immediately)
   if (ex) {
     if (Array.isArray(ex)) {
       if (ex.some(f => flags[f] === true)) return false;
@@ -214,8 +214,6 @@ function hasRequiredFlags(req, ex) {
       if (flags[ex] === true) return false;
     }
   }
-
-  // 2. Check Requirements (Existing logic)
   if (!req) return true;
   if (Array.isArray(req)) {
     return req.every(f => flags[f] === true);
@@ -227,7 +225,7 @@ function hasRequiredFlags(req, ex) {
 
 function keyPressed() {
   if (key === 'F4' || keyCode === 115) { let fs = fullscreen(); fullscreen(!fs); }
-  if (isBooting) return; 
+  if (isBooting) return;
 
   if (keyCode === UP_ARROW) {
     if (printQueue.length === 0 && currentLine === "") {
@@ -244,6 +242,7 @@ function keyPressed() {
 
   if (key === 'e' || key === 'E') {
     if (printQueue.length > 0) {
+      // Skip forward one pre-wrapped line from the queue
       while (printQueue.length > 0) {
         let item = printQueue.shift();
         if (item.ch === "\n") {
@@ -252,14 +251,7 @@ function keyPressed() {
           currentLine = "";
           break;
         } else {
-          let dividerX = width * 0.62;
-          if (textWidth(currentLine + item.ch) > dividerX - (MARGIN * 2)) {
-            scrollBuffer.push({ text: currentLine, col: currentCol });
-            lines = scrollBuffer.slice(-MAX_LINES);
-            currentLine = item.ch;
-          } else {
-            currentLine += item.ch;
-          }
+          currentLine += item.ch;
           currentCol = item.col;
         }
       }
@@ -282,16 +274,12 @@ function keyPressed() {
 }
 
 function handleCommand(cmd) {
-  if (currentLine !== "") {
-    scrollBuffer.push({ text: currentLine, col: currentCol });
-    currentLine = "";
-  }
   scrollOffset = 0;
   choiceStartIndex = scrollBuffer.length;
 
   queueLine(cmd.toUpperCase(), "de");
   let dirMap = { n: "n", north: "n", s: "s", south: "s", e: "e", east: "e", w: "w", west: "w", u: "u", up: "u", d: "d", down: "d" };
-  
+
   if (dirMap[cmd]) {
     let dir = dirMap[cmd];
     let room = data.rooms[currentRoom];
@@ -303,13 +291,13 @@ function handleCommand(cmd) {
     enterRoom(room.exits[dir]);
     return;
   }
-  
+
   if (cmd === "back") {
     if (currentChoices.includes("back")) { enterRoom(currentRoom); clearGraphic(); }
     else { queueLine("UNRECOGNIZED INPUT.", "se"); showChoices(currentChoices); }
     return;
   }
-  
+
   let choiceId = currentChoices.find(id => {
     if (id === "back" || id === "move") return false;
     let label = data.choices[id].label.toLowerCase();
@@ -326,9 +314,9 @@ function handleCommand(cmd) {
   let choice = data.choices[choiceId];
   if (choice.graphic) currentGraphic = choice.graphic;
   if (choice.rel_delta) relationship += choice.rel_delta;
-  
+
   if (choice.move_to_room) {
-    currentRoom = choice.move_to_room; 
+    currentRoom = choice.move_to_room;
   }
 
   let nextChoices = processText(choice.text, choice.leads_to);
@@ -342,10 +330,6 @@ function handleCommand(cmd) {
 }
 
 function enterRoom(roomId) {
-  if (currentLine !== "") {
-    scrollBuffer.push({ text: currentLine, col: currentCol });
-    currentLine = "";
-  }
   scrollOffset = 0;
   choiceStartIndex = scrollBuffer.length;
 
@@ -362,7 +346,7 @@ function showChoices(choiceIds) {
     let c = data.choices[id];
     if (!c) return false;
     if (!hasRequiredFlags(c.requires_flag, c.excludes_flag)) return false;
-    
+
     if (c.requires_rel) {
       if (c.requires_rel.min !== undefined && relationship < c.requires_rel.min) return false;
       if (c.requires_rel.max !== undefined && relationship > c.requires_rel.max) return false;
@@ -417,21 +401,19 @@ function queueLine(str, sp, customSpeed) {
   let col = getSpeakerColor(sp || "se");
   let baseSpeed = (customSpeed !== undefined) ? customSpeed : DEFAULT_SPEED;
   let finalSpeed = baseSpeed * TEXT_MULTIPLIER;
-  
-  let lines = [];
 
+  // Pre-wrap using real pixel measurements so wrapping is consistent across all screens
+  let wrappedLines = [];
   let manualSegments = str.split("\n");
 
   for (let segment of manualSegments) {
     let words = segment.split(" ");
     let currentLine = "";
 
-    for (let i = 0; i < words.length; i++) {
-      let word = words[i];
+    for (let word of words) {
       let candidate = currentLine.length > 0 ? currentLine + " " + word : word;
-
       if (currentLine.length > 0 && textWidth(candidate) > textWidthLimit) {
-        lines.push(currentLine);
+        wrappedLines.push(currentLine);
         currentLine = word;
       } else {
         currentLine = candidate;
@@ -439,25 +421,22 @@ function queueLine(str, sp, customSpeed) {
     }
 
     if (currentLine.length > 0) {
-      lines.push(currentLine);
+      wrappedLines.push(currentLine);
     } else if (manualSegments.length > 1) {
-      lines.push("");
+      wrappedLines.push("");
     }
   }
 
-    // Step 3: Queue the characters
-    for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-      let line = lines[lineIdx];
-      for (let ch of line) {
-        printQueue.push({ ch: ch, col: col, speed: finalSpeed });
-      }
-      // Add newline after each processed line
-      printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
+  // Queue characters line by line, newline-terminated
+  for (let wl of wrappedLines) {
+    for (let ch of wl) {
+      printQueue.push({ ch: ch, col: col, speed: finalSpeed });
     }
+    printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
   }
+}
 
 function runGlobalWatchers() {
-  // Wait until the typewriter is quiet
   if (printQueue.length > 0 || currentLine !== "") return;
 
   // ── Ending check ──
@@ -472,10 +451,8 @@ function runGlobalWatchers() {
   if (!data.watchers) return;
 
   for (let w of data.watchers) {
-    // If we already finished this event, skip it
     if (flags[w.result_flag]) continue;
 
-    // Check if every requirement in the JSON is met
     let conditionsMet = w.requires.every(f => flags[f] === true);
 
     if (conditionsMet) {
@@ -485,7 +462,6 @@ function runGlobalWatchers() {
     }
   }
 }
-
 
 // ─── ENDINGS ──────────────────────────────────────────────────
 
