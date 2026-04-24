@@ -53,8 +53,9 @@ let currentCol;
 let printQueue = [];
 let lastPrint = 0;
 let inputBuffer = "";
-let scrollBuffer = [];   // full line history of the current choice, never trimmed
-let scrollOffset = 0;    // 0 = bottom (default), positive = scrolled up
+let scrollBuffer = [];
+let scrollOffset = 0;
+let choiceStartIndex = 0;
 
 let graphics = {};
 let currentGraphic = null;
@@ -151,9 +152,11 @@ function draw() {
   }
 
   // Render text
-  let maxScroll = max(0, scrollBuffer.length - MAX_LINES);
+  let choiceLines = scrollBuffer.slice(choiceStartIndex);
+  let maxScroll = max(0, choiceLines.length - MAX_LINES);
   let clampedOffset = constrain(scrollOffset, 0, maxScroll);
-  let visibleStart = maxScroll - clampedOffset;
+  let visibleStart = choiceStartIndex + (choiceLines.length - MAX_LINES - clampedOffset + max(0, MAX_LINES - choiceLines.length));
+  visibleStart = constrain(visibleStart, choiceStartIndex, scrollBuffer.length);
   let visibleLines = scrollBuffer.slice(visibleStart, visibleStart + MAX_LINES);
 
   for (let i = 0; i < visibleLines.length; i++) {
@@ -161,7 +164,6 @@ function draw() {
     fill(c.r, c.g, c.b);
     text(visibleLines[i].text, MARGIN, MARGIN + i * LINE_H);
   }
-  // Only render currentLine when at the bottom (not scrolled up mid-type)
   if (clampedOffset === 0) {
     if (currentCol) fill(currentCol.r, currentCol.g, currentCol.b);
     text(currentLine, MARGIN, MARGIN + visibleLines.length * LINE_H);
@@ -222,12 +224,14 @@ function keyPressed() {
 
   if (keyCode === UP_ARROW) {
     if (printQueue.length === 0 && currentLine === "") {
-      scrollOffset = constrain(scrollOffset + 1, 0, max(0, scrollBuffer.length - MAX_LINES));
+      let choiceLines = scrollBuffer.slice(choiceStartIndex);
+      scrollOffset = constrain(scrollOffset + 1, 0, max(0, choiceLines.length - MAX_LINES));
     }
     return;
   }
   if (keyCode === DOWN_ARROW) {
-    scrollOffset = constrain(scrollOffset - 1, 0, max(0, scrollBuffer.length - MAX_LINES));
+    let choiceLines = scrollBuffer.slice(choiceStartIndex);
+    scrollOffset = constrain(scrollOffset - 1, 0, max(0, choiceLines.length - MAX_LINES));
     return;
   }
 
@@ -236,16 +240,15 @@ function keyPressed() {
       while (printQueue.length > 0) {
         let item = printQueue.shift();
         if (item.ch === "\n") {
-          lines.push({ text: currentLine, col: currentCol });
-          if (lines.length > MAX_LINES) lines.shift();
+          scrollBuffer.push({ text: currentLine, col: currentCol });
+          lines = scrollBuffer.slice(-MAX_LINES);
           currentLine = "";
-          break; // Stop at one line
+          break;
         } else {
           let dividerX = width * 0.62;
-          let textWidthLimit = dividerX - (MARGIN * 2);
-          if (textWidth(currentLine + item.ch) > textWidthLimit) {
-            lines.push({ text: currentLine, col: currentCol });
-            if (lines.length > MAX_LINES) lines.shift();
+          if (textWidth(currentLine + item.ch) > dividerX - (MARGIN * 2)) {
+            scrollBuffer.push({ text: currentLine, col: currentCol });
+            lines = scrollBuffer.slice(-MAX_LINES);
             currentLine = item.ch;
           } else {
             currentLine += item.ch;
@@ -273,7 +276,7 @@ function keyPressed() {
 
 function handleCommand(cmd) {
   scrollOffset = 0;
-  scrollBuffer = [];
+  choiceStartIndex = scrollBuffer.length;
 
   queueLine(cmd.toUpperCase(), "de");
   let dirMap = { n: "n", north: "n", s: "s", south: "s", e: "e", east: "e", w: "w", west: "w", u: "u", up: "u", d: "d", down: "d" };
@@ -327,7 +330,7 @@ function handleCommand(cmd) {
 
 function enterRoom(roomId) {
   scrollOffset = 0;
-  scrollBuffer = [];
+  choiceStartIndex = scrollBuffer.length;
 
   currentRoom = roomId;
   let room = data.rooms[roomId];
@@ -480,6 +483,7 @@ function runGlobalWatchers() {
 
 function triggerEndingReboot() {
   lines = [];
+  scrollBuffer = [];
   currentLine = "";
   printQueue = [];
   queueLine("ENDING A ACHIEVED", "na");
@@ -488,6 +492,7 @@ function triggerEndingReboot() {
 
 function triggerEndingMerge() {
   lines = [];
+  scrollBuffer = [];
   currentLine = "";
   printQueue = [];
   queueLine("ENDING B ACHIEVED", "se");
