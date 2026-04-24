@@ -57,6 +57,8 @@ let scrollBuffer = [];
 let scrollOffset = 0;
 let choiceStartIndex = 0;
 
+let textWidthLimit = 600;
+
 let graphics = {};
 let currentGraphic = null;
 let rotationAngle = 0;
@@ -103,7 +105,7 @@ function draw() {
   background(5, 10, 5);
 
   let dividerX = width * 0.62;
-  let textWidthLimit = dividerX - (MARGIN * 2);
+  textWidthLimit = dividerX - (MARGIN * 2);
   let monitorX = dividerX + 30;
   let monitorY = 50;
   let monitorSize = min(width - monitorX - 40, height * 0.4);
@@ -416,10 +418,8 @@ function queueLine(str, sp, customSpeed) {
   let baseSpeed = (customSpeed !== undefined) ? customSpeed : DEFAULT_SPEED;
   let finalSpeed = baseSpeed * TEXT_MULTIPLIER;
   
-  const CHAR_LIMIT = 90;
   let lines = [];
 
-  // Step 1: Split by existing manual newlines first
   let manualSegments = str.split("\n");
 
   for (let segment of manualSegments) {
@@ -428,40 +428,33 @@ function queueLine(str, sp, customSpeed) {
 
     for (let i = 0; i < words.length; i++) {
       let word = words[i];
+      let candidate = currentLine.length > 0 ? currentLine + " " + word : word;
 
-      // Step 2: Normal wrap logic within this segment
-      if (currentLine.length > 0 && currentLine.length + 1 + word.length > CHAR_LIMIT) {
+      if (currentLine.length > 0 && textWidth(candidate) > textWidthLimit) {
         lines.push(currentLine);
         currentLine = word;
       } else {
-        if (currentLine.length > 0) {
-          currentLine += " " + word;
-        } else {
-          currentLine = word;
-        }
+        currentLine = candidate;
       }
     }
-    
-    // Push the remaining part of the segment
+
     if (currentLine.length > 0) {
       lines.push(currentLine);
     } else if (manualSegments.length > 1) {
-      // Handles cases where you have double newlines (\n\n) 
-      // by pushing an empty string to represent an empty line
-      lines.push(""); 
+      lines.push("");
     }
   }
 
-  // Step 3: Queue the characters
-  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-    let line = lines[lineIdx];
-    for (let ch of line) {
-      printQueue.push({ ch: ch, col: col, speed: finalSpeed });
+    // Step 3: Queue the characters
+    for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+      let line = lines[lineIdx];
+      for (let ch of line) {
+        printQueue.push({ ch: ch, col: col, speed: finalSpeed });
+      }
+      // Add newline after each processed line
+      printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
     }
-    // Add newline after each processed line
-    printQueue.push({ ch: "\n", col: col, speed: finalSpeed });
   }
-}
 
 function runGlobalWatchers() {
   // Wait until the typewriter is quiet
