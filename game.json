@@ -978,7 +978,7 @@
             "leads_to": ["back"]
           },
 
-          "c6_inpect": {
+          "c6_inspect": {
             "label": "INSPECT",
             "sp": "de",
             "text": [
