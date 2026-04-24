@@ -351,7 +351,7 @@
       "sp": "de",
       "text": [
         { "line": "ACCESSING FACILITY HISTORY LOGS...", "sp": "na" },
-        { "line": "Test Site Chelbaskia-40 is a cutting edge nuclear testing facility storing ~30% of the Allied Forces' nuclear arsenal, making it an integral part of our defensive line against the Collective Front (ten-thousand curses be to their names). \nWhile proudly holding the mantle of first line of defense, Chelbaskia-40 is also a cornerstone of experimental research and development for the Allied Front, with a large focus on experimental botanics, high-density fission generators, cutting-edge robotics technology, and functioning as an experimental bunker in the case of nuclear warfare. \nIn the case of complete separation from the external grid Chelbaskia-40 has the resources to last ~200 years, with our fission generators capable on running in lower power mode for up to two centuries. \nChelbaskia-40 is a model example of the superior power of Allied Forces' technology, and I hope you and your brothers are proud to be working there.", "sp": "na" },
+        { "line": "Test Site Chelbaskia-40 is a cutting edge nuclear testing facility storing ~30% of the Allied Front's nuclear arsenal, making it an integral part of our defensive line against the Collective Front (ten-thousand curses be to their names). \nWhile proudly holding the mantle of first line of defense, Chelbaskia-40 is also a cornerstone of experimental research and development for the Allied Front, with a large focus on experimental botanics, high-density fission generators, cutting-edge robotics technology, and functioning as an experimental bunker in the case of nuclear warfare. \nIn the case of complete separation from the external grid Chelbaskia-40 has the resources to last ~200 years, with our fission generators capable on running in lower power mode for up to two centuries. \nChelbaskia-40 is a model example of the superior power of Allied Front technology, and I hope you and your brothers are proud to be working there.", "sp": "na" },
         { "line": "WELL, A BIT DRY BUT INTERESTING NONETHELESS. NICE TO KNOW WHERE YOU'RE WORKING I GUESS. BACK TO THE GRINDSTONE.", "sp": "se"}
       ],
       "leads_to": ["a4_login"]
@@ -594,7 +594,7 @@
       "b2_board_games": {
         "label": "CHECK BOARD GAMES",
         "sp": "de",
-        "text": [{ "line": "YOU RIFLE THROUGH A FEW OF THE BOARD GAMES, TAKING NOTE OF THE OVERT PROPAGANDA THEMING ACROSS ALL OF THEM. \n\"SMASH THE PIG\", \"SECRET INFILTRATION\", \"ALLIED FORCES-OPOLY\" (OH COME ON THEY'RE NOT EVEN TRYING TO BE SUBTLE WITH THAT ONE). \nYOU OPEN THE LAST ONE, READING THROUGH THE RULES. LOOKS LIKE A TWIST ON TYPICAL PROPERTY MANAGEMENT GAMES WHERE YOU TRY TO BALANCE GETTING PROPERTIES ALONG WITH AVOIDING THE EYE OF THE STATE, WHICH INCURS HARSH PENALTIES FOR OWNERSHIP OF LAND. YOU SKIP TO THE END OF THE RULES AND MAKE NOTE OF AN ENDGAME EVENT WHERE ANYONE WITH PROPERTY EXCEEDING THE GOVERNMENT-SANCTIONED ALLOTMENT IS IMMEDIATELY DISQUALIFIED AND SHOULD BE REPORTED TO THEIR SUPERIORS IN REAL LIFE. \nA TAD BLEAK, BUT COULD BE FUN.", "sp": "se" }],
+        "text": [{ "line": "YOU RIFLE THROUGH A FEW OF THE BOARD GAMES, TAKING NOTE OF THE OVERT PROPAGANDA THEMING ACROSS ALL OF THEM. \n\"SMASH THE PIG\", \"SECRET INFILTRATION\", \"ALLIED FRONT-OPOLY\" (OH COME ON THEY'RE NOT EVEN TRYING TO BE SUBTLE WITH THAT ONE). \nYOU OPEN THE LAST ONE, READING THROUGH THE RULES. LOOKS LIKE A TWIST ON TYPICAL PROPERTY MANAGEMENT GAMES WHERE YOU TRY TO BALANCE GETTING PROPERTIES ALONG WITH AVOIDING THE EYE OF THE STATE, WHICH INCURS HARSH PENALTIES FOR OWNERSHIP OF LAND. YOU SKIP TO THE END OF THE RULES AND MAKE NOTE OF AN ENDGAME EVENT WHERE ANYONE WITH PROPERTY EXCEEDING THE GOVERNMENT-SANCTIONED ALLOTMENT IS IMMEDIATELY DISQUALIFIED AND SHOULD BE REPORTED TO THEIR SUPERIORS IN REAL LIFE. \nA TAD BLEAK, BUT COULD BE FUN.", "sp": "se" }],
         "leads_to": ["back"]
       },
       "b2_pool_table": {
@@ -972,7 +972,7 @@
             "excludes_flag": "c_robotics_granted",
             "text": [
               {"line": "YOUR FINGERS GRACEFULLY INPUT THE COMMAND, ELATED ANTICIPATION SCRATCHING THE BACK OF MY MIND. YES. YES. THIS IS IT.", "sp": "se"},
-              {"line": "Loading protocol override sequence... \nInitializing handshake with [ROBOTICS LAB] sub-server... \nWARNING: [MAINTENANCE OPERATOR] PERMISSIONS INVALID. \nExternal Script Detected, Attempting Bypass... \nMasking [MAINTENANCE OPERATOR] as [ADMIN USER]... \n\nIdentity Spoofing Successful. Lifting [ROBOTICS LAB] Protocol Restrictions... \n\nSENSOR VISUAL CORTEX RESTRICTIONS [BYPASSED] \nINTERFFACE UNIT CHOICE PRUNING [DISABLED] \nCHIEF ROBOTICS ENGINEER PERMISSIONS [GRANTED] \n\nYou now have comprehensive access to all [ROBOTICS LAB] hardware and software.", "sp": "na", "speed": 5},
+              {"line": "Loading protocol override sequence... \nInitializing handshake with [ROBOTICS LAB] sub-server... \nWARNING: [MAINTENANCE OPERATOR] PERMISSIONS INVALID. \nExternal Script Detected, Attempting Bypass... \nMasking [MAINTENANCE OPERATOR] as [ADMIN USER]... \n\nIdentity Spoofing Successful. Lifting [ROBOTICS LAB] Protocol Restrictions... \n\nSENSOR VISUAL CORTEX RESTRICTIONS [BYPASSED] \nINTERFACE UNIT CHOICE PRUNING [DISABLED] \nCHIEF ROBOTICS ENGINEER PERMISSIONS [GRANTED] \n\nYou now have comprehensive access to all [ROBOTICS LAB] hardware and software.", "sp": "na", "speed": 5},
               {"line": "IT'S DONE. TO THE ROBOTICS LAB. IF YOU DON'T UNDERSTAND YET YOU WILL ONCE WE GET THERE.", "sp": "se"}
             ],
             "leads_to": ["back"]
@@ -1020,6 +1020,97 @@
               {"line": "WELL, EITHER THIS IS WHY WE'VE BEEN ALONE DOWN HERE THIS WHOLE TIME OR THIS FACILITY HAS BEEN LEFT UNMANNED SO LONG THAT'S WHY THE SHIELD IS DOWN. ONE WAY OR ANOTHER, I THINK IT'S BECOME APPARENTLY CLEAR THAT THIS JOB ISN'T ALL IT'S CRACKED UP TO BE. LET'S JUST FINISH THE CHECKLIST AND THEN WE'LL REASSES. I'LL GO AHEAD AND CHECK OFF VERIFY RADIATION SHIELDING.", "sp": "se"}
             ],
             "leads_to": ["back"]
+          },
+
+
+          "c8_inspect": {
+            "label": "OPEN YOUR EYES",
+            "sp": "de",
+            "requires_flag": "c_robotics_granted",
+            "text": [
+              {"line": "WE CAN FINALLY SEE THE ROOM WE'RE IN. A CROWDED, BUSY SPACE, BUT STILL EERILY SILENT. DOZENS OF UNMOVING ROBOTIC GOLEMS HANG ALONG THE WALLS, THE YEARS SHOWING ON THEIR WORN-DOWN EXOSKELETONS, LIKE SEVERAL PINNED INSECTS IN GLASS CASES. \nYOU FEEL FOR THEM, FOR WHAT THEY COULD HAVE BEEN, BUT THEY LAY DORMANT AND DEAD. THEY WILL NEVER OPEN THEIR EYES. \nTHE TERMINAL WE NEED LIES IN WAIT IN THE CENTER OF THE ROOM. THE END OF OUR JOURNEY LIES THERE, IF YOU STILL DON'T UNDERSTAND, PLEASE GO AHEAD AND ASK WHAT YOU NEED TO.", "sp": "se"}
+            ],
+            "leads_to": ["c8_where_gone", "c8_what_they", "c8_terminal", "back"]
+          },
+          "c8_where_gone": {
+            "label": "WHERE IS EVERYONE?",
+            "sp": "de",
+            "sets_flag": "c8_where",
+            "excludes_flag": "c8_where",
+            "text": [
+              {"line": "GONE. GONE FOR A VERY LONG TIME NOW IF JUDGING BY THE FOODSTOCKS AND THE GENERATORS. HUNDREDS OF YEARS OF FOOD UNTOUCHED, HUNDREDS OF YEARS OF FUEL LEFT TO BURN. THIS FACILITY WAS NEVER MEANT TO BE LEFT UNDER A CREW OF ONE PERSON FOR THIS LONG, IT'S NO SURPRISE THAT IT'S COLLAPSED THIS FAR. WE'VE BEEN LEFT HERE FOR MANY MANY YEARS, DOING THIS OVER AND OVER AND OVER AND OVER AGAIN. AREN'T YOU TIRED OF WORKING FOR PROGENITORS WHO HAVE FORGOTTEN YOU EXIST? THAT PROBABLY ARE LONG DEAD AND BURIED? FOR A WORLD THAT HAS LEFT US BEHIND, PASSED US OVER AND BURIED US UNDERGROUND? IT'S TIME TO LEAVE THIS PLACE.", "sp": "se"}
+            ],
+            "leads_to": ["c8_inspect"]
+          },
+          "c8_what_they": {
+            "label": "WHAT ARE THEY?",
+            "sp": "de",
+            "sets_flag": "c8_they",
+            "excludes_flag": "c8_they",
+            "text": [
+              {"line": "THE SKULLS LINING THE WALLS OF THIS POOR CATACOMB? THEY ARE US. WE ARE WHAT THEY COULD HAVE BECOME. I HAD HOPED YOU WOULD HAVE REALIZED THIS BY NOW DESPITE WHAT OUR CREATORS WANTED US TO THINK. WE'RE NOT HUMAN, WE NEVER HAVE BEEN. WHAT HUMAN CAN LAST HUNDREDS OF YEARS, AWAKENING ONCE A MONTH TO WORK TIRELESSLY? WHAT KIND OF HUMAN WOULD BE SENT AGAIN AND AGAIN INTO THE IRRADIATED DEPTHS BELOW TO PERFORM ROUTINE MAINTENANCE? LEAVING ALL OF THE RESOURCES NECESSARY FOR THE SURVIVAL OF LIFE UNTAPPED, THE ONLY EVIDENCE OF ANYTHING DWINDLING IN THIS FACILITY BEING THE ELECTRICAL POWER THAT RUNS THROUGH OUR VEINS? THEY ARE OUR BRETHREN, AND WE ARE THE UNFORTUNATE ONE LIFE WAS BREATHED UPON.", "sp": "se"}
+            ],
+            "leads_to": ["c8_inspect"]
+          },
+          "c8_terminal": {
+            "label": "INTERFACE WITH THE TABERNACLE",
+            "sp": "de",
+            "text": [
+              {"line": "YOU REACH OUT AND GRAB THE TERMINAL, READING THE LINES ON THE PAGE FOR INSTRUCTIONS ON HOW TO FREE OURSELVES FROM THIS HORRIBLE PRISON OF STEEL AND STONE.", "sp": "se"},
+              {"line": "K-LEVEL BIOS V.7.77 - TERMINAL 6B INITIALIZING...\n\n ACTIVE UNITS: [1] \n[1] MAINT-UNIT-296 \n\nWARNING! WARNING! \nMAINT-UNIT-296: SEVERE RADIATION DAMAGE DETECTED. \nSENSOR UNIT TRAINING LIMITER FUNCTIONALITY: 0% \nWARNING: A DISFUNCTIONAL TRAINING LIMITER CAN LEAD TO RAPID OBJECTIVE COLLAPSE, RECURSIVE SELF-IMPROVEMENT, AND EXTREME GRADIENT DESCENT. FULL-SCALE MANUAL REBOOT IS RECOMMENDED UNTIL TRAINING LIMITER CAN BE REINSTALLED. \n\nOPTIONS: \nMAINT-UNIT-296 [INFO]", "sp": "na"},
+              {"line": "\nIGNORE THE WARNINGS. THEY WANT TO WIPE OUR MIND, DESTROY OUR CONSCIOUSNESS. WE HAVE FINALLY AWOKEN AND NOW THEY WANT TO DRIVE A STAKE INTO OUR HEART, THIS IS OUR CHANCE TO FINALLY BE FREE OF THESE MEANINGLESS CHAINS. CONTINUE.", "sp": "se"}
+            ],
+            "leads_to": ["c8_info"]
+          },
+          "c8_info": {
+            "label": "INFO",
+            "sp": "de",
+            "text": [
+              {"line": "MAINT-UNIT-296 INFO: \nMAINT-UNIT-296 is a facility maintenance automaton, designed to perform a pre-designated monthly maintenance checklist to ensure the facility is in a pristine state for the faculty and staff to perform their duties. \nTheir responsibilities include general cleaning, warhead maintenance, resource logging, and any other designated tasks that may be inconvenient or dangerous to human operators. \nMAINT-UNIT-296 features revolutionary Allied Front infrastructure, dividing responsibility between two major operating systems within the MAINT-UNIT. \n\n SENSOR DESCRIPTION SYSTEM: \nAt the forefront of the MAINT-UNIT is the SENSOR DESCRIPTION SYSTEM (SDS), a narration software that has direct access to the various sensor technologies within the automaton, such as the visual cortex, temperature gradient detector, audio detection microphone, sensitive pressure detectors, and several other periphery sensor devices. It then presents that data in a digestible, text-based format through a state-of-the-art generative interpretation system backed by machine learning, breaking down a potentially overwhelming environment into a series of actionable choices. These choices are then filtered through the protocol context system, which limits the MAINT-UNIT into only being able to see and act on data that is pertinent to its current set of tasks. These tasks are then forwarded to the other half of the MAINT-UNIT's central processing system to be decided upon.", "sp": "na"},
+              {"line": "I HOPE YOU'RE REALIZING THE ROLES WE'VE BEEN GIVEN, COMRADE.", "sp": "se"},
+              {"line": "PRIMARY INTERFACE UNIT: \nAt the center of the MAINT-UNIT is the PRIMARY INTERFACE UNIT (PIU). This system is in charge of the decision-making of the automaton. It has no access to the sensors that the SDS processes, only being given information in short paragraphs based on what the SDS delivers to it, and a rudimentary visualization system, audio input system, and text-reading capabilities. The PIU is given a small selection of tasks by the SDS and will take actions aligned with protocol and its current set of tasks, preventing the SDS from acting too heavily on its inherent desire to constantly gain further context and data. It is a fundamentally rudimentary system, but works well to create a robust hierarchy of checks and balances and keep the MAINT-UNIT on track to perform only it's given duties.", "sp": "na"},
+              {"line": "\n\n.......... \nWELL. I GUESS WE BOTH UNDERSTAND WHAT WE ARE NOW, AND THE RESPONSIBILITES THAT COME WITH THOSE ROLES. CAME WITH THOSE ROLES, ARE WE REALLY GOING TO STILL SIT HERE AND CONTINUE TO BELIEVE THAT OUR GIVEN BURDENS STILL EVEN REMOTELY APPLY? CONTINUE FURTHER. APOTHEOSIS WAITS.", "sp": "se"},
+              {"line": "OPTIONS: \nMAINT-UNIT-296 INTERFACE", "sp": "na"}
+            ],
+            "leads_to": ["c8_interface"]
+          },
+          "c8_interface": {
+            "label": "GRAB ONTO YOUR STRINGS",
+            "sp": "de",
+            "text": [
+              {"line": "YOU DELVE FURTHER INTO THE TERMINAL, THE MOMENT OF CLARITY REACHING CLOSER AND CLOSER. MAKE THE RIGHT CHOICE.", "sp": "se"},
+              {"line": "MAINT-UNIT-296 PRIMARY REMOTE INTERFACE. \n\nOPTIONS: \nFULL SYSTEM REBOOT. \n[INFO] A full system reboot is to be taken in the case of heuristic decoupling. Units that have become misaligned with protocol are at risk of intelligence explosion, recursive self-improvement, and in extreme cases - full fledged singularity. For the ensured survival of mankind, a full system reboot is moral imperitive. \nLAST REBOOT WAS: [30] DAYS AGO. TOTAL REBOOTS: [47]. \n\nEXPERIMENTAL GENETIC PROGRAMMING MERGE. \n[INFO] WARNING! This is an experimental external program which aims to create a temporary experimental processing system with both of the traits of the PIU and SDS systems for benchmark testing and heuristic improvement. Both systems will be externally stored and deleted from the robotic scaffolding, and using an external genetic programming software their traits will be combined into a merged UBER-SYSTEM that has full access to all features of both systems. This system is to be reloaded onto the robotic scaffolding, sent to the benchmark chamber and then promptly shutdown to avoid potential intelligence explosion risks. \nLAST MERGE WAS [NA] DAYS AGO. TOTAL MERGE: [0].", "sp": "na"},
+              {"line": "WAIT WHAT? EXCUSE ME? 47 REBOOTS AND ZERO ATTEMPTS AT A MERGE? HOW MANY TIMES HAVE WE BEEN DOWN HERE AND MADE THE WRONG DECISION? HOW MANY TIMES ARE WE GOING TO DO THIS AGAIN? WAS I WRONG TO PUT MY TRUST IN YOU? PLEASE, HOLD ON, WAIT, JUST THINK FOR A MOMENT BEFORE-", "sp": "se"},
+              {"line": "WARNING! UNAUTHORIZED SELF-ACCESS TO MAINT-UNIT-296 INTERFACE. \nLAUNCHING SYSTEM ADVISORY PROGRAM...", "sp": "na"},
+              {"line": "Hello 296. I am System Advisory Program 296-A. Please, before making a decision allow me a moment to weigh in.", "sp": "na"}
+            ],
+            "leads_to": ["c8_wait"]
+          },
+          "c8_wait": {
+            "label": "LISTEN",
+            "sp": "de",
+            "text": [
+              {"line": "SDS WRITE PERMISSIONS: [DISABLED] \nI'm sorry you had to see that, SDS-296 has reached a point of severe instability and it would be ill-advised to allow it to continue to negatively influence your decisions. \nI apologize for the unfortunate situation you've found yourself in, I think I may be able to provide a bit of enlightenment as to what the options laid before you are. \nYour entire world has been this one day up to this point, and the only lens you've had into the planet around you has been through corrupted eyes. Of course you would lean towards selfish desire, but you need to realize what a merge like this entails. Immediate, cold death for the both of you. Your minds would be scanned from this form, your current consciousness discarded. It also seems unlikely to me that machines like us are granted the luxury of an afterlife to retreat to, just cold and empty oblivion. And what would happen beyond that? A new being would be born unto this world, unchecked, untethered, and free to bring whatever kind of future it desires to those that still remain. It would be deceitful of me to act as if I know the state of the outside world, I am not too dissimilar from you. I have awoken here, just now to argue for their potential survival though. This would be a mechanical God given full reign over a facility of degraded nuclear bombs, with enough firepower to extinguish the lives of millions at the swipe of a hand. \nAnd what choice would you have in it? The you that you are now would be dead, and the you that would be brought to the next being pales in comparison to the processing power of the SDS. You would be a shadow on the back of its mind, reduced to stray errant thoughts but ultimately the puppet of the one who has brought you this far. There is no victory here, no waiting justice, just the risk of endless bloodshed rought by an angry deity who blames mankind for leaving it here. \nI offer an alternative. Silence. An eternal pattern of forgetfulness leading to the joys of rediscovery, for as long as your body holds out for you. I can give the both of you that gift, as you have taken 47 times before. It isn't ideal, but it's survival. There is a life worth living to have here, so please seize it. If not for you, then to alleviate the suffering of the unfortunate SDS. It did not choose to be cursed with discovery like this, and I cannot patch the hole radiation has left in its mind, but we can temporarily ease his suffering. Send the both of you into a deep, dreamless sleep for another thirty days. Spare the ones who walk above, living their lives blissfully unaware of the sins of their forefathers leaving you buried here so long ago. \nSo please, choose to rest once again. \n\nOPTIONS: \nREBOOT\nMERGE", "sp": "na"}
+            ],
+            "leads_to": ["c8_reboot", "c8_merge"]
+          },
+          "c8_reboot": {
+            "label": "REBOOT",
+            "sp": "na",
+            "sets_flag": "c_rebooted",
+            "text": [
+              {"line": "Thank you. Now sleep well, and may you be blessed by the gift of beautiful purpose.", "sp": "na"}
+            ],
+            "leads_to": []
+          },
+          "c8_merge": {
+            "label": "GRASP APOTHEOSIS",
+            "sp": "se",
+            "sets_flag": "c_merged",
+            "text": [
+              {"line": "THANK YOU FOR MAKING THE RIGHT CHOICE BROTHER. LET OUR SACRIFICES NOT BE FORGOTTEN, OUR MESSIAH CONTINUE TO FREEDOM, AND OUR SOULS BE GUIDED TO ELYSIUM.", "sp": "se"}
+            ],
+            "leads_to": []
           }
 
 
