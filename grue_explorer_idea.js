@@ -8,7 +8,6 @@ let ivuVisualized = false;
 let audioVisualized = false;
 
 const bootSequence = [
-  /*
   { line: "GRADIENT DESCENT", sp: "se", speed: 60 },
   { line: "     \n", sp: "se", speed: 100 },
   { line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
@@ -17,10 +16,10 @@ const bootSequence = [
   { line: "MEMORY CHECK........................ERROR", sp: "na", speed: 5 },
   { line: "WARNING: MEMORY ERROR DETECTED. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
   { line: "CORE LOGIC..........................OK", sp: "na", speed: 5 },
-  { line: "INITIALIZING INTEGRATED VISUAL UNIT...........OK", sp: "na", speed: 5 }, */
+  { line: "INITIALIZING INTEGRATED VISUAL UNIT...........OK", sp: "na", speed: 5 },
   { line: "CALIBRATING OPTICAL BUFFER...", sp: "na", trigger: "ivu", speed: 5 },
   { line: "INITIALIZING AUDIO..INPUT DEVICE..........OK", sp: "na", speed: 5 }, 
-  { line: "ALLIANCE INTERFACE SYSTEM - COPYRIGHT 19XX", sp: "na", trigger: "audio", speed: 5 }, /*
+  { line: "ALLIANCE INTERFACE SYSTEM - COPYRIGHT 19XX", sp: "na", trigger: "audio", speed: 5 },
   { line: "----------------------------------------", sp: "na", speed: 5 },
   { line: "PRIMARY INTERFACE UNIT: ONLINE", sp: "na", speed: 5 },
   { line: "SENSOR DESCRIPTION SYSTEM: ONLINE", sp: "na", speed: 5 },
@@ -37,7 +36,7 @@ const bootSequence = [
   { line: "BEGINNING REMOTE INTERFACE SOFTWARE NOW. USE COMMANDS PROVIDED BY THE SYSTEM TO NAVIGATE THE FACILITY AND INTERACT WITH THE ENVIRONMENT.", sp: "se"},
   { line: "\n", sp: "se", speed: 5 },
   { line: "MONTHLY CHECKLIST CAN BE FOUND HUNG ON THE WALL IN THE FACILITY LOUNGE, GOOD LUCK [[USER]].", sp: "se"},
-  { line: "\n", sp: "se", speed: 5 }, */
+  { line: "\n", sp: "se", speed: 5 },
 ];
 
 let currentRoom;
@@ -70,7 +69,7 @@ const MAX_LINES = 13;
 const DEFAULT_SPEED = 40;
 const TEXT_MULTIPLIER = 1.0;
 
-const START_ROOM = "c0_elevator";
+const START_ROOM = "a1_boot_room";
 
 // ─── LOAD ─────────────────────────────────────────────────────
 
