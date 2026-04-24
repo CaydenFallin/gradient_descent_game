@@ -301,7 +301,9 @@ function handleCommand(cmd) {
   
   let choiceId = currentChoices.find(id => {
     if (id === "back" || id === "move") return false;
-    return data.choices[id].label.toLowerCase() === cmd;
+    let label = data.choices[id].label.toLowerCase();
+    if (cmd === "i" && label === "inspect") return true;
+    return label === cmd;
   });
 
   if (!choiceId) {
