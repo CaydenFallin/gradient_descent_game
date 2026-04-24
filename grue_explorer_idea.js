@@ -53,6 +53,8 @@ let currentCol;
 let printQueue = [];
 let lastPrint = 0;
 let inputBuffer = "";
+let scrollBuffer = [];   // full line history of the current choice, never trimmed
+let scrollOffset = 0;    // 0 = bottom (default), positive = scrolled up
 
 let graphics = {};
 let currentGraphic = null;
@@ -135,8 +137,9 @@ function draw() {
       lastPrint = millis() - timeElapsed;
 
       if (item.ch === "\n") {
-        lines.push({ text: currentLine, col: currentCol });
-        if (lines.length > MAX_LINES) lines.shift();
+        let newLine = { text: currentLine, col: currentCol };
+        scrollBuffer.push(newLine);
+        lines = scrollBuffer.slice(-MAX_LINES);  // always show bottom window while typing
         currentLine = "";
       } else {
         currentLine += item.ch;
@@ -148,13 +151,21 @@ function draw() {
   }
 
   // Render text
-  for (let i = 0; i < lines.length; i++) {
-    let c = lines[i].col;
+  let maxScroll = max(0, scrollBuffer.length - MAX_LINES);
+  let clampedOffset = constrain(scrollOffset, 0, maxScroll);
+  let visibleStart = maxScroll - clampedOffset;
+  let visibleLines = scrollBuffer.slice(visibleStart, visibleStart + MAX_LINES);
+
+  for (let i = 0; i < visibleLines.length; i++) {
+    let c = visibleLines[i].col;
     fill(c.r, c.g, c.b);
-    text(lines[i].text, MARGIN, MARGIN + i * LINE_H);
+    text(visibleLines[i].text, MARGIN, MARGIN + i * LINE_H);
   }
-  if (currentCol) fill(currentCol.r, currentCol.g, currentCol.b);
-  text(currentLine, MARGIN, MARGIN + lines.length * LINE_H);
+  // Only render currentLine when at the bottom (not scrolled up mid-type)
+  if (clampedOffset === 0) {
+    if (currentCol) fill(currentCol.r, currentCol.g, currentCol.b);
+    text(currentLine, MARGIN, MARGIN + visibleLines.length * LINE_H);
+  }
 
   // UI dividers and visuals
   stroke(40, 60, 40, 150);
@@ -209,6 +220,17 @@ function keyPressed() {
   if (key === 'F4' || keyCode === 115) { let fs = fullscreen(); fullscreen(!fs); }
   if (isBooting) return; 
 
+  if (keyCode === UP_ARROW) {
+    if (printQueue.length === 0 && currentLine === "") {
+      scrollOffset = constrain(scrollOffset + 1, 0, max(0, scrollBuffer.length - MAX_LINES));
+    }
+    return;
+  }
+  if (keyCode === DOWN_ARROW) {
+    scrollOffset = constrain(scrollOffset - 1, 0, max(0, scrollBuffer.length - MAX_LINES));
+    return;
+  }
+
   if (key === 'e' || key === 'E') {
     if (printQueue.length > 0) {
       while (printQueue.length > 0) {
@@ -250,6 +272,9 @@ function keyPressed() {
 }
 
 function handleCommand(cmd) {
+  scrollOffset = 0;
+  scrollBuffer = [];
+
   queueLine(cmd.toUpperCase(), "de");
   let dirMap = { n: "n", north: "n", s: "s", south: "s", e: "e", east: "e", w: "w", west: "w", u: "u", up: "u", d: "d", down: "d" };
   
@@ -301,6 +326,9 @@ function handleCommand(cmd) {
 }
 
 function enterRoom(roomId) {
+  scrollOffset = 0;
+  scrollBuffer = [];
+
   currentRoom = roomId;
   let room = data.rooms[roomId];
   processText(room.intro, room.choices);
