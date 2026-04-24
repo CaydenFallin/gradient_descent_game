@@ -275,6 +275,10 @@ function keyPressed() {
 }
 
 function handleCommand(cmd) {
+  if (currentLine !== "") {
+    scrollBuffer.push({ text: currentLine, col: currentCol });
+    currentLine = "";
+  }
   scrollOffset = 0;
   choiceStartIndex = scrollBuffer.length;
 
@@ -331,6 +335,10 @@ function handleCommand(cmd) {
 }
 
 function enterRoom(roomId) {
+  if (currentLine !== "") {
+    scrollBuffer.push({ text: currentLine, col: currentCol });
+    currentLine = "";
+  }
   scrollOffset = 0;
   choiceStartIndex = scrollBuffer.length;
 
