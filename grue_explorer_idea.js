@@ -155,9 +155,14 @@ function draw() {
   let choiceLines = scrollBuffer.slice(choiceStartIndex);
   let maxScroll = max(0, choiceLines.length - MAX_LINES);
   let clampedOffset = constrain(scrollOffset, 0, maxScroll);
-  let visibleStart = choiceStartIndex + (choiceLines.length - MAX_LINES - clampedOffset + max(0, MAX_LINES - choiceLines.length));
-  visibleStart = constrain(visibleStart, choiceStartIndex, scrollBuffer.length);
-  let visibleLines = scrollBuffer.slice(visibleStart, visibleStart + MAX_LINES);
+
+  let visibleLines;
+  if (clampedOffset === 0) {
+    visibleLines = scrollBuffer.slice(-MAX_LINES);
+  } else {
+    let visibleStart = choiceStartIndex + maxScroll - clampedOffset;
+    visibleLines = scrollBuffer.slice(visibleStart, visibleStart + MAX_LINES);
+  }
 
   for (let i = 0; i < visibleLines.length; i++) {
     let c = visibleLines[i].col;
