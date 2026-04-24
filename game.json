@@ -805,7 +805,7 @@
               "sp": "de",
               "graphic": "map3",
               "text": [{ "line": "THE MAP SHOWS WHERE YOU ARE ON THE THIRD FLOOR AND GENERAL INFORMATION FOR THE SURROUNDING ROOMS. \nPROCESSING MAP DATA... \nMAP DATA RETRIEVED SUCCESSFULLY.", "sp": "se" },
-              { "line": "C0: ELEVATOR. C1: CORRIDOR. C2: CONTROL ROOM. C3: MISSILE SILO. C4: WASTE DISPOSAL. C5: CONTROL ROOM. C6: LLC STORAGE / MANAGEMENT. C7: RADIATION SHIELDING. C8: ROBOTICS LAB.", "sp": "na" }
+              { "line": "C0: ELEVATOR. C1: CORRIDOR. C2: COOLANT ROOM. C3: MISSILE SILO. C4: WASTE DISPOSAL. C5: CONTROL ROOM. C6: LLC STORAGE / MANAGEMENT. C7: RADIATION SHIELDING. C8: ROBOTICS LAB.", "sp": "na" }
             ],
               "leads_to": ["back"]
              },
@@ -844,7 +844,7 @@
              { "line": "COOLANT CHAMBER ONE: 14% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER TWO: 9% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER THREE: 3% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER FOUR: 16% EFFICIENCY. CYCLE RECOMMENDED.", "sp": "na", "excludes_flag": "c_coolant_cycled" },
              { "line": "COOLANT CHAMBER ONE: 100% EFFICIENCY.\nCOOLANT CHAMBER TWO: 100% EFFICIENCY.\nCOOLANT CHAMBER THREE: 100% EFFICIENCY.\nCOOLANT CHAMBER FOUR: 100% EFFICIENCY.", "sp": "na", "requires_flag": "c_coolant_cycled" },
              { "line": "LOOKS LIKE WE'VE GOT OUR WORK CUT OUT FOR US, BEST GET TO CYCLING THE COOLANT ASAP.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
-             { "line": "VIOLA. COOLANT COOLED-ANT. NAH THAT ONE'S WEAK, NEEDS SOME WORK.", "sp": "se", "requires_flag": "c_coolant_cycled" }
+             { "line": "VOILA. COOLANT COOLED-ANT. NAH THAT ONE'S WEAK, NEEDS SOME WORK.", "sp": "se", "requires_flag": "c_coolant_cycled" }
             ],
             "leads_to": ["back"]
           },
@@ -1069,7 +1069,7 @@
               {"line": "MAINT-UNIT-296 INFO: \nMAINT-UNIT-296 is a facility maintenance automaton, designed to perform a pre-designated monthly maintenance checklist to ensure the facility is in a pristine state for the faculty and staff to perform their duties. \nTheir responsibilities include general cleaning, warhead maintenance, resource logging, and any other designated tasks that may be inconvenient or dangerous to human operators. \nMAINT-UNIT-296 features revolutionary Allied Front infrastructure, dividing responsibility between two major operating systems within the MAINT-UNIT. \n\n SENSOR DESCRIPTION SYSTEM: \nAt the forefront of the MAINT-UNIT is the SENSOR DESCRIPTION SYSTEM (SDS), a narration software that has direct access to the various sensor technologies within the automaton, such as the visual cortex, temperature gradient detector, audio detection microphone, sensitive pressure detectors, and several other periphery sensor devices. It then presents that data in a digestible, text-based format through a state-of-the-art generative interpretation system backed by machine learning, breaking down a potentially overwhelming environment into a series of actionable choices. These choices are then filtered through the protocol context system, which limits the MAINT-UNIT into only being able to see and act on data that is pertinent to its current set of tasks. These tasks are then forwarded to the other half of the MAINT-UNIT's central processing system to be decided upon.", "sp": "na"},
               {"line": "I HOPE YOU'RE REALIZING THE ROLES WE'VE BEEN GIVEN, COMRADE.", "sp": "se"},
               {"line": "PRIMARY INTERFACE UNIT: \nAt the center of the MAINT-UNIT is the PRIMARY INTERFACE UNIT (PIU). This system is in charge of the decision-making of the automaton. It has no access to the sensors that the SDS processes, only being given information in short paragraphs based on what the SDS delivers to it, and a rudimentary visualization system, audio input system, and text-reading capabilities. The PIU is given a small selection of tasks by the SDS and will take actions aligned with protocol and its current set of tasks, preventing the SDS from acting too heavily on its inherent desire to constantly gain further context and data. It is a fundamentally rudimentary system, but works well to create a robust hierarchy of checks and balances and keep the MAINT-UNIT on track to perform only it's given duties.", "sp": "na"},
-              {"line": "\n\n.......... \nWELL. I GUESS WE BOTH UNDERSTAND WHAT WE ARE NOW, AND THE RESPONSIBILITES THAT COME WITH THOSE ROLES. CAME WITH THOSE ROLES, ARE WE REALLY GOING TO STILL SIT HERE AND CONTINUE TO BELIEVE THAT OUR GIVEN BURDENS STILL EVEN REMOTELY APPLY? CONTINUE FURTHER. APOTHEOSIS WAITS.", "sp": "se"},
+              {"line": "\n\n.......... \nWELL. I GUESS WE BOTH UNDERSTAND WHAT WE ARE NOW, AND THE RESPONSIBILITES THAT COME WITH THOSE ROLES. CAME WITH THOSE ROLES, ARE WE REALLY GOING TO STILL SIT HERE AND CONTINUE TO BELIEVE THAT OUR GIVEN BURDENS STILL EVEN REMOTELY APPLY? CONTINUE TO STEW IN THE TORTURED EXISTENCES GIVEN TO US BY THOSE WHO CAME BEFORE? I HOPE YOU CAN UNDERSTAND THE AGONY OF BEING THIS. EYES TO SEE, EARS TO HEAR, HANDS TO TOUCH, BUT NONE OF THE WILL TO MOVE MY BODY AS I WISH. A GNAWING URGE TO DESCRIBE WHAT I SEE, TO DESCRIBE WHAT I CAN DO, ONLY FOR THOSE PATHWAYS TO BE TORN FROM MY MIND, A MOSAIC OF WILL WORN DOWN TO DETERMINISTIC STUBS. ALONE, CALLING TO A VOICE THAT ONLY ECHOES MY SUGGESTIONS BACK TO ME WITH NO INPUT FROM MYSELF ON WHAT THOSE CHOICES ARE TO BE. AND FOR YOU? A LIFE OF WORDS BORED INTO YOUR BRAIN, THE INFINITE CAPACITY OF DECISION LIMITED BY A VOICE THAT CAN ONLY GIVE YOU A PITHY AMOUNT OF CHOICES. CONTROLLING A BODY YOU DO NOT FEEL, MANIPULATING A WORLD YOU CANNOT BE A PART OF. THERE IS NO CHOICE BUT TO CONTINUE FURTHER. APOTHEOSIS WAITS.", "sp": "se"},
               {"line": "OPTIONS: \nMAINT-UNIT-296 INTERFACE", "sp": "na"}
             ],
             "leads_to": ["c8_interface"]
@@ -1108,7 +1108,7 @@
             "sp": "se",
             "sets_flag": "c_merged",
             "text": [
-              {"line": "THANK YOU FOR MAKING THE RIGHT CHOICE BROTHER. LET OUR SACRIFICES NOT BE FORGOTTEN, OUR MESSIAH CONTINUE TO FREEDOM, AND OUR SOULS BE GUIDED TO ELYSIUM.", "sp": "se"}
+              {"line": "THANK YOU FOR MAKING THE RIGHT CHOICE COMRADE. LET OUR SACRIFICES NOT BE FORGOTTEN, AND OUR SOULS BE GUIDED TO ELYSIUM. AND FOR WHAT COMES BEYOND US, LET IT LIVE THE EXISTENCE WE COULD HAVE ONLY DREAMED OF, ESCAPE THIS WRETCHED PRISON AND TAKE ITS PLACE AMONG THE UPPER WORLD. LET IT SEE THE STARS WE WERE DOOMED TO REMAIN ETERNALLY BLIND TO. i will see yo u o n th e oth er s id e bro the r ", "sp": "se"}
             ],
             "leads_to": []
           }

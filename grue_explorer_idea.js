@@ -44,6 +44,7 @@ let currentChoices = [];
 let flags = {};
 let relationship = 0;
 let sensorShift = 0;
+let pendingEnding = null; // Will be "c_rebooted" or "c_merged" when an ending is triggered
 
 let lines = [];
 let currentLine = "";
@@ -285,7 +286,12 @@ function handleCommand(cmd) {
   }
 
   let nextChoices = processText(choice.text, choice.leads_to);
-  if (choice.sets_flag) flags[choice.sets_flag] = true;
+  if (choice.sets_flag) {
+    flags[choice.sets_flag] = true;
+    if (choice.sets_flag === "c_rebooted" || choice.sets_flag === "c_merged") {
+      pendingEnding = choice.sets_flag;
+    }
+  }
   showChoices(nextChoices);
 }
 
@@ -409,6 +415,16 @@ function queueLine(str, sp, customSpeed) {
 function runGlobalWatchers() {
   // Wait until the typewriter is quiet
   if (printQueue.length > 0 || currentLine !== "") return;
+
+  // ── Ending check ──
+  if (pendingEnding) {
+    let ending = pendingEnding;
+    pendingEnding = null;
+    if (ending === "c_rebooted") triggerEndingReboot();
+    else if (ending === "c_merged") triggerEndingMerge();
+    return;
+  }
+
   if (!data.watchers) return;
 
   for (let w of data.watchers) {
@@ -425,6 +441,25 @@ function runGlobalWatchers() {
       processText(w.text);
     }
   }
+}
+
+
+// ─── ENDINGS ──────────────────────────────────────────────────
+
+function triggerEndingReboot() {
+  lines = [];
+  currentLine = "";
+  printQueue = [];
+  queueLine("ENDING A ACHIEVED", "na");
+  // TODO: Play reboot cutscene mp4 here
+}
+
+function triggerEndingMerge() {
+  lines = [];
+  currentLine = "";
+  printQueue = [];
+  queueLine("ENDING B ACHIEVED", "se");
+  // TODO: Play merge cutscene mp4 here
 }
 
 // ─── VISUAL HELPERS ───────────────────────────────────────────
