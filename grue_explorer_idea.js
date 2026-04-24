@@ -265,7 +265,11 @@ function handleCommand(cmd) {
     return;
   }
   
-  if (cmd === "back") { enterRoom(currentRoom); clearGraphic(); return; }
+  if (cmd === "back") {
+    if (currentChoices.includes("back")) { enterRoom(currentRoom); clearGraphic(); }
+    else { queueLine("UNRECOGNIZED INPUT.", "se"); showChoices(currentChoices); }
+    return;
+  }
   
   let choiceId = currentChoices.find(id => {
     if (id === "back" || id === "move") return false;
@@ -437,9 +441,8 @@ function runGlobalWatchers() {
 
     if (conditionsMet) {
       flags[w.result_flag] = true;
-      
-      // Use your existing processText helper to queue the lines from JSON
-      processText(w.text);
+      let nextChoices = processText(w.text);
+      showChoices(nextChoices !== undefined ? nextChoices : ["back"]);
     }
   }
 }
