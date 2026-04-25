@@ -246,13 +246,17 @@ function drawMenu() {
 
   // ── CONTROLS (bottom right) ──
   let controls = [
+    "WARNING! THIS GAME IS MEANT TO BE PLAYED IN ONE SESSION, THERE IS NO SAVING OR QUITTING.",
+    "REFRESHING OR CLOSING THE PAGE WILL RESULT IN LOSS OF PROGRESS.",
+    "PLAYTIME IS 20-40 MINUTES.",
+    "",
     "CONTROLS",
     "─────────────────────",
     "TYPE COMMAND + ENTER   SELECT",
     "E                   SKIP LINE",
     "UP / DOWN ARROWS       SCROLL",
     "F4                 FULLSCREEN",
-    "INSPECT = I     QUICK INSPECT"
+    "INSPECT = I     QUICK INSPECT",
   ];
 
   textSize(30);
@@ -264,8 +268,8 @@ function drawMenu() {
   textAlign(RIGHT, TOP);
   for (let i = 0; i < controls.length; i++) {
     if (i === 0)      fill(0, 175, 60, 220);
-    else if (i === 1) fill(0, 75,  28, 150);
-    else              fill(0, 130, 48, 175);
+    else if (i === 1) fill(0, 175,  60, 220);
+    else              fill(0, 175, 60, 220);
     text(controls[i], ctrlX, ctrlY + i * ctrlLineH);
   }
 
