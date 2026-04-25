@@ -1,13 +1,20 @@
 let data;
 let vt323;
 
+// --- MENU STATE ---
+let isMenu = true;
+let menuInput = "";
+let menuCursorBlink = 0;
+let menuScanlineOffset = 0;
+
 // --- BOOT SEQUENCE SETTINGS ---
-let isBooting = true;
+let isBooting = false;
 let bootIndex = 0;
 let ivuVisualized = false;
 let audioVisualized = false;
 
 const bootSequence = [
+  
   { line: "GRADIENT DESCENT", sp: "se", speed: 60 },
   { line: "     \n", sp: "se", speed: 100 },
   { line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
@@ -18,7 +25,7 @@ const bootSequence = [
   { line: "CORE LOGIC..........................OK", sp: "na", speed: 5 },
   { line: "INITIALIZING INTEGRATED VISUAL UNIT...........OK", sp: "na", speed: 5 },
   { line: "CALIBRATING OPTICAL BUFFER...", sp: "na", trigger: "ivu", speed: 5 },
-  { line: "INITIALIZING AUDIO..INPUT DEVICE..........OK", sp: "na", speed: 5 }, 
+  { line: "INITIALIZING AUDIO..INPUT DEVICE..........OK", sp: "na", speed: 5 },
   { line: "ALLIANCE INTERFACE SYSTEM - COPYRIGHT 19XX", sp: "na", trigger: "audio", speed: 5 },
   { line: "----------------------------------------", sp: "na", speed: 5 },
   { line: "PRIMARY INTERFACE UNIT: ONLINE", sp: "na", speed: 5 },
@@ -56,10 +63,11 @@ let scrollBuffer = [];
 let scrollOffset = 0;
 let choiceStartIndex = 0;
 
-let textWidthLimit = 600; // fallback, properly set in setup()
+let textWidthLimit = 600;
 
 let graphics = {};
 let currentGraphic = null;
+let currentNoRotate = false;
 let rotationAngle = 0;
 
 const PRINT_DELAY = 18;
@@ -78,7 +86,14 @@ function preload() {
   data = loadJSON("game.json");
   loadGraphic("star_gear_graphic", "graphics/star_gear_graphic.png");
   loadGraphic("map", "graphics/map.png");
-  loadGraphic("map2", "graphics/map2.png");
+  loadGraphic("clipboard", "graphics/clipboard.png");
+  loadGraphic("elevator", "graphics/elevator.png");
+  loadGraphic("water", "graphics/water.png");
+  loadGraphic("weights", "graphics/weights.png");
+  loadGraphic("ice", "graphics/ice.png");
+  loadGraphic("admin_terminal", "graphics/admin_terminal.png");
+  loadGraphic("warning_terminal", "graphics/warning_terminal.png");
+  loadGraphic("tabernacle_terminal", "graphics/tabernacle_terminal.png");
 }
 
 function loadGraphic(id, path) {
@@ -92,7 +107,7 @@ function setup() {
   textFont(vt323);
   textSize(28);
   imageMode(CENTER);
-  textWidthLimit = (width * 0.62) - (MARGIN * 2); // initialize with font loaded
+  textWidthLimit = (width * 0.62) - (MARGIN * 2);
 }
 
 function windowResized() {
@@ -100,9 +115,184 @@ function windowResized() {
   textWidthLimit = (width * 0.62) - (MARGIN * 2);
 }
 
+// ─── MAIN MENU ────────────────────────────────────────────────
+
+function drawMenu() {
+  background(5, 10, 5);
+
+  // Subtle scanline effect
+  menuScanlineOffset = (menuScanlineOffset + 0.4) % 6;
+  for (let y = menuScanlineOffset; y < height; y += 6) {
+    fill(0, 0, 0, 18);
+    noStroke();
+    rect(0, y, width, 2);
+  }
+
+  // Vignette
+  for (let r = min(width, height) * 0.95; r > 0; r -= 10) {
+    let a = map(r, 0, min(width, height) * 0.95, 55, 0);
+    fill(0, 0, 0, a);
+    noStroke();
+    ellipse(width / 2, height / 2, r * 2, r * 1.6);
+  }
+
+  // Corner brackets
+  stroke(0, 60, 0, 120);
+  strokeWeight(1);
+  line(MARGIN, MARGIN, MARGIN + 80, MARGIN);
+  line(MARGIN, MARGIN, MARGIN, MARGIN + 80);
+  line(width - MARGIN, height - MARGIN, width - MARGIN - 80, height - MARGIN);
+  line(width - MARGIN, height - MARGIN, width - MARGIN, height - MARGIN - 80);
+  noStroke();
+
+  // ── TITLE (top left) ──
+  let titleX = MARGIN + 10;
+  let titleY = MARGIN + 20;
+  let titleSize = min(width * 0.072, 88);
+
+  textFont(vt323);
+  textSize(titleSize);
+  textAlign(LEFT, TOP);
+
+  // Glow layers
+  drawingContext.shadowBlur = 36;
+  drawingContext.shadowColor = "rgba(0,255,80,0.18)";
+  fill(0, 180, 60, 55);
+  text("GRADIENT", titleX, titleY);
+  text("DESCENT", titleX, titleY + titleSize * 1.05);
+
+  drawingContext.shadowBlur = 12;
+  drawingContext.shadowColor = "rgba(0,255,80,0.45)";
+  fill(0, 220, 80, 130);
+  text("GRADIENT", titleX, titleY);
+  text("DESCENT", titleX, titleY + titleSize * 1.05);
+
+  drawingContext.shadowBlur = 0;
+  fill(0, 255, 90);
+  text("GRADIENT", titleX, titleY);
+  fill(0, 200, 70);
+  text("DESCENT", titleX, titleY + titleSize * 1.05);
+
+  // Rule under title
+  let titleBottom = titleY + titleSize * 2.25;
+  stroke(0, 100, 35, 160);
+  strokeWeight(1);
+  line(titleX, titleBottom, titleX + titleSize * 4.4, titleBottom);
+  noStroke();
+
+  // Author blurb
+  textSize(18);
+  fill(0, 130, 45, 190);
+  textAlign(LEFT, TOP);
+  text("BY [John Fallin]", titleX, titleBottom + 12);
+
+  // ── GRAPHIC UNIT (right side) ──
+  let menuMonitorX = width * 0.65;
+  let menuMonitorY = height * 0.12;
+  let menuMonitorSize = min(width * 0.22, height * 0.38);
+
+  drawMonitorFrame(menuMonitorX, menuMonitorY, menuMonitorSize);
+  drawGraphic("star_gear_graphic", menuMonitorX, menuMonitorY, menuMonitorSize, false);
+  fill(0, 150, 0, 180);
+  textSize(18);
+  textAlign(CENTER);
+  text("INTEGRATED VISUAL UNIT", menuMonitorX + menuMonitorSize / 2, menuMonitorY + menuMonitorSize + 30);
+  textAlign(LEFT, BASELINE);
+  textSize(28);
+
+  // ── INPUT PROMPT (center-left, vertically centered) ──
+  let optY = height * 0.48;
+  let optX = titleX;
+
+  // Blinking cursor
+  menuCursorBlink = (menuCursorBlink + 1) % 60;
+  let showCursor = menuCursorBlink < 38;
+
+  textSize(24);
+  fill(255, 140, 0);
+  textAlign(LEFT, TOP);
+  text("> " + menuInput + (showCursor ? "_" : " "), optX, optY);
+
+  // Live-highlight matched option
+  let typed = menuInput.trim().toLowerCase();
+  let startMatch = typed.length > 0 && "start".startsWith(typed);
+  let quitMatch  = typed.length > 0 && "quit".startsWith(typed);
+
+  textSize(28);
+  let labelY = optY + 50;
+
+  if (startMatch) {
+    drawingContext.shadowBlur = 16;
+    drawingContext.shadowColor = "rgba(0,255,80,0.65)";
+    fill(0, 255, 90);
+  } else {
+    drawingContext.shadowBlur = 0;
+    fill(0, 155, 50);
+  }
+  textAlign(LEFT, TOP);
+  text("[ START ]", optX, labelY);
+
+  let quitX = optX + textWidth("[ START ]") + 52;
+  if (quitMatch) {
+    drawingContext.shadowBlur = 16;
+    drawingContext.shadowColor = "rgba(0,255,80,0.65)";
+    fill(0, 255, 90);
+  } else {
+    drawingContext.shadowBlur = 0;
+    fill(0, 155, 50);
+  }
+  text("[ QUIT ]", quitX, labelY);
+  drawingContext.shadowBlur = 0;
+
+  // ── CONTROLS (bottom right) ──
+  let controls = [
+    "CONTROLS",
+    "─────────────────────",
+    "TYPE COMMAND + ENTER   SELECT",
+    "E                   SKIP LINE",
+    "UP / DOWN ARROWS       SCROLL",
+    "F4                 FULLSCREEN",
+    "INSPECT = I     QUICK INSPECT"
+  ];
+
+  textSize(30);
+  let ctrlLineH = 22;
+  let ctrlBlockH = controls.length * ctrlLineH;
+  let ctrlX = width - MARGIN - 10;
+  let ctrlY = height - MARGIN - ctrlBlockH;
+
+  textAlign(RIGHT, TOP);
+  for (let i = 0; i < controls.length; i++) {
+    if (i === 0)      fill(0, 175, 60, 220);
+    else if (i === 1) fill(0, 75,  28, 150);
+    else              fill(0, 130, 48, 175);
+    text(controls[i], ctrlX, ctrlY + i * ctrlLineH);
+  }
+
+  // Reset alignment for rest of app
+  textAlign(LEFT, BASELINE);
+  textSize(28);
+}
+
+function handleMenuInput(cmd) {
+  if (cmd === "start") {
+    isMenu = false;
+    isBooting = true;
+  } else if (cmd === "quit") {
+    window.close();
+  } else {
+    menuInput = "";
+  }
+}
+
 // ─── DRAW ─────────────────────────────────────────────────────
 
 function draw() {
+  if (isMenu) {
+    drawMenu();
+    return;
+  }
+
   background(5, 10, 5);
 
   let dividerX = width * 0.62;
@@ -184,7 +374,7 @@ function draw() {
 
   if (ivuVisualized) {
     drawMonitorFrame(monitorX, monitorY, monitorSize);
-    drawGraphic(currentGraphic, monitorX, monitorY, monitorSize);
+    drawGraphic(currentGraphic, monitorX, monitorY, monitorSize, currentNoRotate);
     fill(0, 150, 0, 180);
     textAlign(CENTER);
     textSize(18);
@@ -195,6 +385,20 @@ function draw() {
 
   if (audioVisualized) {
     drawSoundVisualizer(monitorX, monitorY + monitorSize + 80, monitorSize, 120);
+  }
+
+  if (audioVisualized) {
+    let mapY = monitorY + monitorSize + 80 + 120 + 30;
+    let mapH = height - mapY - MARGIN;
+    if (mapH > 60) {
+      drawLocalMap(monitorX, mapY, monitorSize, mapH);
+      fill(0, 150, 0, 180);
+      textAlign(CENTER);
+      textSize(18);
+      text("INTEGRATED LOCAL MAP", monitorX + monitorSize / 2, mapY + mapH + 20);
+      textAlign(LEFT);
+      textSize(28);
+    }
   }
 
   if (!isBooting) {
@@ -224,6 +428,21 @@ function hasRequiredFlags(req, ex) {
 
 function keyPressed() {
   if (key === 'F4' || keyCode === 115) { let fs = fullscreen(); fullscreen(!fs); }
+
+  // ── MENU INPUT ──
+  if (isMenu) {
+    if (keyCode === ENTER) {
+      let cmd = menuInput.trim().toLowerCase();
+      menuInput = "";
+      if (cmd !== "") handleMenuInput(cmd);
+    } else if (keyCode === BACKSPACE) {
+      menuInput = menuInput.slice(0, -1);
+    } else if (key.length === 1) {
+      menuInput += key;
+    }
+    return;
+  }
+
   if (isBooting) return;
 
   if (keyCode === UP_ARROW) {
@@ -241,7 +460,6 @@ function keyPressed() {
 
   if (key === 'e' || key === 'E') {
     if (printQueue.length > 0) {
-      // Skip forward one pre-wrapped line from the queue
       while (printQueue.length > 0) {
         let item = printQueue.shift();
         if (item.ch === "\n") {
@@ -311,7 +529,10 @@ function handleCommand(cmd) {
   }
 
   let choice = data.choices[choiceId];
-  if (choice.graphic) currentGraphic = choice.graphic;
+  if (choice.graphic) {
+    currentGraphic = choice.graphic;
+    currentNoRotate = choice.no_rotate || false;
+  }
   if (choice.rel_delta) relationship += choice.rel_delta;
 
   if (choice.move_to_room) {
@@ -401,7 +622,6 @@ function queueLine(str, sp, customSpeed) {
   let baseSpeed = (customSpeed !== undefined) ? customSpeed : DEFAULT_SPEED;
   let finalSpeed = baseSpeed * TEXT_MULTIPLIER;
 
-  // Pre-wrap using real pixel measurements so wrapping is consistent across all screens
   let wrappedLines = [];
   let manualSegments = str.split("\n");
 
@@ -426,7 +646,6 @@ function queueLine(str, sp, customSpeed) {
     }
   }
 
-  // Queue characters line by line, newline-terminated
   for (let wl of wrappedLines) {
     for (let ch of wl) {
       printQueue.push({ ch: ch, col: col, speed: finalSpeed });
@@ -438,7 +657,6 @@ function queueLine(str, sp, customSpeed) {
 function runGlobalWatchers() {
   if (printQueue.length > 0 || currentLine !== "") return;
 
-  // ── Ending check ──
   if (pendingEnding) {
     let ending = pendingEnding;
     pendingEnding = null;
@@ -497,6 +715,82 @@ function drawSoundVisualizer(x, y, w, h) {
   textSize(28);
 }
 
+function drawLocalMap(x, y, w, h) {
+  // Background frame
+  noFill(); stroke(30, 45, 30); strokeWeight(1); rect(x, y, w, h, 5); noStroke();
+
+  if (!currentRoom || !data || !data.rooms[currentRoom]) return;
+
+  let room = data.rooms[currentRoom];
+  let exits = room.exits || {};
+
+  let cx = x + w / 2;
+  let cy = y + h / 2;
+  let reach = min(w, h) * 0.29; // distance from center box to adjacent box
+  let boxW = w * 0.22;
+  let boxH = h * 0.18;
+
+  // Direction vectors
+  let dirs = {
+    n: { dx: 0,  dy: -1 },
+    s: { dx: 0,  dy:  1 },
+    e: { dx: 1,  dy:  0 },
+    w: { dx: -1, dy:  0 }
+  };
+
+  // Arrow head helper
+  function drawArrow(x1, y1, x2, y2) {
+    stroke(0, 160, 50, 200); strokeWeight(1.5);
+    line(x1, y1, x2, y2);
+    let angle = atan2(y2 - y1, x2 - x1);
+    let hs = 7;
+    fill(0, 160, 50, 200); noStroke();
+    triangle(
+      x2, y2,
+      x2 - hs * cos(angle - 0.4), y2 - hs * sin(angle - 0.4),
+      x2 - hs * cos(angle + 0.4), y2 - hs * sin(angle + 0.4)
+    );
+  }
+
+  // Room label helper (first 2 chars of room id)
+  function roomLabel(roomId) {
+    return roomId.substring(0, 2).toUpperCase();
+  }
+
+  // Draw current room box (center)
+  fill(0, 40, 15); stroke(0, 180, 60, 200); strokeWeight(1.5);
+  rectMode(CENTER);
+  rect(cx, cy, boxW, boxH, 3);
+  noStroke(); fill(0, 230, 80);
+  textSize(13); textAlign(CENTER, CENTER);
+  text(roomLabel(currentRoom), cx, cy);
+
+  // Draw each exit
+  for (let dir in exits) {
+    if (!dirs[dir]) continue;
+    let d = dirs[dir];
+    let nx = cx + d.dx * reach;
+    let ny = cy + d.dy * reach;
+
+    // Arrow from edge of current box to edge of adjacent box
+    let fromX = cx + d.dx * (boxW / 2 + 2);
+    let fromY = cy + d.dy * (boxH / 2 + 2);
+    let toX   = nx - d.dx * (boxW / 2 + 2);
+    let toY   = ny - d.dy * (boxH / 2 + 2);
+    drawArrow(fromX, fromY, toX, toY);
+
+    // Adjacent room box
+    fill(0, 20, 8); stroke(0, 100, 35, 160); strokeWeight(1);
+    rect(nx, ny, boxW, boxH, 3);
+    noStroke(); fill(0, 160, 55);
+    text(roomLabel(exits[dir]), nx, ny);
+  }
+
+  rectMode(CORNER);
+  textAlign(LEFT, BASELINE);
+  textSize(28);
+}
+
 function applyDither(img) {
   img.loadPixels();
   for (let y = 0; y < img.height; y++) {
@@ -518,16 +812,32 @@ function drawMonitorFrame(x, y, size) {
   for (let i = y + 10; i < y + size - 10; i += 5) line(x + 10, i, x + size - 10, i);
 }
 
-function drawGraphic(id, x, y, size) {
+function drawGraphic(id, x, y, size, noRotate) {
   if (!id || !graphics[id]) return;
-  push(); translate(x + size/2, y + size/2); imageMode(CENTER);
-  if (id === "facility_map") image(graphics[id], 0, 0, size * 0.8, size * 0.8);
-  else {
-    rotationAngle += 0.012; scale(cos(rotationAngle), 1.0 + sin(rotationAngle) * 0.01);
-    let flicker = 1.0 + sin(millis() * 0.003) * 0.05; tint(0, 230 * flicker, 80 * flicker, 220);
-    image(graphics[id], 0, 0, size * 0.65, size * 0.65); noTint();
+  let img = graphics[id];
+
+  // Fit image within the box while preserving aspect ratio
+  let aspect = img.width / img.height;
+  let drawW, drawH;
+  if (aspect >= 1) {
+    drawW = size * 0.95;
+    drawH = drawW / aspect;
+  } else {
+    drawH = size * 0.95;
+    drawW = drawH * aspect;
   }
-  pop();
+
+  push(); translate(x + size/2, y + size/2); imageMode(CENTER);
+  let flicker = 1.0 + sin(millis() * 0.003) * 0.05;
+  tint(0, 230 * flicker, 80 * flicker, 220);
+  if (noRotate) {
+    image(img, 0, 0, drawW, drawH);
+  } else {
+    rotationAngle += 0.012;
+    scale(cos(rotationAngle), 1.0 + sin(rotationAngle) * 0.01);
+    image(img, 0, 0, drawW, drawH);
+  }
+  noTint(); pop();
 }
 
-function clearGraphic() { currentGraphic = null; rotationAngle = 0; }
+function clearGraphic() { currentGraphic = null; currentNoRotate = false; rotationAngle = 0; }

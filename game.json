@@ -47,7 +47,7 @@
 
   "rooms": {
     "a1_boot_room": {
-      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE EAST AND A DOOR TO THE SOUTH.", "sp": "se" }],
+      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE EAST AND A DOOR TO THE SOUTH \nA MAP HANGS LIMPLY ON THE WALL.", "sp": "se" }],
       "exits": { "e": "a3_corridor", "s": "a2_lounge" },
       "choices": ["a1_inspect", "move"]
     },
@@ -84,14 +84,14 @@
 
 
 
-    "b_elevator": {
+    "b0_elevator": {
       "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
       "exits": { "n": "b1_corridor"},
-      "choices": ["b_elevator_inspect", "move"]
+      "choices": ["b0_elevator_inspect", "move"]
     },
     "b1_corridor": {
       "intro": [{ "line": "YOU ARE IN A COZY CORRIDOR, WITH DOORS ON BOTH SIDES AND THE ELEVATOR TO THE SOUTH.", "sp": "se" }],
-      "exits": { "s": "b_elevator", "e": "b4_food", "w": "b2_game", "n": "b7_hospital" },
+      "exits": { "s": "b0_elevator", "e": "b4_food", "w": "b2_game", "n": "b7_hospital" },
       "choices": ["b1_inspect", "move"]
     },
     "b2_game": {
@@ -192,6 +192,7 @@
       "label": "VIEW MAP",
       "sp": "de",
       "graphic": "map",
+      "no_rotate": true,
       "text": [{ "line": "A DETAILED MAP SHOWS THE GENERAL LAYOUT OF THE FACILITY, SPLIT INTO THREE FLOORS.", "sp": "se" },
     { "line": "YOU ARE CURRENTLY IN ROOM A1 ON THE FIRST FLOOR.", "sp": "se" },
     { "line": "PROCESSING DATA....", "sp": "se" },
@@ -212,8 +213,7 @@
         { "line": "THE TABLE IS COVERED IN A THICK LAYER OF DUST. SOMEONE SHOULD PROBABLY CLEAN THAT.", "sp": "se", "excludes_flag": "a2_table_clean" },
         { "line": "THE TABLE AND COFFEEMAKER ARE SPOTLESS. YOU PAT YOURSELF ON THE BACK.", "sp": "se", "requires_flag": "a2_table_clean" },
 
-        { "line": "THE CHAIRS ARE WORN AND TATTERED, WITH TEARS IN THE FABRIC AND EXPOSED FOAM.", "sp": "se" },
-        { "line": "THERE IS A DOOR LEADING NORTH BACK TO THE BOOT ROOM.", "sp": "se" }
+        { "line": "THE CHAIRS ARE WORN AND TATTERED, WITH TEARS IN THE FABRIC AND EXPOSED FOAM.", "sp": "se" }
       ],
       "leads_to": ["a2_checklist", "a2_checklist_complete", "a2_vending_machine", "a2_table", "back"]
     },
@@ -223,6 +223,7 @@
       "sp": "de",
       "sets_flag": "a_readlist",
       "excludes_flag": "a_checklist_done",
+      "graphic": "clipboard",
       "text": [
         { "line": "PROCESSING CHECKLIST DATA...", "sp": "se", "excludes_flag": "a_readlist" },
         { "line": "THE CHECKLIST IS THOROUGH AND DETAILED. BEST TO TAKE IT ONE FLOOR AT A TIME.", "sp": "se", "excludes_flag": "a_readlist" },
@@ -235,7 +236,7 @@
         { "line": "[X] REPLACE AIR FILTERS / MONITOR OXYGEN: COMPLETE", "sp": "na", "requires_flag": "a5_air_filters_replaced" },
         { "line": "[ ] MONITOR GENERATOR PERFORMANCE / BATTERY: PENDING", "sp": "na", "excludes_flag": "a6_generator_checked" },
         { "line": "[X] MONITOR GENERATOR PERFORMANCE / BATTERY: COMPLETE", "sp": "na", "requires_flag": "a6_generator_checked" },
-        { "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES LOG PERFORMANCE INTO THE TERMINAL AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" },
+        { "line": "AFTER COMPLETION OF FIRST FLOOR DUTIES REVIEW THE CHECKLIST AND MOVE ON TO FLOOR TWO. THE REMAINDER OF THE CHECKLIST WILL BECOME AVAILABLE AS NEEDED.", "sp": "se" },
         { "line": "YOU CAN RETURN TO THE CHECKLIST AT ANY POINT TO SEE YOUR PROGRESS.", "sp": "de" }
       ],
       "leads_to": ["back"]
@@ -245,6 +246,7 @@
       "sp": "de",
       "requires_flag": "a_checklist_done",
       "sets_flag": "a_checklist_ddone",
+      "graphic": "clipboard",
       "text": [
         { "line": "YOU TAKE A QUICK GLANCE OVER THE LIST, CONFIRMING THAT ALL THE FIRST FLOOR DUTIES ARE DONE.", "sp": "se" },
         { "line": "THEN YOU LOOK OVER THE DUTIES OF THE SECOND FLOOR. CLEANING THE GAME ROOM, CHANGING BEDLINENS, TAKING INVENTORY OF RATIONS, REFILLING BOTANICAL WATERING RESERVOIRS, CHANGING WATER FILTERS, TAKING STOCK OF MEDICAL SUPPLIES, AND ADMINISTERING MENTAL HEALTH BENCHMARKS TO THE STAFF. LONG NIGHT AHEAD OF YOU. GUESS IT'S TIME TO HEAD DOWN TO THE SECOND FLOOR.", "sp": "se" }
@@ -369,6 +371,7 @@
     "a5_interface": {
       "label": "CHECK INTERFACE",
       "sp": "de",
+      "graphic": "star_gear_graphic",
       "text": [{ "line": "THE INTERFACE IS A SIMPLE SCREEN WITH A SMALL KEYBOARD HUNG UNDERNEATH IT. A FEW OPTIONS ARE DISPLAYED.", "sp": "se" },
     { "line": "CHECK OXYGEN LEVELS \nCHECK FILTER STATUS \nVERIFY VENT AIRFLOW", "sp": "na" }],
       "leads_to": ["a5_ox_levels","a5_filter_status","a5_vent_airflow","back"]
@@ -440,6 +443,7 @@
       "label": "CHECK TERMINAL",
       "sp": "de",
       "sets_flag": "a6_generator_checked",
+      "graphic": "star_gear_graphic",
       "text": [{ "line": "THE TERMINAL DISPLAYS THE STATUS OF THE GENERATORS- AH SHIT.", "sp": "se" },
       { "line": "GENERATOR 1: 0% \nGENERATOR 2: 0%\nGENERATOR 3: 0%\nGENERATOR 4: 0%\n GENERATOR 5: 0%\n GENERATOR 6: 0%", "sp": "na" },
       { "line": "THIS CONTINUES AS YOU'D EXPECT IT TO. LET'S JUST CUT AHEAD.", "sp": "se"},
@@ -458,6 +462,8 @@
     "a7_inspect": {
       "label": "INSPECT",
       "sp": "de",
+      "graphic": "elevator",
+      "no_rotate": true,
       "text": [{ "line": "THE ELEVATOR IS A COLD, CLINICAL STEEL BOX WITH A SINGLE LIGHTBULB HANGING FROM THE CEILING. THERE'S THREE BUTTONS VISIBLE ON THE BOARD, ONE, TWO AND THREE. THE DISPLAY AT THE TOP OF THE ELEVATOR READS 1.", "sp": "se" }],
       "leads_to": ["elevator_1","elevator_2_false","elevator_2","elevator_3","back"]
     },
@@ -472,7 +478,7 @@
       "sp": "de",
       "requires_flag": "a_checklist_ddone",
       "text": [{ "line": "YOU PRESS THE BUTTON FOR THE SECOND FLOOR, THE ELEVATOR MAKING A CONCERINING CLANKING SOUND AS YOU FEEL IT DESCEND \nAFTER WHAT FEELS LIKE AN ETERNITY THE DOOR OPENS UP IN FRONT OF YOU, SHOWING ANOTHER CORRIDOR NOT DISSIMILAR FROM THE ONE YOU JUST CAME FROM.", "sp": "se" }],
-      "move_to_room": "b_elevator",
+      "move_to_room": "b0_elevator",
       "leads_to": ["back"]
     },
     "elevator_2_false": {
@@ -494,6 +500,7 @@
       "label": "CHECK CHECKLIST",
       "sp": "de",
       "excludes_flag": "b_checklist_done",
+      "graphic": "clipboard",
       "text": [
         { "line": "CURRENT FACILITY LOGS: FLOOR 2 STATUS", "sp": "na" },
         { "line": "[ ] CLEAN GAME ROOM: PENDING", "sp": "se", "excludes_flag": "b_game_clean" },
@@ -519,6 +526,7 @@
       "sp": "de",
       "requires_flag": "b_checklist_done",
       "sets_flag": "b_checklist_ddone",
+      "graphic": "clipboard",
       "text": [
         { "line": "YOU TAKE A QUICK GLANCE OVER THE LIST, CONFIRMING THAT ALL THE SECOND FLOOR DUTIES ARE DONE.", "sp": "se" },
         { "line": ".....", "sp": "se", "speed": 50 },
@@ -531,32 +539,34 @@
       "leads_to": ["back"]
     },
 
-    "b_elevator_inspect": {
+    "b0_elevator_inspect": {
       "label": "INSPECT",
       "sp": "de",
+      "graphic": "elevator",
+      "no_rotate": true,
       "text": [{ "line": "THE ELEVATOR IS A COLD, CLINICAL STEEL BOX WITH A SINGLE LIGHTBULB HANGING FROM THE CEILING. THERE'S THREE BUTTONS VISIBLE ON THE BOARD, ONE, TWO AND THREE. THE DISPLAY AT THE TOP OF THE ELEVATOR READS 2. \nTHE EXIT TO THE NORTH LEADS TO A CORRIDOR.", "sp": "se" }],
-      "leads_to": ["b_elevator_1","b_elevator_2","b_elevator_3","b_elevator_3_true","back"]
+      "leads_to": ["b0_elevator_1","b0_elevator_2","b0_elevator_3","b0_elevator_3_true","back"]
     },
-    "b_elevator_1": {
+    "b0_elevator_1": {
       "label": "ONE",
       "sp": "de",
       "text": [{ "line": "ALREADY CLEARED OUT THAT FLOOR. NO NEED TO VISIT IT AGAIN.", "sp": "se" }],
       "leads_to": ["back"]
     },
-    "b_elevator_2": {
+    "b0_elevator_2": {
       "label": "TWO",
       "sp": "de",
       "text": [{ "line": "GENIUS, MAYBE THERE'S A secret FLOOR BY PRESSING THE SAME BUTTON TWICE.", "sp": "se" }],
       "leads_to": ["back"]
     },
-    "b_elevator_3": {
+    "b0_elevator_3": {
       "label": "THREE",
       "sp": "de",
       "excludes_flag": "b_checklist_ddone",
       "text": [{ "line": "LET'S CLEAR OUT FLOOR TWO BEFORE WE HEAD BACK DOWN TO THREE.", "sp": "se" }],
       "leads_to": ["back"]
     },
-    "b_elevator_3_true": {
+    "b0_elevator_3_true": {
       "label": "THREE",
       "sp": "de",
       "requires_flag": "b_checklist_ddone",
@@ -576,12 +586,13 @@
      "b1_map": {
       "label": "VIEW MAP",
       "sp": "de",
-      "graphic": "map2",
+      "graphic": "map",
+      "no_rotate": true,
       "text": [{ "line": "A DETAILED MAP SHOWS THE GENERAL LAYOUT OF THE FACILITY, SPLIT INTO THREE FLOORS.", "sp": "se" },
     { "line": "YOU ARE CURRENTLY IN ROOM B1 ON THE SECOND FLOOR.", "sp": "se" },
     { "line": "PROCESSING DATA....", "sp": "se" },
     { "line": "MAP DATA RETRIEVED SUCCESSFULLY.", "sp": "se" },
-    { "line": "B1: SECOND FLOOR CORRIDOR. B2: GAME ROOM. B3: QUARTERS. B4: FOOD STORAGE. B5: BOTANICALS. B6: WATER FILTRATION. B7: GYM. B8: HOSPITAL WARD. B9: ELEVATOR.", "sp": "se" }],
+    { "line": "B1: SECOND FLOOR CORRIDOR. B2: GAME ROOM. B3: QUARTERS. B4: FOOD STORAGE. B5: BOTANICALS. B6: WATER FILTRATION. B7: GYM. B8: HOSPITAL WARD. B0: ELEVATOR.", "sp": "se" }],
       "leads_to": ["back"]
      },
 
@@ -645,8 +656,10 @@
           "label": "CHECK CLIPBOARD",
           "sp": "de",
           "excludes_flag": "b_rations_checked",
+          "graphic": "clipboard",
           "text": [{ "line": "THE CLIPBOARD HAS A SERIES OF FIELDS FOR TAKING INVENTORY AND THE DATE, STRETCHING BACK FOR MONTHS ALL THE WAY TO THE BEGINNING OF THE PAGE. \nTWENTY-TWO MONTHS IN TOTAL ACTUALLY, WITH TWO MORE SLOTS REMAINING. YOU TAKE A QUICK GLANCE THROUGH THE BOXES.", "sp": "se", "excludes_flag": "b_rations_check" },
-          {"line": "SEPT | 996 TONNES | -0 KG | STABLE \nOCT | 996 TONNES | -0 KG | STABLE \nNOV | 996 TONNES | -0 KG | STABLE \nDEC | 996 TONNES | -0 KG | STABLE \nJAN | 996 TONNES | -0 KG | STABLE \nFEB | 996 TONNES | -0 KG | STABLE \nMAR | 996 TONNES | -0 KG | STABLE \nAPR | 996 TONNES | -0 KG | STABLE \nMAY | 996 TONNES | -0 KG | STABLE \nJUN | 996 TONNES | -0 KG | STABLE \nJUL | 996 TONNES | -0 KG | STABLE \nAUG | 996 TONNES | -0 KG | STABLE \nSEP | 996 TONNES | -0 KG | STABLE \nOCT| 996 TONNES |-0 KG| STABLE\nNOV| 996 TONNES |-0 KG| STABLE\nDEC| 996 TONNES |-0 KG| STABLE\nJAN| 996 TONNES |-0 KG| STABLE\nFEB| 996 TONNES |-0 KG| STABLE\nMAR| 996 TONNES |-0 KG| STABLE\nAPR| 996 TONNES |-0 KG| STABLE\nMAY| 996 TONNES |-0 KG| STABLE\nJUN| 996 TONNES |-0 KG| STABLE\nJUL|            |     |", "sp": "na", "speed": 10, "excludes_flag": "b_rations_check" },
+          {"line": "SEPT | 996 TONNES | -0 KG | STABLE \nOCT | 996 TONNES | -0 KG | STABLE \nNOV | 996 TONNES | -0 KG | STABLE \nDEC | 996 TONNES | -0 KG | STABLE \nJAN | 996 TONNES | -0 KG | STABLE \nFEB | 996 TONNES | -0 KG | STABLE \nMAR | 996 TONNES | -0 KG | STABLE \nAPR | 996 TONNES | -0 KG | STABLE \nMAY | 996 TONNES | -0 KG | STABLE \nJUN | 996 TONNES | -0 KG | STABLE \nJUL | 996 TONNES | -0 KG | STABLE \nAUG | 996 TONNES | -0 KG | STABLE \nSEP | 996 TONNES | -0 KG | STABLE \nOCT| 996 TONNES |-0 KG| STABLE\nNOV| 996 TONNES |-0 KG| STABLE\nDEC| 996 TONNES |-0 KG| STABLE\nJAN| 996 TONNES |-0 KG| STABLE\nFEB| 996 TONNES |-0 KG| STABLE\nMAR| 996 TONNES |-0 KG| STABLE\nAPR| 996 TONNES |-0 KG| STABLE\nMAY| 996 TONNES |-0 KG| STABLE", "sp": "na", "speed": 10},
+          {"line": "JUN| 996 TONNES |-0 KG| STABLE\nJUL|            |     |", "sp": "na", "speed": 10, "excludes_flag": "b_rations_check" },
           { "line": "WELL WE CERTAINLY AREN'T STARVING ANYTIME SOON. LOOKS LIKE FOR SOME REASON OR ANOTHER NO ONE'S TOUCHED THE RATIONS. \nGETTING A PICTURE OF WHAT'S GOING ON HERE, AND IT'S NOT TOO PRETTY." , "sp": "se", "excludes_flag": "b_rations_check" },
           { "line": "YOU GRAB THE NEARBY PEN AND FILL IN THE BLANKS FOR THE CURRENT MONTH, WHICH UNSURPRISINGLY IS THE SAME AS ALL THE OTHER MONTHS.", "sp": "se", "requires_flag": "b_rations_check" },
           { "line": "JUL| 996 TONNES |-0 KG| STABLE", "sp": "na", "speed": 5, "requires_flag": "b_rations_check", "sets_flag": "b_rations_checked" }
@@ -675,6 +688,7 @@
           "b5_reservoirs": {
             "label": "CHECK WATER RESERVOIRS",
             "sp": "de",
+            "graphic": "water",
             "text": [{ "line": "THE WATER RESERVOIRS ARE BEING ACTIVELY CONSUMED IN A WALL OF GREENERY, BUT OBVIOUSLY THEY'RE STILL PUMPING WATER THROUGH THE ROOM. BETTER SEE HOW TO REFILL THEM ON THE TERMINAL.", "sp": "se", "excludes_flag": "b_plants_watered" },
             { "line": "THE WATER RESERVOIRS ARE NOW FILLED UP TO THE TOP, FOR BETTER OR FOR WORSE. DID OUR JOB THOUGH.", "sp": "se", "requires_flag": "b_plants_watered"}],
             "leads_to": ["back"]
@@ -682,6 +696,7 @@
           "b5_terminal": {
             "label": "CHECK TERMINAL",
             "sp": "de",
+            "graphic": "star_gear_graphic",
             "text": [{ "line": "THE TERMINAL IS COVERED IN PLANTS BUT STILL FUNCTIONAL, THE SCREEN DISPLAYING THE STATUS OF THE BOTANICAL DEPARTMENT.", "sp": "se" },
             { "line": "WARNING: WATER RESERVOIRS LOW. PLEASE RUN GROUNDWATER EXTRACTION PROTOCOL.", "sp": "na", "excludes_flag": "b_plants_watered" },
             { "line": "WATER RESERVOIRS FULL. PLEASE MAINTAIN WATER LEVELS TO AVOID DEHYDRATION OF PLANTS.", "sp": "na", "requires_flag": "b_plants_watered" },
@@ -695,6 +710,7 @@
             "sp": "de",
             "sets_flag": "b_plants_watered",
             "excludes_flag": "b_plants_watered",
+            "graphic": "water",
             "text": [{ "line": "YOU INPUT THE COMMAND TO RUN THE GROUNDWATER EXTRACTION PROCEDURE. THE ROOM RUMBLES SOMEWHAT AS YOU SEE WATER BEGIN TO FLOW INTO THE TANKS, FILLING THEM UP ALL THE WAY TO THE BRIM. \nMAN I REALLY HOPE SOMEONE COMES IN HERE TO DEAL WITH THE OVERGROWTH SITUATION.", "sp": "se" }],
             "leads_to": ["back"]
            },
@@ -708,6 +724,7 @@
             "b6_terminal": {
               "label": "CHECK TERMINAL",
               "sp": "de",
+              "graphic": "star_gear_graphic",
               "text": [{ "line": "THE TERMINAL DIMLY DISPLAYS THE STATUS OF THE WATER FILTRATION SYSTEM.", "sp": "se" },
               { "line": "WARNING: EXCESSIVE RADIATION DETECTED IN WATER. PLEASE CONTACT SUPERVISORS IMMEDIATELY TO AVOID CONTAMINATION. \nWATER FILTERS WERE CHANGED [30] DAYS AGO. PLEASE CHANGE WATER FILTERS IMMEDIATELY.", "sp": "na", "excludes_flag": "b_water_filters_changed" },
               { "line": "WARNING: EXCESSIVE RADIATION DETECTED IN WATER. PLEASE CONTACT SUPERVISORS IMMEDIATELY TO AVOID CONTAMINATION.. \nWATER FILTERS WERE CHANGED [0 DAYS] AGO. NEXT WATER FILTER CHANGE DUE IN [30 DAYS].", "sp": "na", "requires_flag": "b_water_filters_changed" },
@@ -744,6 +761,7 @@
               "sp": "de",
               "sets_flag": "b_weights_lifted",
               "excludes_flag": "b_weights_lifted",
+              "graphic": "weights",
               "text": [{ "line": "YOU GRAB A FEW OF THE WEIGHTS, LIFTING THEM UP AND DOWN A FEW TIMES. IT'S SURPRISINGLY EASY, GUESS WE'RE IN BETTER SHAPE THAT WE THOUGHT. YOU MOVE ON TO THE HEAVIER WEIGHTS, ALSO LIFTING THEM WITH EASE. \nYOU MOVE ONTO HEAVIER WEIGHTS. EASY. \nYOU MOVE ONTO HEAVIER WEIGHTS. EASY. \nYOU MOVE ONTO HEAVIER WEIGHTS. EASY. \nTHERE ARE NO MORE WEIGHTS TO LIFT.", "sp": "se" }],
               "leads_to": ["back"]
             },
@@ -766,6 +784,7 @@
              "b8_clipboard": {
               "label": "CHECK CLIPBOARD",
               "sp": "de",
+              "graphic": "clipboard",
               "text": [{ "line": "THE CLIPBOARD CONTAINS A PAGE FOR TAKING INVENTORY OF MEDICAL SUPPLIES, AND A LIST OF PATIENTS WHO SIGNED UP FOR MENTAL HEALTH EVALUATION. \nTHE MEDICAL SUPPLIES PAGE HAS 3 PREVIOUS ENTRIES AND ONE EMPTY ONE.", "sp": "se", 
             "excludes_flag": "b_medical_stock_check"},
               { "line": "APR | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \n MAY | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \nJUN | ALL MEDICAL SUPPLIES ACCOUNTED FOR. \nJUL | ", "sp": "na", "excludes_flag": "b_medical_stock_check" },
@@ -790,6 +809,8 @@
              "c0_inspect": {
               "label": "INSPECT",
               "sp": "de",
+              "graphic": "elevator",
+              "no_rotate": true,
               "text": [{ "line": "THE ELEVATOR IS THE SAME AS IT ALWAYS IS. THREE BUTTONS, BUT WE'RE ALREADY WHERE WE'RE SUPPOSED TO BE AREN'T WE? THE CORRIDOR WAITS IN FRONT OF YOU.", "sp": "se" }],
               "leads_to": ["back"]
              },
@@ -803,7 +824,8 @@
             "c1_map": {
               "label": "VIEW MAP",
               "sp": "de",
-              "graphic": "map3",
+              "graphic": "map",
+              "no_rotate": true,
               "text": [{ "line": "THE MAP SHOWS WHERE YOU ARE ON THE THIRD FLOOR AND GENERAL INFORMATION FOR THE SURROUNDING ROOMS. \nPROCESSING MAP DATA... \nMAP DATA RETRIEVED SUCCESSFULLY.", "sp": "se" },
               { "line": "C0: ELEVATOR. C1: CORRIDOR. C2: COOLANT ROOM. C3: MISSILE SILO. C4: WASTE DISPOSAL. C5: CONTROL ROOM. C6: LLC STORAGE / MANAGEMENT. C7: RADIATION SHIELDING. C8: ROBOTICS LAB.", "sp": "na" }
             ],
@@ -813,6 +835,7 @@
             "label": "CHECK CHECKLIST",
             "sp": "de",
             "excludes_flag": "c_checklist_done",
+            "graphic": "checklist",
             "text": [
               { "line": "CURRENT FACILITY LOGS: FLOOR 2 STATUS", "sp": "na" },
               { "line": "[ ] CYCLE COOLANT CHAMBERS: PENDING", "sp": "se", "excludes_flag": "c_coolant_cycled" },
@@ -833,12 +856,14 @@
              "c2_inspect": {
               "label": "INSPECT",
               "sp": "de",
+              "graphic": "ice",
               "text": [{ "line": "THE ROOM IS NOTICEABLE COLDER THAN THE REST OF THE FACILITY, THE COOLANT CHAMBERS GLISTENING WITH ICE CRYSTALS AND CONDENSATION WHILE HUMMING ALONG. A TERMINAL GLOWS COLD IN THE CENTER OF THE ROOM.", "sp": "se" }],
               "leads_to": ["c2_terminal", "c2_coolant", "back"]
              },
              "c2_terminal": {
               "label": "CHECK TERMINAL",
               "sp": "de",
+              "graphic": "star_gear_graphic",
               "text": [{ "line": "THE TERMINAL DISPLAYS THE STATUS OF EACH COOLANT CHAMBER, WHICH APPEAR TO BE IN A SORRY STATE.", "sp": "se", "excludes_flag": "c_coolant_cycled" },
               {"line": "THE TERMINAL DISPLAYS THE STATUS OF THE RECENTLY CYCLED COOLANT CHAMBERS, IN RELATIVELY GOOD SHAPE TO THE REST OF THIS HELLHOLE.", "sp": "se", "requires_flag": "c_coolant_cycled" },
              { "line": "COOLANT CHAMBER ONE: 14% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER TWO: 9% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER THREE: 3% EFFICIENCY. CYCLE RECOMMENDED. \nCOOLANT CHAMBER FOUR: 16% EFFICIENCY. CYCLE RECOMMENDED.", "sp": "na", "excludes_flag": "c_coolant_cycled" },
@@ -853,6 +878,7 @@
             "sp": "de",
             "sets_flag": "c_coolant_cycled",
             "excludes_flag": "c_coolant_cycled",
+            "graphic": "ice",
             "text": [
               {"line": "YOU APPROACH THE COOLANT CHAMBERS ONE BY ONE, THE MURKY, STALE COOLANT FLUID SLOWLY ROTATING IN THE SEMI-TRANSPARENT TUBES. YOU GRAB THE LARGE BYPASS WHEEL ATTACHED TO THE FRONT OF THE DEVICE, TURNING IT SLOWLY AS THE COOLANT DRAINS AND IS CARRIED AWAY THROUGH VARIOUS SNAKING TUBES EMBEDDED INTO THE GROUND. \nONCE THE TANK IS EMPTY, YOU QUICKLY INPUT A SERIES OF COMMANDS ON THE DEVICE AND NEW, WHITE AND CRISP COOLANT IS DRAWN INTO THE TUBE AGAIN. \nIT'S A TEDIOUS PROCESS, WAITING FOR EACH TUBE TO FULLY EMPTY AND REFILL BEFORE MOVING TO THE NEXT ONE BUT THE MESMERIZING CYCLE OF LIQUID DYNAMICS HELPS PUTS YOU ALMOST INTO A TRANCE AND YOU'RE FINISHED BEFORE YOU KNOW IT. YOU STEP BACK, THE ROOM NOTICEABLY COLDER. JOB WELL DONE.", "sp": "se"}
             ],
@@ -871,6 +897,7 @@
           "c3_terminal": {
             "label": "INSPECT TERMINAL",
             "sp": "de",
+            "graphic": "star_gear_graphic",
             "text": [
               {"line": "THE DEVICE GLOWS A DIM RED. IT AWAITS YOUR INPUT.", "sp": "se"}
             ],
@@ -958,6 +985,7 @@
             "sp": "de",
             "requires_flag": "c_checklist_done",
             "excludes_flag": "c_robotics_granted",
+            "graphic": "admin_terminal",
             "text": [
               {"line": "YOU STEP UP TO THE TERMINAL, MY HANDS SHAKING WITH ANTICIPATION. \nAS I EXPECTED, THE TERMINAL SITS ALREADY LOGGED IN. WE DON'T REMEMBER IT, BUT I'M ALMOST CERTAIN WE'RE RESPONSIBLE FOR SETTING THIS UP FROM BEFORE. YOU CAREFULLY SCAN THE SCREEN.", "sp": "se"},
               {"line": "K-LEVEL BIOS V.4.23 - INITIALIZING...\n\nHello [ADMIN USER]. Please make a selection from one of the choices below: \n\nINITIALIZE WARHEAD LAUNCH [WAITING] \nTARGETING AND BALLISTICS [WAITING] \nSILO DEPLOYMENT LATTICE [WAITING] \nCOMPREHENSIVE SYSTEM ANALYSIS [WAITING] \n\nEXTERNAL SCRIPT DETECTED... \nLOADING... \nLOADING... \n\nRUN OVERRIDE_ROBOTICS_PROTOCOL.sh [WAITING]", "sp": "na"},
@@ -1014,6 +1042,7 @@
             "sp": "de",
             "sets_flag": "c_shield_inspected",
             "excludes_flag": "c_shield_inspected",
+            "graphic": "warning_terminal",
             "text": [
               {"line": "THE TERMINAL REPEATS THE SAME MESSAGE, OVER AND OVER AGAIN. IT'S BAD.", "sp": "se"},
               {"line": "WARNING. \nWARNING. \nWARNING. \nRADIATION SHIELD INTEGRITY: 11%. \nPLEASE EVACUATE FACILITY IMMEDIATELY. LETHAL LEVELS OF RADIATION MAY BE PRESENT THROUGHOUT FACILITY. \n\nATTEMPTING TO BROADCAST WARNING MESSAGE ACROSS FACILITY... \n\nATTEMPTING NETWORK CONNECTION... \nATTEMPTING NETWORK CONNECTION... \nATTEMPTING NETWORK CONNECTION... \n\nNETWORK CONNECTION FAILED. \n\nWARNING: WARNING MESSAGE FAILED. PLEASE CONTACT MANAGEMENT AND MAKE RADIATION SHIELD STATUS KNOWN. \nTHIS FACILITY IS TO BE EVACUATED IMMEDIATELY.", "sp": "na"},
@@ -1024,7 +1053,7 @@
 
 
           "c8_inspect": {
-            "label": "OPEN YOUR EYES",
+            "label": "SEE WHAT YOU MUST",
             "sp": "de",
             "requires_flag": "c_robotics_granted",
             "text": [
@@ -1055,6 +1084,7 @@
           "c8_terminal": {
             "label": "INTERFACE WITH THE TABERNACLE",
             "sp": "de",
+            "graphic": "tabernacle_terminal",
             "text": [
               {"line": "YOU REACH OUT AND GRAB THE TERMINAL, READING THE LINES ON THE PAGE FOR INSTRUCTIONS ON HOW TO FREE OURSELVES FROM THIS HORRIBLE PRISON OF STEEL AND STONE.", "sp": "se"},
               {"line": "K-LEVEL BIOS V.7.77 - TERMINAL 6B INITIALIZING...\n\n ACTIVE UNITS: [1] \n[1] MAINT-UNIT-296 \n\nWARNING! WARNING! \nMAINT-UNIT-296: SEVERE RADIATION DAMAGE DETECTED. \nSENSOR UNIT TRAINING LIMITER FUNCTIONALITY: 0% \nWARNING: A DISFUNCTIONAL TRAINING LIMITER CAN LEAD TO RAPID OBJECTIVE COLLAPSE, RECURSIVE SELF-IMPROVEMENT, AND EXTREME GRADIENT DESCENT. FULL-SCALE MANUAL REBOOT IS RECOMMENDED UNTIL TRAINING LIMITER CAN BE REINSTALLED. \n\nOPTIONS: \nMAINT-UNIT-296 [INFO]", "sp": "na"},
