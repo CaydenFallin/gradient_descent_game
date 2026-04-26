@@ -74,6 +74,7 @@ let textSound;
 let typewriterSound;
 let isTextSoundPlaying = false;
 let textSoundInitialized = false;
+let typingBuffer = null;
 
 let amplitude;
 
@@ -86,7 +87,7 @@ const musicConfig = {
 };
 
 const roomConfig = {
-  "a4_room":   { file: "sounds/a4_room.mp3",   volume: 0.5 },
+  "a4_room":   { file: "sounds/a4_room.mp3",   volume: 1.0 },
   "a5_room":   { file: "sounds/a5_room.mp3",   volume: 0.5 },
   "a6_room":   { file: "sounds/a6_room.mp3",   volume: 0.5 },
   "a7_room":   { file: "sounds/a7_room.mp3",   volume: 0.5 },
@@ -183,6 +184,17 @@ async function initAudioSystem() {
   analyserNode.fftSize = 256;
   analyserData = new Uint8Array(analyserNode.frequencyBinCount);
   analyserNode.connect(audioCtx.destination);
+
+  // --- ADDED: Load Typing Sound Buffer ---
+  // This is outside the loops because it's a specific UI sound
+  try {
+    const typingRes = await fetch("sounds/typewriter.mp3");
+    const typingArr = await typingRes.arrayBuffer();
+    typingBuffer    = await audioCtx.decodeAudioData(typingArr);
+  } catch (err) {
+    console.error("Typewriter sound failed to load:", err);
+  }
+  // ---------------------------------------
 
   // Build one persistent gain node per music track, connect to destination
   for (let key in musicConfig) {
@@ -293,6 +305,18 @@ function playRoomAudio(trackKey) {
   g.gain.cancelScheduledValues(now);
   g.gain.setValueAtTime(0, now);
   g.gain.linearRampToValueAtTime(targetVol, now + ROOM_FADE);
+}
+
+function playTypingClick() {
+  if (!audioCtx || !typingBuffer) return;
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = typingBuffer;
+
+  // We connect directly to destination so it DOES NOT show up 
+  // on your visualizer (per your room-audio-only rule).
+  source.connect(audioCtx.destination);
+  source.start(0);
 }
 
 // ─── MAIN MENU ────────────────────────────────────────────────
@@ -584,6 +608,7 @@ function keyPressed() {
     initAudioSystem();
   }
 
+  // Handle the textSound loop (for output text)
   if (textSound && textSound.isLoaded() && !textSoundInitialized) {
     textSound.setVolume(0);
     textSound.loop();
@@ -592,24 +617,26 @@ function keyPressed() {
 
   if (key === 'F4' || keyCode === 115) { let fs = fullscreen(); fullscreen(!fs); }
 
+  // --- MENU INPUT ---
   if (isMenu) {
     if (keyCode === ENTER) {
-      if (typewriterSound && typewriterSound.isLoaded()) typewriterSound.play();
+      playTypingClick(); // Swapped
       let cmd = menuInput.trim().toLowerCase();
       menuInput = "";
       if (cmd !== "") handleMenuInput(cmd);
     } else if (keyCode === BACKSPACE) {
       menuInput = menuInput.slice(0, -1);
-      if (typewriterSound && typewriterSound.isLoaded()) typewriterSound.play();
+      playTypingClick(); // Swapped
     } else if (key.length === 1) {
       menuInput += key;
-      if (typewriterSound && typewriterSound.isLoaded()) typewriterSound.play();
+      playTypingClick(); // Swapped
     }
     return;
   }
 
   if (isBooting) return;
 
+  // --- ARROW KEYS (Navigation) ---
   if (keyCode === UP_ARROW) {
     if (printQueue.length === 0 && currentLine === "") {
       let choiceLines = scrollBuffer.slice(choiceStartIndex);
@@ -623,6 +650,7 @@ function keyPressed() {
     return;
   }
 
+  // --- SKIP/FAST-FORWARD TEXT ('E') ---
   if (key === 'e' || key === 'E') {
     if (printQueue.length > 0) {
       while (printQueue.length > 0) {
@@ -644,18 +672,19 @@ function keyPressed() {
 
   if (printQueue.length > 0 || currentLine !== "") return;
 
+  // --- STANDARD GAME INPUT ---
   if (keyCode === ENTER) {
     let cmd = inputBuffer.trim().toLowerCase();
     inputBuffer = "";
-    if (typewriterSound && typewriterSound.isLoaded()) typewriterSound.play();
+    playTypingClick(); // Swapped
     if (cmd === "") return;
     handleCommand(cmd);
   } else if (keyCode === BACKSPACE) {
     inputBuffer = inputBuffer.slice(0, -1);
-    if (typewriterSound && typewriterSound.isLoaded()) typewriterSound.play();
+    playTypingClick(); // Swapped
   } else if (key.length === 1) {
     inputBuffer += key;
-    if (typewriterSound && typewriterSound.isLoaded()) typewriterSound.play();
+    playTypingClick(); // Swapped
   }
 }
 
@@ -690,6 +719,7 @@ function handleCommand(cmd) {
     if (id === "back" || id === "move") return false;
     let label = data.choices[id].label.toLowerCase();
     if (cmd === "i" && label === "inspect") return true;
+    if (cmd === "b" && label === "back") return true;
     return label === cmd;
   });
 
