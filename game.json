@@ -62,21 +62,25 @@
       "choices": ["a3_inspect", "move"]
     },
     "a4_terminal": {
+      "room_audio": "a4_room",
       "intro": [{ "line": "YOU FIND YOURSELF IN A LARGE ROOM WITH DOZENS OF BLINKING TERMINALS SURROUNDING YOU.", "sp": "se" }],
       "exits": { "w": "a3_corridor", "s": "a5_filtration" },
       "choices": ["a4_terminal_inspect", "move"]
     },
     "a5_filtration": {
+      "room_audio": "a5_room",
       "intro": [{ "line": "THE ROOM WHIRS WITH THE SOUND OF SEVERAL LARGE FILTRATION UNITS AROUND YOU, DUST HANGING IN THE AIR.", "sp": "se" }],
       "exits": { "n": "a4_terminal", "s": "a6_power" },
       "choices": ["a5_inspect", "move"]
     },
     "a6_power": {
+      "room_audio": "a6_room",
       "intro": [{ "line": "YOU ARE IN A BRIGHT ROOM FILLED WITH ELECTRICAL EQUIPMENT AND SEVERAL LARGE GENERATORS.", "sp": "se" }],
       "exits": { "n": "a5_filtration" },
       "choices": ["a6_inspect", "move"]
     },
     "a7_elevator": {
+      "room_audio": "a7_room",
       "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
       "exits": { "n": "a3_corridor" },
       "choices": ["a7_inspect", "move"]
@@ -85,6 +89,7 @@
 
 
     "b0_elevator": {
+      "room_audio": "a7_room",
       "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
       "exits": { "n": "b1_corridor"},
       "choices": ["b0_elevator_inspect", "move"]
@@ -115,11 +120,13 @@
       "choices": ["b4_inspect", "move"]
     },
     "b5_plants": {
+      "room_audio": "b5_room",
       "intro": [{ "line": "YOU ENTER AN EXTREMELY OVERGROWN JUNGLE OF A ROOM, WITH PLANTERS OVERFLOWING WITH VINES AND FRUIT.", "sp": "se" }],
       "exits": { "n": "b4_food", "s": "b6_water"},
       "choices": ["b5_inspect", "move"]
     },
     "b6_water": {
+      "room_audio": "b6_room",
       "intro": [{ "line": "YOU ENTER THE WATER FILTRATION ROOM, A SMALL ROOM WITH SEVERAL LARGE WATER TANKS LINING THE WALLS.", "sp": "se" }],
       "exits": { "n": "b5_plants" },
       "choices": ["b6_inspect", "move"]
@@ -132,6 +139,7 @@
 
 
     "c0_elevator": {
+      "room_audio": "a7_room",
       "intro": [{ "line": "YOU ARE IN A SMALL STEEL ELEVATOR WITH THREE BUTTONS, ONE FOR EACH FLOOR OF THE FACILITY.", "sp": "se" }],
       "exits": {"n": "c1_corridor"},
       "choices": ["c0_inspect", "move"]
@@ -142,31 +150,37 @@
       "choices": ["c1_inspect", "move"]
     },
     "c2_coolant": {
+      "room_audio": "c2_room",
       "intro": [{ "line": "YOU ENTER THE COOLANT ROOM, A LARGE CIRCULAR ROOM HUMMING WITH LIFE, DOZENS OF COOLANT TANKS LINING THE WALLS.", "sp": "se" }],
       "exits": {"w": "c1_corridor", "s": "c4_waste"},
       "choices": ["c2_inspect", "move"]
     },
     "c3_silo": {
+      "room_audio": "c3_room",
       "intro": [{ "line": "YOU ENTER THE CAVERN OF A MISSILE SILO, DOZENS OF MISSILES TOWERING ABOVE YOU INTO THE DARKNESS.", "sp": "se" }],
       "exits": {"w": "c6_llc", "s": "c7_shield", "e": "c4_waste"},
       "choices": ["c3_inspect", "move"]
     },
     "c4_waste": {
+      "room_audio": "c4_room",
       "intro": [{ "line": "YOU STEP THROUGH A BULKHEAD AND ENTER THE WASTE MANAGEMENT ROOM, DOZENS OF BARRELS STACKED ACROSS THE FLOOR.", "sp": "se" }],
       "exits": {"w": "c3_silo", "n": "c2_coolant"},
       "choices": ["c4_inspect", "move"]
     },
     "c6_llc": {
+      "room_audio": "c6_room",
       "intro": [{ "line": "YOU FIND YOURSELF IN A STORAGE ROOM, SEVERAL SHELVES FILLED TO THE BRIM WITH VARIOUS CHEMICALS AND DEVICES. SEVERAL GAS CHAMBERS SIT THROUGHOUT THE ROOM.", "sp": "se" }],
       "exits": {"e": "c3_silo", "n": "c5_control"},
       "choices": ["c6_inspect", "move"]
     },
     "c5_control": {
+      "room_audio": "a4_room",
       "intro": [{ "line": "YOU STROLL INTO THE CONTROL ROOM, THE CONTROL PANEL AGAINST THE WALL FLICKERING WITH HUNDREDS OF LITTLE LIGHTS.", "sp": "se" }],
       "exits": {"w": "c8_robotics", "s": "c6_llc", "e": "c1_corridor"},
       "choices": ["c5_inspect", "move"]
     },
     "c7_shield": {
+      "room_audio": "c7_room",
       "intro": [{ "line": "YOU ENTER THE SHIELDING ROOM, THE CRACKED LEAD WALL SHOWING YEARS OF WEAR.", "sp": "se" }],
       "exits": {"n": "c3_silo"},
       "choices": ["c7_inspect", "move"]
