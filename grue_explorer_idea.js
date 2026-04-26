@@ -858,14 +858,20 @@ function triggerEndingMerge() {
 // ─── VISUAL HELPERS ───────────────────────────────────────────
 
 function drawSoundVisualizer(x, y, w, h) {
-  noFill(); stroke(30, 45, 30); rect(x, y, w, h, 5);
-  stroke(0, 80, 0, 100);
-
+  // 1. Draw the frame
+  noFill(); stroke(30, 45, 30); strokeWeight(2);
+  rect(x, y, w, h, 5);
+  
+  // 2. Identify if we should be pulling data
+  // This ensures textSound (p5.sound) and Menu Music are NOT visualized
   let hasAudio = !isBooting && currentRoomKey && roomSources[currentRoomKey];
-  let level    = 0;
+  let level = 0;
 
   if (hasAudio && analyserNode && analyserData) {
+    // Fill the array with current sound wave data
     analyserNode.getByteTimeDomainData(analyserData);
+    
+    // Calculate Volume (RMS)
     let sum = 0;
     for (let i = 0; i < analyserData.length; i++) {
       let v = (analyserData[i] - 128) / 128;
@@ -874,28 +880,30 @@ function drawSoundVisualizer(x, y, w, h) {
     level = Math.sqrt(sum / analyserData.length);
   }
 
+  // 3. Draw the lines (using your original style)
+  stroke(0, 180, 0, 150); 
   for (let i = 0; i < w; i += 10) {
     let bh;
     if (hasAudio && level > 0.001) {
-      bh = (level * h * 3) * noise(i * 0.15, millis() * 0.002);
-      bh = constrain(bh, 2, h - 4);
+      // Sensitivity boost: level * 5 helps small ambient sounds show up better
+      bh = (level * h * 5) * noise(i * 0.15, millis() * 0.002);
+      bh = constrain(bh, 2, h - 10);
     } else {
-      bh = 2;
+      bh = 2; // Flat line when silent
     }
-    line(x + i, y + h, x + i, y + h - bh);
+    line(x + i, y + h - 5, x + i, y + h - bh - 5);
   }
 
+  // 4. Status Text
   fill(0, 100, 0, 150); noStroke(); textSize(14);
-  let statusText;
+  let statusText = "AUDIO_INPUT: NULL";
   if (isBooting) {
     statusText = "AUDIO_INPUT: CALIBRATING...";
   } else if (hasAudio && level > 0.001) {
     statusText = "AUDIO_INPUT: " + (currentRoom || "UNKNOWN").toUpperCase();
-  } else {
-    statusText = "AUDIO_INPUT: NULL";
   }
+  
   text(statusText, x + 10, y + 20);
-  textSize(28);
 }
 
 function drawLocalMap(x, y, w, h) {
