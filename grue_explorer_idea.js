@@ -8,6 +8,7 @@ let menuCursorBlink = 0;
 let menuScanlineOffset = 0;
 
 // --- BOOT SEQUENCE SETTINGS ---
+let gameStarted = false;
 let isBooting = false;
 let bootIndex = 0;
 let ivuVisualized = false;
@@ -473,6 +474,7 @@ function handleMenuInput(cmd) {
   if (cmd === "start") {
     isMenu    = false;
     isBooting = true;
+    gameStarted  = true;
     lastPrint  = millis();
     playMusic("music_a");
   } else if (cmd === "quit") {
@@ -552,7 +554,7 @@ function draw() {
   if (flags["sensor_aware"] && sensorShift < 1.0) sensorShift += 0.0005;
 
   // Print queue
-  if (printQueue.length > 0) {
+  if (gameStarted && printQueue.length > 0) {
     let timeElapsed = millis() - lastPrint;
     while (printQueue.length > 0 && timeElapsed >= printQueue[0].speed) {
       let item    = printQueue.shift();
@@ -1359,6 +1361,7 @@ function returnToMenu() {
   resetGameState();
   isMenu    = true;
   menuInput = "";
+  gameStarted = false;
   playMusic("music_menu");
 }
 
