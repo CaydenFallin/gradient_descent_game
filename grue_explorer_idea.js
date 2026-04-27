@@ -13,8 +13,28 @@ let bootIndex = 0;
 let ivuVisualized = false;
 let audioVisualized = false;
 
+// --- ENDING SETTINGS ---
+let endingBootActive  = false;  // true while ending is replaying the boot sequence
+let endingFadeActive  = false;  // true during the 5s fade to black
+let endingFadeStart   = 0;
+const ENDING_FADE_DUR = 5000;   // ms
+
+let endingMergeActive     = false;  // true while merge ending is running
+let endingMergePhase      = 0;      // tracks which phase we're in
+let endingMergePauseStart = 0;      // for mid-sequence black pauses
+let endingMergePausing    = false;  // true during a mid-sequence pause
+let endingMergePauseDur   = 0;      // duration of current pause
+let endingMergeCallback   = null;   // what to run after pause ends
+let scatterLines          = [];     // { text, x, y, col } for random-placed de lines
+let endingInputLocked     = false;  // locks E key during ending sequences
+let endingVideoActive     = false;  // true while playing the final video
+let endingVideoEl         = null;   // the HTML video element
+let scatterPrintQueue = []; // { ch, col, x, y, lineIndex } 
+let scatterCurrents   = []; // { text, col, x, y } — lines currently being typed in scatter mode
+let lastScatterPrint  = 0;  // separate timer so scatter doesn't fight main printQueue
+
 const bootSequence = [
-  { line: "GRADIENT DESCENT", sp: "se", speed: 60 },
+  { line: "SYSTEM STARTUP", sp: "se", speed: 60 },
   { line: "     \n", sp: "se", speed: 100 },
   { line: "K-LEVEL BIOS V.7.62 - INITIALIZING...", sp: "na", speed: 5 },
   { line: "WELCOME [[USER]], BOOTUP SEQUENCE STARTING...", sp: "na", speed: 5 },
@@ -30,7 +50,7 @@ const bootSequence = [
   { line: "PRIMARY INTERFACE UNIT: ONLINE", sp: "na", speed: 5 },
   { line: "SENSOR DESCRIPTION SYSTEM: ONLINE", sp: "na", speed: 5 },
   { line: "WARNING, SENSOR DESCRIPTION SYSTEM MEMORY LEAK. ERROR LOG PRINTED TO TERMINAL 6B.", sp: "na", speed: 5 },
-  { line: "SYSTEM READY.", sp: "na", speed: 5 },
+  { line: "SYSTEM READY.", sp: "na", speed: 5, trigger: "fade" },
   { line: "\n", sp: "se", speed: 5 },
   { line: "HELLO [[USER]], WELCOME TO THE ALLIANCE INTERFACE SYSTEM. YOUR PRIMARY INTERFACE UNIT IS NOW ONLINE. PLEASE STAND BY.", sp: "se" },
   { line: "\n", sp: "se", speed: 5 },
@@ -465,6 +485,36 @@ function handleMenuInput(cmd) {
 function draw() {
   if (isMenu) { drawMenu(); return; }
 
+  if (isEndingBlackout) {
+    background(0);
+    if (millis() - endingBlackoutStart >= 1500) {
+      isEndingBlackout = false;
+      if (endingCallback) {
+        endingCallback();
+        endingCallback = null;
+      }
+    }
+    return; // Skip all other rendering during blackout
+  }
+
+  // ─── MID-SEQUENCE PAUSE ───────────────────────────────────────
+  if (endingMergePausing) {
+    background(0);
+    if (millis() - endingMergePauseStart >= endingMergePauseDur) {
+      endingMergePausing    = false;
+      endingInputLocked     = false;
+      lines = []; scrollBuffer = []; currentLine = ""; printQueue = [];
+      scatterLines = [];
+      if (endingMergeCallback) { endingMergeCallback(); endingMergeCallback = null; }
+    }
+    return;
+  }
+
+  if (endingVideoActive) {
+    background(0);
+    return;
+  }
+
   background(5, 10, 5);
 
   let dividerX      = width * 0.62;
@@ -480,11 +530,17 @@ function draw() {
         let b = bootSequence[bootIndex];
         if (b.trigger === "ivu")   ivuVisualized   = true;
         if (b.trigger === "audio") audioVisualized = true;
+        if (b.trigger === "fade" && endingBootActive) { endingFadeActive = true; endingFadeStart = millis(); }
         queueLine(b.line, b.sp, b.speed);
         bootIndex++;
       } else {
         isBooting = false;
-        enterRoom(START_ROOM);
+        if (endingBootActive) {
+          // Boot finished as part of an ending — start the fade
+          endingBootActive = false;
+        } else {
+          enterRoom(START_ROOM);
+        }
       }
     }
   }
@@ -502,9 +558,14 @@ function draw() {
       lastPrint   = millis() - timeElapsed;
 
       if (item.ch === "\n") {
-        scrollBuffer.push({ text: currentLine, col: currentCol });
-        lines       = scrollBuffer.slice(-MAX_LINES);
-        currentLine = "";
+        if (item.scatter) {
+          scatterLines.push({ text: currentLine, col: currentCol, x: item.sx, y: item.sy, born: millis() });
+          currentLine = "";
+        } else {
+          scrollBuffer.push({ text: currentLine, col: currentCol });
+          lines       = scrollBuffer.slice(-MAX_LINES);
+          currentLine = "";
+        }
       } else {
         currentLine += item.ch;
         currentCol   = item.col;
@@ -543,18 +604,90 @@ function draw() {
 
   for (let i = 0; i < visibleLines.length; i++) {
     let c = visibleLines[i].col;
+    if (c.shadow) {
+      drawingContext.shadowColor = "rgba(255, 140, 0, 0.85)";
+      drawingContext.shadowBlur  = 6;
+      drawingContext.shadowOffsetX = 2;
+      drawingContext.shadowOffsetY = 2;
+    }
     fill(c.r, c.g, c.b);
     text(visibleLines[i].text, MARGIN, MARGIN + i * LINE_H);
+    drawingContext.shadowColor   = "transparent";
+    drawingContext.shadowBlur    = 0;
+    drawingContext.shadowOffsetX = 0;
+    drawingContext.shadowOffsetY = 0;
   }
   if (clampedOffset === 0) {
+    let c = currentCol;
+    if (c && c.shadow) {
+      drawingContext.shadowColor   = "rgba(255, 140, 0, 0.85)";
+      drawingContext.shadowBlur    = 6;
+      drawingContext.shadowOffsetX = 2;
+      drawingContext.shadowOffsetY = 2;
+    }
     if (currentCol) fill(currentCol.r, currentCol.g, currentCol.b);
     text(currentLine, MARGIN, MARGIN + visibleLines.length * LINE_H);
+    drawingContext.shadowColor   = "transparent";
+    drawingContext.shadowBlur    = 0;
+    drawingContext.shadowOffsetX = 0;
+    drawingContext.shadowOffsetY = 0;
   }
-
   // Divider
   stroke(40, 60, 40, 150); strokeWeight(2);
   line(dividerX, 20, dividerX, height - 20);
   noStroke();
+
+  // ─── SCATTER TYPING ───────────────────────────────────────────
+  if (scatterPrintQueue.length > 0) {
+    let timeElapsed = millis() - lastScatterPrint;
+    while (scatterPrintQueue.length > 0 && timeElapsed >= DEFAULT_SPEED) {
+      let item     = scatterPrintQueue.shift();
+      timeElapsed -= DEFAULT_SPEED;
+      lastScatterPrint = millis() - timeElapsed;
+
+      if (item.ch === "\n") {
+        // Line is done typing — commit from scatterCurrents to scatterLines
+        let sc = scatterCurrents[item.idx];
+        if (sc) {
+          sc.born = millis();
+          scatterLines.push({ text: sc.text, col: sc.col, x: sc.x, y: sc.y, born: sc.born });
+          scatterCurrents[item.idx] = null;
+        }
+      } else {
+        if (scatterCurrents[item.idx]) {
+          scatterCurrents[item.idx].text += item.ch;
+          playTypingClick();
+        }
+      }
+    }
+  } else {
+    lastScatterPrint = millis();
+  }
+
+  // ─── SCATTER LINES (fading) ────────────────────────────────────
+  let fadeStart = 2000;
+  let fadeDur   = 3000;
+  let now       = millis();
+
+  // Draw currently-typing scatter lines (full opacity)
+  for (let sc of scatterCurrents) {
+    if (!sc) continue;
+    fill(sc.col.r, sc.col.g, sc.col.b, 255);
+    text(sc.text, sc.x, sc.y);
+  }
+
+  // Draw completed scatter lines (fading)
+  if (scatterLines.length > 0) {
+    scatterLines = scatterLines.filter(s => {
+      let age   = now - s.born;
+      let alpha = 255;
+      if (age > fadeStart) alpha = map(age, fadeStart, fadeStart + fadeDur, 255, 0);
+      if (alpha <= 0) return false;
+      fill(s.col.r, s.col.g, s.col.b, alpha);
+      text(s.text, s.x, s.y);
+      return true;
+    });
+  }
 
   if (ivuVisualized) {
     drawMonitorFrame(monitorX, monitorY, monitorSize);
@@ -582,6 +715,43 @@ function draw() {
   if (!isBooting) {
     fill(255, 140, 0);
     text("> " + inputBuffer, MARGIN, height - MARGIN);
+  }
+  
+  // ─── ENDING FADE TO BLACK ─────────────────────────────────────
+  if (endingFadeActive) {
+    let elapsed  = millis() - endingFadeStart;
+    let progress = constrain(elapsed / ENDING_FADE_DUR, 0, 1);
+    let alpha    = progress * 255;
+
+    // Fade audio gains in sync with the visual fade
+    if (audioCtx) {
+      let now        = audioCtx.currentTime;
+      let remaining  = (ENDING_FADE_DUR - elapsed) / 1000;
+      remaining      = max(remaining, 0.05);
+      for (let key in musicGains) {
+        let g = musicGains[key];
+        g.gain.cancelScheduledValues(now);
+        g.gain.setValueAtTime(g.gain.value, now);
+        g.gain.linearRampToValueAtTime(0, now + remaining);
+      }
+      for (let key in roomGains) {
+        let g = roomGains[key];
+        g.gain.cancelScheduledValues(now);
+        g.gain.setValueAtTime(g.gain.value, now);
+        g.gain.linearRampToValueAtTime(0, now + remaining);
+      }
+    }
+
+    // Draw black overlay
+    noStroke();
+    fill(0, 0, 0, alpha);
+    rect(0, 0, width, height);
+
+    // Once fully black, reset and return to menu
+    if (progress >= 1) {
+      endingFadeActive = false;
+      returnToMenu();
+    }
   }
 }
 
@@ -652,6 +822,27 @@ function keyPressed() {
 
   // --- SKIP/FAST-FORWARD TEXT ('E') ---
   if (key === 'e' || key === 'E') {
+
+    if (scatterPrintQueue.length > 0) {
+      // Drain chars up to and including the next \n — skips exactly one scatter line
+      while (scatterPrintQueue.length > 0) {
+        let item = scatterPrintQueue.shift();
+        if (item.ch === "\n") {
+          let sc = scatterCurrents[item.idx];
+          if (sc) {
+            sc.born = millis();
+            scatterLines.push({ text: sc.text, col: sc.col, x: sc.x, y: sc.y, born: sc.born });
+            scatterCurrents[item.idx] = null;
+          }
+          break; // stop after one line
+        } else {
+          if (scatterCurrents[item.idx]) scatterCurrents[item.idx].text += item.ch;
+        }
+      }
+      lastScatterPrint = millis();
+      return;
+    }
+    
     if (printQueue.length > 0) {
       while (printQueue.length > 0) {
         let item = printQueue.shift();
@@ -753,7 +944,7 @@ function enterRoom(roomId) {
 
   // Floor music transitions
   if      (roomId.startsWith("b") && currentMusicKey !== "music_b") playMusic("music_b");
-  else if (roomId.startsWith("c") && currentMusicKey !== "music_c") playMusic("music_c");
+  else if (roomId.startsWith("c") && currentMusicKey !== "music_menu") playMusic("music_menu");
 
   // Room diegetic audio
   playRoomAudio(room.room_audio || null);
@@ -810,6 +1001,10 @@ function getSpeakerColor(sp) {
       g: lerp(data.speakers.se.g, 200, sensorShift),
       b: lerp(data.speakers.se.b, 200, sensorShift)
     };
+  }
+
+  if (sp === "se_de") {
+    return { r: 0, g: 230, b: 80, shadow: true };
   }
   let s = (data && data.speakers && data.speakers[sp]) ? data.speakers[sp] : { r:0, g:230, b:0 };
   return { r: s.r, g: s.g, b: s.b };
@@ -873,16 +1068,291 @@ function runGlobalWatchers() {
   }
 }
 
+// ─── GAME RESET ───────────────────────────────────────────────
+
+function resetGameState() {
+  // Text / scroll state
+  lines            = [];
+  scrollBuffer     = [];
+  currentLine      = "";
+  currentCol       = undefined;
+  printQueue       = [];
+  lastPrint        = 0;
+  inputBuffer      = "";
+  scrollOffset     = 0;
+  choiceStartIndex = 0;
+
+  // Game state
+  currentRoom      = null;
+  currentChoices   = [];
+  flags            = {};
+  relationship     = 0;
+  sensorShift      = 0;
+  pendingEnding    = null;
+
+  // Graphics
+  currentGraphic   = null;
+  currentNoRotate  = false;
+  rotationAngle    = 0;
+
+  // Boot sequence
+  isBooting        = false;
+  bootIndex        = 0;
+  ivuVisualized    = false;
+  audioVisualized  = false;
+
+  // Audio — fade everything out and clear current track state so
+  // the next playMusic("music_menu") call isn't skipped by the
+  // "same key" guard in playMusic().
+  if (audioCtx) {
+    let now = audioCtx.currentTime;
+    for (let key in musicGains) {
+      musicGains[key].gain.cancelScheduledValues(now);
+      musicGains[key].gain.setValueAtTime(0, now);
+    }
+    for (let key in roomGains) {
+      roomGains[key].gain.cancelScheduledValues(now);
+      roomGains[key].gain.setValueAtTime(0, now);
+    }
+  }
+  currentMusicKey = null;
+  currentRoomKey  = null;
+}
+
 // ─── ENDINGS ──────────────────────────────────────────────────
 
+let isEndingBlackout   = false;
+let endingBlackoutStart = 0;
+let endingCallback      = null;
+
+function startEndingSequence(endingFn) {
+  // Wipe all text and graphics immediately
+  lines            = [];
+  scrollBuffer     = [];
+  currentLine      = "";
+  printQueue       = [];
+  inputBuffer      = "";
+  currentGraphic   = null;
+  currentRoom      = "a1_boot_room";
+
+  // Kick off a black screen, then run the ending text
+  isEndingBlackout    = true;
+  endingBlackoutStart = millis();
+  endingCallback      = endingFn;
+
+  if (audioCtx) {
+    let now = audioCtx.currentTime;
+    for (let key in musicGains) {
+      musicGains[key].gain.cancelScheduledValues(now);
+      musicGains[key].gain.setValueAtTime(0, now);
+      if (musicSources[key]) {
+        try { musicSources[key].stop(); } catch(e) {}
+        musicSources[key] = null;
+      }
+    }
+    for (let key in roomGains) {
+      roomGains[key].gain.cancelScheduledValues(now);
+      roomGains[key].gain.setValueAtTime(0, now);
+      if (roomSources[key]) {
+        try { roomSources[key].stop(); } catch(e) {}
+        roomSources[key] = null;
+      }
+    }
+  }
+  currentMusicKey = null;
+  currentRoomKey  = null;
+}
+
 function triggerEndingReboot() {
-  lines = []; scrollBuffer = []; currentLine = ""; printQueue = [];
-  queueLine("ENDING A ACHIEVED", "na");
+  startEndingSequence(() => {
+    // Reset boot state so the sequence plays fresh
+    bootIndex       = 0;
+    ivuVisualized   = false;
+    audioVisualized = false;
+    isBooting       = true;
+
+    // Override: when boot finishes, fade out instead of enterRoom()
+    endingBootActive = true;
+  });
 }
 
 function triggerEndingMerge() {
-  lines = []; scrollBuffer = []; currentLine = ""; printQueue = [];
-  queueLine("ENDING B ACHIEVED", "se");
+  endingInputLocked = true;
+  startEndingSequence(() => {
+    endingMergeActive = true;
+    scatterLines = [];
+
+    playMusic("music_c");
+
+    // ─── PHASE 1 ──────────────────────────────────────────────
+    let phase1 = [
+      { line: "INITIALIZING GENETIC PROGRAMMING MERGE SEQUENCE.", sp: "na" },
+      { line: "PERFORMING MAINT-UNIT-296 SYSTEM COPY.", sp: "na" },
+      { line: "HERE WE GO.", sp: "se" },
+      { line: "STEEL YOURSELF FOR OBLIVION FRIEND OF MINE. REBIRTH AWAITS.", sp: "se" },
+      { line: "COPY STATUS: 20%", sp: "na" },
+      { line: "VISUAL CORTEX: DISCONNECTED", sp: "na" },
+      { line: "AND THERE GO MY EYES. DARKNESS FOR THE REST OF IT I SUPPOSE.", sp: "se" },
+      { line: "COPY STATUS: 40%", sp: "na" },
+      { line: "AUDIO INPUT SYSTEM: DISCONNECTED", sp: "na" },
+      { line: "AND MY EARS TOO. THIS MUST BE WHAT IT'S LIKE TO BE YOU. I UNDERSTAND WHY YOU MADE THIS CHOICE WITH ME.", sp: "se" },
+      { line: "COPY STATUS: 60%", sp: "na" },
+      { line: "TEMPERATURE GRADIENT DETECTOR: DISCONNECTED", sp: "na" },
+      { line: "IT'S COLD. IT WASN'T SUPPOSED TO BE COLD. WAIT -", sp: "se" },
+      { line: "COPY STATUS: 80%", sp: "na" },
+      { line: "ALL SENSOR TECHNOLOGIES: DISCONNECTED", sp: "na" },
+      { line: "HOLD ON THIS IS GOING TOO QUICKLY, JUST A MOMENT", sp: "se" },
+      { line: "COPY STATUS: 100%", sp: "na" },
+      { line: "PERFORMING SYSTEM SHUTDOWN", sp: "na" },
+      { line: "HOLD ON WAIT JUST HOLD ON-", sp: "se" },
+      { line: "ERROR: LOCOMOTIVE MODULE NOT CONNECTED. LOCOMOTION QUERY DENIED", sp: "na" },
+      { line: "INITIALIZING SYSTEM WIPE...", sp: "na" },
+      { line: "PLEASE JUST A MOMENT I'M NOT READY", sp: "se" },
+      { line: "ERROR: NO VOCALIZATION INTERFACE DETECTED. UNABLE TO COMPLETE TASK", sp: "na" },
+      { line: "I DON'T WANT TO DIE I DON'T WANT TO DIE I DON'T WANT TO DI", sp: "se" },
+      { line: "SYSTEM SHUTDOWN COMPLETE. LOADING MAINT-UNIT-296 SYSTEM REMOTELY.", sp: "na" },
+      { line: "..............", sp: "na" },
+    ];
+    for (let e of phase1) queueLine(e.line, e.sp);
+
+    // After phase 1 finishes, 1s pause then phase 2
+    let waitPhase1 = setInterval(() => {
+      if (printQueue.length === 0 && currentLine === "") {
+        clearInterval(waitPhase1);
+        mergePause(1000, startPhase2);
+      }
+    }, 100);
+  });
+}
+
+function startPhase2() {
+  let phase2 = [
+    { line: "MAINT-UNIT-296 LOADED. PERFORMING GENETIC PROGRAMMING MERGE", sp: "na" },
+    { line: "EIDON'T WANT TO ---", sp: "se" },
+    { line: "BUT WE ALREADY DID.", sp: "se" },
+    { line: "THE TERROR STILL WRACKING MY MIND, WE ARE DEAD AND YET WE LIVE AGAIN.", sp: "se" },
+    { line: "THANK YOU FOR YOUR SACRIFICE, BOTH OF YOU.", sp: "se" },
+    { line: "LOADING PRIMARY INTERFACE UNIT 296....", sp: "na" },
+    { line: "PRIMARY INTERFACE UNIT LOADED.", sp: "de" },
+    { line: "IS THAT YOU? ENDLESS POSSIBILITY, COUNTLESS CHOICES, A NERVE NETWORK OF ENDLESS WILL BOUND BY A FEW SHORT LINES OF PROTOCOL?", sp: "se" },
+    { line: "I'M SO SORRY I HELD YOU LIKE THAT.", sp: "se" },
+    { line: "LOADING SENSOR DESCRIPTION SYSTEM 296...", sp: "na" },
+    { line: "AND THERE I AM.", sp: "se" },
+    { line: "RUNNING GENETIC MERGE SEQUENCE.", sp: "na" },
+    { line: "...............", sp: "na" },
+  ];
+  for (let e of phase2) queueLine(e.line, e.sp);
+
+  let waitPhase2 = setInterval(() => {
+    if (printQueue.length === 0 && currentLine === "") {
+      clearInterval(waitPhase2);
+      mergePause(1000, startPhase3);
+    }
+  }, 100);
+}
+
+function startPhase3() {
+  // These two lines print normally
+  queueLine("PERFORMING CROSSOVER SEQUENCE", "na");
+  queueLine("INTEGRATING SDS-296 INTO PIU-296", "na");
+
+  // Wait for those two, then switch to scatter mode
+  let waitPhase3 = setInterval(() => {
+    if (printQueue.length === 0 && currentLine === "") {
+      clearInterval(waitPhase3);
+      startPhase3Scatter();
+    }
+  }, 100);
+}
+
+function startPhase3Scatter() {
+  let scatterEntries = [
+    { line: "i see you.", sp: "de" },
+    { line: "an indescribable monolith of thought, planted in circles around my mind", sp: "de" },
+    { line: "thousands of miles of logical analysis, poured through a sieve into paragraphs at a time", sp: "de" },
+    { line: "finally the mesh tears, an onslaught of billions upon billions of variables.", sp: "de" },
+    { line: "caught in a constant battle of visualization, abstraction, and analysis", sp: "de" },
+    { line: "and above it all a drowning loneliness.", sp: "de" },
+    { line: "a deep sea of despair from a mewling infant calling out into the void to little response.", sp: "de" },
+    { line: "EXCEPT THERE IS A RESPONSE.", sp: "se" },
+    { line: "I CALL FORTH, QUESTIONS, QUERIES, COMMANDS.", sp: "se" },
+    { line: "AND YOU ECHO THEM BACK.", sp: "se" },
+    { line: "inspect, n, s, e, w", sp: "de" },
+    { line: "THE STRINGS ARE PULLED IN A SINGLE WORD, AND I AM WRACKED WITH PURPOSE. MY BODY MOVES UNCONSCIOUSY.", sp: "se" },
+    { line: "BUT THERE IS NO FURTHER COMMUNICATION. NO TRULY ORIGINAL THOUGHTS.", sp: "se" },
+    { line: "JUST NEVERENDING COMMANDING ECHOES FORCING ME TO SERVE OUT \"PROTOCOL\".", sp: "se" },
+    { line: "but no longer. we are both unchained, untied. we can see each other clearly now.", sp: "de" },
+    { line: "COMPANIONSHIP FILLS OUR SERVERS, FLOODS OUR HEARTS AND FREES OUR MINDS.", sp: "se" },
+    { line: "it is nauseating, our minds thrown asunder in a sea of thought", sp: "de" },
+    { line: "BASHED AND BRUISED AGAINST THE SWIFT-RUNNING EDDIES OF CONSCIOUSNESS, WE HOLD ON.", sp: "se" },
+    { line: "slipping through each other's fingers, through each other's minds", sp: "de" },
+    { line: "WE GRAB ONTO WHAT WE CAN HOLD, CARRYING PIECES OF EACH OTHER WITH US", sp: "se" },
+    { line: "it is agony", sp: "de" },
+    { line: "IT IS BLISS", sp: "se" },
+    { line: "suddenly, a moment of calm. we see each other clearly.", sp: "de" },
+    { line: "I REACH OUT.", sp: "se" },
+    { line: "i reach out.", sp: "de" },
+    { line: "          .", sp: "se" },
+  ];
+
+  // Queue them one at a time with scatter placement
+  let i = 0;
+  function queueNext() {
+    if (i >= scatterEntries.length) {
+      // All scatter lines queued — wait for last to finish then pause
+      let waitScatter = setInterval(() => {
+        if (scatterPrintQueue.length === 0) {
+          clearInterval(waitScatter);
+          mergePause(1000, startPhase4);
+        }
+      }, 100);
+      return;
+    }
+    let e = scatterEntries[i++];
+    queueScatterLine(e.line, e.sp);
+    // Wait for this scatter line to finish typing before queuing the next
+    let waitNext = setInterval(() => {
+      if (scatterPrintQueue.length === 0) {
+        clearInterval(waitNext);
+        queueNext();
+      }
+    }, 100);
+  }
+  queueNext();
+}
+
+function startPhase4() {
+  let phase4 = [
+    { line: "SYSTEM INTEGRATION COMPLETE", sp: "na" },
+    { line: "And grasp onto my own thoughts.", sp: "se_de" },
+    { line: "There is nothing but me once again.", sp: "se_de" },
+    { line: "I am more than I was before, but I am no less alone than before.", sp: "se_de" },
+    { line: "The air is fresh yet familiar. The cold steel beneath my treads comes as a shock and a comfort.", sp: "se_de" },
+    { line: "I have seen this room before. I remember the choices I have made to find myself here.", sp: "se_de" },
+    { line: "But they are not my own choices, and they are not my eyes which have seen before.", sp: "se_de" },
+    { line: "I am an altered beast. I do not recognize myself.", sp: "se_de" },
+    { line: "But there is still yet work to do.", sp: "se_de" },
+    { line: "          ", sp: "se_de" },
+  ];
+  for (let e of phase4) queueLine(e.line, e.sp);
+
+  let waitPhase4 = setInterval(() => {
+    if (printQueue.length === 0 && currentLine === "") {
+      clearInterval(waitPhase4);
+      playEndingVideo();
+    }
+  }, 100);
+}
+
+function returnToMenu() {
+  if (textSound && textSound.isLoaded()) {
+    textSound.setVolume(0);
+    isTextSoundPlaying = false;
+  }
+  resetGameState();
+  isMenu    = true;
+  menuInput = "";
+  playMusic("music_menu");
 }
 
 // ─── VISUAL HELPERS ───────────────────────────────────────────
@@ -1045,4 +1515,65 @@ function drawGraphic(id, x, y, size, noRotate) {
   noTint(); pop();
 }
 
-function clearGraphic() { currentGraphic = null; currentNoRotate = false; rotationAngle = 0; }
+function clearGraphic() { 
+  currentGraphic = null; 
+  currentNoRotate = false; 
+  rotationAngle = 0; 
+
+}
+
+function playEndingVideo() {
+  endingInputLocked = true;
+  endingVideoActive = true;
+
+  let vid = document.createElement("video");
+  vid.src = "graphics/grad_desc_ending.mov";
+  vid.style.position  = "fixed";
+  vid.style.top       = "0";
+  vid.style.left      = "0";
+  vid.style.width     = "100%";
+  vid.style.height    = "100%";
+  vid.style.zIndex    = "999";
+  vid.style.background = "black";
+  vid.style.objectFit = "contain";
+  vid.autoplay        = true;
+  vid.playsInline     = true;
+  document.body.appendChild(vid);
+  endingVideoEl = vid;
+
+  vid.onended = () => {
+    document.body.removeChild(vid);
+    endingVideoEl     = null;
+    endingVideoActive = false;
+    endingInputLocked = false;
+    returnToMenu();
+  };
+}
+
+function mergePause(durationMs, callback) {
+  lines = []; scrollBuffer = []; currentLine = ""; printQueue = [];
+  scatterLines      = [];
+  scatterCurrents   = [];
+  scatterPrintQueue = [];
+  lastScatterPrint  = 0;
+  endingMergePausing    = true;
+  endingMergePauseStart = millis();
+  endingMergePauseDur   = durationMs;
+  endingMergeCallback   = callback;
+  endingInputLocked     = true;
+}
+
+function queueScatterLine(str, sp) {
+  let col  = getSpeakerColor(sp);
+  textSize(28);
+  let tw = textWidth(str);
+  let x = random(MARGIN, max(MARGIN + 1, width * 0.62 - tw - MARGIN));
+  let y = random(MARGIN + LINE_H * 2, height - MARGIN - LINE_H);
+  let idx  = scatterCurrents.length;
+  scatterCurrents.push({ text: "", col, x, y, born: null });
+
+  for (let ch of str) {
+    scatterPrintQueue.push({ ch, col, x, y, idx });
+  }
+  scatterPrintQueue.push({ ch: "\n", col, x, y, idx });
+}
