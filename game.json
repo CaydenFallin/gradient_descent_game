@@ -47,7 +47,9 @@
 
   "rooms": {
     "a1_boot_room": {
-      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE EAST AND A DOOR TO THE SOUTH \nA MAP HANGS LIMPLY ON THE WALL.", "sp": "se" }],
+      "intro": [{ "line": "YOU FIND YOURSELF IN A SMALL ROOM WITH A DOOR TO THE EAST AND A DOOR TO THE SOUTH \nA MAP HANGS LIMPLY ON THE WALL.", "sp": "se" },
+      { "line": "You can look at the map via the \"INSPECT\" command.", "sp": "de"}
+    ],
       "exits": { "e": "a3_corridor", "s": "a2_lounge" },
       "choices": ["a1_inspect", "move"]
     },
@@ -286,7 +288,7 @@
       "text": [
         { "line": "YOU GRAB A NEARBY RAG AND THOROUGHLY WIPE THE TABLE AND COFFEE MAKER DOWN, ORGANIZING THE MAGAZINES INTO A STACK.", "sp": "se" },
         { "line": "WHILE YOU'RE AT IT, YOU ALSO WIPE DOWN THE CHAIRS, REMOVING SOME OF THE DUST AND DEBRIS.", "sp": "se" },
-        { "line": "YOU GRAB A NEARBY BROOM AND SWEEP THE FLOOR, MAKING THE ROOM FEEL MUCH CLEANER A LITTLE MORE LIVABLE FOR THE STAFF.", "sp": "se" },
+        { "line": "YOU GRAB A NEARBY BROOM AND SWEEP THE FLOOR, MAKING THE ROOM FEEL MUCH CLEANER AND A LITTLE MORE LIVABLE FOR THE STAFF.", "sp": "se" },
         { "line": "A SENSE OF PRIDE WELLS UP IN YOU AS YOU STEP BACK AND ADMIRE YOUR WORK.", "sp": "se" },
         { "line": "MUCH BETTER.", "sp": "se" }
       ],
@@ -417,14 +419,6 @@
       "leads_to": ["a5_interface"]
     },
 
-    "a5_closet": {
-      "label": "CHECK STORAGE CLOSET",
-      "sp": "de",
-      "sets_flag": "a5_air_filters_held",
-      "excludes_flag": "a5_air_filters_held",
-      "text": [{ "line": "YOU OPEN THE DOORS TO THE STORAGE CLOSET, REVEALING SEVERAL SHELVES LINED WITH GOVERNMENT ISSUED AIR FILTERS. YOU GRAB A HANDFUL OFF THE SHELF.", "sp": "se" }],
-      "leads_to": ["back"]
-    },
     "a5_vents": {
       "label": "CHECK VENTS",
       "sp": "de",
@@ -434,11 +428,10 @@
     "a5_filters": {
       "label": "REPLACE AIR FILTERS",
       "sp": "de",
-      "requires_flag": "a5_air_filters_held",
       "sets_flag": "a5_air_filters_replaced",
       "excludes_flag": "a5_air_filters_replaced",
       "text": [
-        { "line": "YOU TAKE THE AIR FILTERS YOU GRABBED FROM THE STORAGE CLOSET AND BEGIN REPLACING THEM FROM EACH UNIT, GOING ONE BY ONE DOWN THE LINE. \nFIRST YOU GRAB THE POP-OFF CORNERS OF THE FILTRATION PANELS, PULLING OUT DUSTY AND TANGLED AIR FILTERS AND REPLACING EACH ONE WITH PRECISION AND CARE. \nIT'S TEDIOUS WORK AND TIME CONSUMING, BUT IT'S IMPORTANT FOR THE HEALTH OF THE CREW. \nFINALLY, YOU POP THE LAST PANEL BACK ON AND STEP BACK. FILTER REPLACEMENT COMPLETE. GREAT JOB TEAM.", "sp": "se" }
+        { "line": "YOU GRAB SEVERAL GOVERNMENT-ISSUED AIR FILTERS FROM THE STORAGE CLOSET AND BEGIN REPLACING THEM FROM EACH UNIT, GOING ONE BY ONE DOWN THE LINE. \nFIRST YOU GRAB THE POP-OFF CORNERS OF THE FILTRATION PANELS, PULLING OUT DUSTY AND TANGLED AIR FILTERS AND REPLACING EACH ONE WITH PRECISION AND CARE. \nIT'S TEDIOUS WORK AND TIME CONSUMING, BUT IT'S IMPORTANT FOR THE HEALTH OF THE CREW. \nFINALLY, YOU POP THE LAST PANEL BACK ON AND STEP BACK. FILTER REPLACEMENT COMPLETE. GREAT JOB TEAM.", "sp": "se" }
       ],
       "leads_to": ["back"]
     },

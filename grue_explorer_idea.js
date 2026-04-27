@@ -81,6 +81,7 @@ let inputBuffer = "";
 let scrollBuffer = [];
 let scrollOffset = 0;
 let choiceStartIndex = 0;
+let choiceHistory = []; // tracks last 3 choiceStartIndex values
 
 let textWidthLimit = 600;
 
@@ -472,6 +473,7 @@ function handleMenuInput(cmd) {
   if (cmd === "start") {
     isMenu    = false;
     isBooting = true;
+    lastPrint  = millis();
     playMusic("music_a");
   } else if (cmd === "quit") {
     window.close();
@@ -883,7 +885,9 @@ function keyPressed() {
 
 function handleCommand(cmd) {
   scrollOffset      = 0;
-  choiceStartIndex  = scrollBuffer.length;
+  choiceHistory.push(scrollBuffer.length);
+  if (choiceHistory.length > 3) choiceHistory.shift();
+  choiceStartIndex = choiceHistory[0];
 
   queueLine(cmd.toUpperCase(), "de");
   let dirMap = { n:"n", north:"n", s:"s", south:"s", e:"e", east:"e", w:"w", west:"w", u:"u", up:"u", d:"d", down:"d" };
@@ -900,7 +904,7 @@ function handleCommand(cmd) {
     return;
   }
 
-  if (cmd === "back") {
+  if (cmd === "back" || cmd === "b") {
     if (currentChoices.includes("back")) { enterRoom(currentRoom); clearGraphic(); }
     else { queueLine("UNRECOGNIZED INPUT.", "se"); showChoices(currentChoices); }
     return;
@@ -937,7 +941,9 @@ function handleCommand(cmd) {
 
 function enterRoom(roomId) {
   scrollOffset     = 0;
-  choiceStartIndex = scrollBuffer.length;
+  choiceHistory.push(scrollBuffer.length);
+  if (choiceHistory.length > 3) choiceHistory.shift();
+  choiceStartIndex = choiceHistory[0];
   currentRoom      = roomId;
 
   let room = data.rooms[roomId];
@@ -1081,6 +1087,7 @@ function resetGameState() {
   inputBuffer      = "";
   scrollOffset     = 0;
   choiceStartIndex = 0;
+  choiceHistory    = [];
 
   // Game state
   currentRoom      = null;
