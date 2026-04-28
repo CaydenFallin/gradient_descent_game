@@ -153,7 +153,7 @@ const START_ROOM     = "a1_boot_room";
 // ─── PRELOAD ──────────────────────────────────────────────────
 
 function preload() {
-  vt323 = loadFont("VT323-Regular.ttf", () => {}, () => console.log("Font failed"));
+  vt323 = loadFont("vt323-regular.ttf", () => {}, () => console.log("Font failed"));
   data  = loadJSON("game.json");
 
   loadGraphic("star_gear_graphic",  "graphics/star_gear_graphic.png");
@@ -168,7 +168,7 @@ function preload() {
   loadGraphic("tabernacle_terminal","graphics/tabernacle_terminal.png");
 
   // p5.sound only for short SFX
-  textSound       = loadSound("sounds/textSound.mp3");
+  textSound       = loadSound("sounds/textsound.mp3");
   typewriterSound = loadSound("sounds/typewriter.mp3");
 }
 
