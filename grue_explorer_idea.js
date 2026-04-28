@@ -102,10 +102,10 @@ let amplitude;
 
 // ─── RAW WEB AUDIO SYSTEM ─────────────────────────────────────
 const musicConfig = {
-  "music_menu": { file: "sounds/music_menu.mp3", volume: 0.8 },
-  "music_a":    { file: "sounds/music_a.mp3",    volume: 0.7 },
-  "music_b":    { file: "sounds/music_b.mp3",    volume: 0.7 },
-  "music_c":    { file: "sounds/music_c.mp3",    volume: 0.7 },
+  "music_menu": { file: "sounds/music_menu.mp3", volume: 0.5 },
+  "music_a":    { file: "sounds/music_a.mp3",    volume: 0.5 },
+  "music_b":    { file: "sounds/music_b.mp3",    volume: 0.5 },
+  "music_c":    { file: "sounds/music_c.mp3",    volume: 0.5 },
 };
 
 const roomConfig = {
