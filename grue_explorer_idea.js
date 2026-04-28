@@ -394,7 +394,7 @@ function drawMenu() {
   noStroke();
 
   textSize(18); fill(0, 130, 45, 190); textAlign(LEFT, TOP);
-  text("BY [John Fallin]", titleX, titleBottom + 12);
+  text("BY [Kaderblast]", titleX, titleBottom + 12);
 
   let menuMonitorX    = width * 0.65;
   let menuMonitorY    = height * 0.12;
